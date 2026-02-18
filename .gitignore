@@ -4,14 +4,14 @@ __pycache__/
 # 数据示例
 example/
 checkpoints/Net/
-data/
-*/dcm
-*/ima
-*/nii
-*/nii.gz
+*/.dcm
+*/.ima
+*/.nii
+*/.nii.gz
+*/.onnx
 
 # 其他类
-nnUNet/nnunetv2.egg-info/
 .idea/
+.view/
 
 

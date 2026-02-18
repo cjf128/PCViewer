@@ -1,6 +1,6 @@
-import os
 import shutil
 import pydicom
+from pathlib import Path
 
 def sort_dcm(folder_path: str, dicom_CT_path: str, dicom_PET_path: str) -> None:
     """
@@ -13,15 +13,14 @@ def sort_dcm(folder_path: str, dicom_CT_path: str, dicom_PET_path: str) -> None:
     :param dicom_PET_path: 患者最终存储PET的文件夹
     :type dicom_PET_path: str
     """
-    for dcm_file in os.listdir(folder_path):
-        dcm_path = os.path.join(folder_path, dcm_file)
+    folder_path = Path(folder_path)
+    for dcm_file in folder_path.iterdir():
         try:
-            dicom_data = pydicom.dcmread(dcm_path)
+            dicom_data = pydicom.dcmread(str(dcm_file))
             modality = dicom_data.Modality
             if modality == 'PT':
-                shutil.copy(dcm_path, dicom_PET_path)
+                shutil.copy(str(dcm_file), dicom_PET_path)
             elif modality == 'CT':
-                shutil.copy(dcm_path, dicom_CT_path)
+                shutil.copy(str(dcm_file), dicom_CT_path)
         except Exception as e:
             continue
-                

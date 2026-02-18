@@ -1,0 +1,10 @@
+2026-02-16 17:34:31 - INFO - Viewer - 应用程序启动
+2026-02-16 17:34:31 - INFO - Viewer - 开始加载SAM2模型
+2026-02-16 17:34:31 - INFO - Viewer - 应用程序初始化完成
+2026-02-16 17:34:31 - DEBUG - Viewer - 编码器路径: D:\PythonProjects\Viewer\models\sam2.1_hiera_base_plus_encoder.onnx
+2026-02-16 17:34:31 - DEBUG - Viewer - 解码器路径: D:\PythonProjects\Viewer\models\sam2.1_hiera_base_plus_decoder.onnx
+2026-02-16 17:34:32 - INFO - Viewer - SAM2模型加载完成
+2026-02-16 17:34:32 - INFO - Viewer - SAM模型已加载到主窗口
+2026-02-16 17:34:33 - INFO - Viewer - 打开数据加载对话框
+2026-02-16 17:36:17 - INFO - Viewer - 应用程序关闭，清理缓存
+2026-02-16 17:36:17 - INFO - Viewer - 应用程序退出

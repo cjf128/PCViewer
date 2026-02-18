@@ -1,5 +1,5 @@
 import sys
-from configs import VIEWERMode, VIEWMode
+from app.mode import VIEWERMode, VIEWMode
 
 import numpy as np
 from PySide6.QtCore import QPoint, QRect, Qt, Signal

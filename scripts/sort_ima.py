@@ -1,6 +1,6 @@
-import os
 import shutil
 import pydicom
+from pathlib import Path
 
 def sort_ima(folder_path: str, dicom_CT_path: str, dicom_PET_path: str) -> None:
     """
@@ -13,44 +13,41 @@ def sort_ima(folder_path: str, dicom_CT_path: str, dicom_PET_path: str) -> None:
     :param dicom_PET_path: 患者最终存储PET的文件夹
     :type dicom_PET_path: str
     """
-    for folder in os.listdir(folder_path):
-        ima_folder = os.path.join(folder_path, folder)
-        if "WB" in folder and "CT" in folder:
-            ima_files = [f for f in os.listdir(ima_folder) if f.endswith(".IMA")]
-            dcm_files = [f for f in os.listdir(ima_folder) if f.endswith(".dcm")]
+    folder_path = Path(folder_path)
+    for folder in folder_path.iterdir():
+        ima_folder = folder
+        if "WB" in folder.name and "CT" in folder.name:
+            ima_files = [f for f in ima_folder.iterdir() if f.suffix == ".IMA"]
+            dcm_files = [f for f in ima_folder.iterdir() if f.suffix == ".dcm"]
             if ima_files:
                 for ima_file in ima_files:
-                    ima_path = os.path.join(ima_folder, ima_file)
-                    ima_data = pydicom.dcmread(ima_path)
+                    ima_data = pydicom.dcmread(str(ima_file))
                     if ima_data.Modality == 'CT':
-                        ima_path = os.path.join(dicom_CT_path, ima_file.replace(".IMA", ".dcm"))
-                        ima_data.save_as(ima_path)
+                        new_path = Path(dicom_CT_path) / (ima_file.stem + ".dcm")
+                        ima_data.save_as(str(new_path))
 
             if dcm_files:
                 for dcm_file in dcm_files:
-                    dcm_path = os.path.join(ima_folder, dcm_file)
-                    dcm_data = pydicom.dcmread(dcm_path)
+                    dcm_data = pydicom.dcmread(str(dcm_file))
 
                     modality = dcm_data.Modality
                     if modality == 'CT':
-                        shutil.copy(dcm_path, dicom_CT_path)
+                        shutil.copy(str(dcm_file), dicom_CT_path)
 
-        if 'WB' in folder and 'PET' in folder:
-            ima_files = [f for f in os.listdir(ima_folder) if f.endswith(".IMA")]
-            dcm_files = [f for f in os.listdir(ima_folder) if f.endswith(".dcm")]
+        if 'WB' in folder.name and 'PET' in folder.name:
+            ima_files = [f for f in ima_folder.iterdir() if f.suffix == ".IMA"]
+            dcm_files = [f for f in ima_folder.iterdir() if f.suffix == ".dcm"]
 
             if ima_files:
                 for ima_file in ima_files:
-                    ima_path = os.path.join(ima_folder, ima_file)
-                    ima_data = pydicom.dcmread(ima_path)
+                    ima_data = pydicom.dcmread(str(ima_file))
                     if ima_data.Modality == 'PT':
-                        ima_path = os.path.join(dicom_PET_path, ima_file.replace(".IMA", ".dcm"))
-                        ima_data.save_as(ima_path)
+                        new_path = Path(dicom_PET_path) / (ima_file.stem + ".dcm")
+                        ima_data.save_as(str(new_path))
 
             if dcm_files:
                 for dcm_file in dcm_files:
-                    dcm_path = os.path.join(ima_folder, dcm_file)
-                    dcm_data = pydicom.dcmread(dcm_path)
+                    dcm_data = pydicom.dcmread(str(dcm_file))
                     modality = dcm_data.Modality
                     if modality == 'PT':
-                        shutil.copy(dcm_path, dicom_PET_path)
+                        shutil.copy(str(dcm_file), dicom_PET_path)

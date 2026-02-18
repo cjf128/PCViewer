@@ -1,7 +1,7 @@
-import os
 import shutil
 import sys
 import warnings
+from pathlib import Path
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QActionGroup, QImage, QPixmap, QUndoCommand, QUndoStack
@@ -19,16 +19,16 @@ import SimpleITK as sitk
 import cv2
 import numpy as np
 import pypinyin as pin
-import torch
 import vtk
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from widgets.WorkerThread import BuiltThread, ModelLoader, SamThread, WorkerThread
-from configs import LOADMode, VIEWERMode, VIEWMode
+from app.mode import LOADMode, VIEWERMode, VIEWMode
 from scripts.sort_dcm import sort_dcm
 from scripts.sort_ima import sort_ima
+from scripts.logger import log_info, log_debug, log_error, log_warning
 from ui.MainWindow_ui import Ui_MainWindow
-from utils import resource_path
+from path import BASE_PATH
 from widgets.LoadDialog import LoadDialog
 
 warnings.filterwarnings("ignore")
@@ -54,7 +54,7 @@ class SegChangeCommand(QUndoCommand):
             self.parent.update_all()
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, config, parent=None):
         super().__init__(parent)
         self.setupUi(self)
 
@@ -96,13 +96,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_mode = LOADMode.UNLOAD
         self.view_mode = VIEWMode.CROSS
 
-        self.model: str = "nnUNet"
-
         # 路径参数
-        self.cache_path: str = resource_path("data", "cache")
-        self.seg_path: str = resource_path("data", "segmentation")
-        self.data_path: str = ''
-        self.seg_file: str = ''
+        self.cache_path: Path = BASE_PATH / "data" / "cache"
+        self.seg_path: Path = BASE_PATH / "data" / "segmentation"
+        self.data_path: Path = ''
+        self.seg_file: Path = ''
 
         self.SamPredictor = None
         self.undo_stack = QUndoStack(self)
@@ -115,7 +113,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("鼻咽癌PET/CT图像全身病灶检测软件")
 
         self.init_ui()
-        self.init_nnunet()
         self.init_connectAction()
 
     def init_ui(self):
@@ -222,7 +219,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btnReset.clicked.connect(self.reset_slot)
 
         self.cboxMode.currentIndexChanged.connect(self.on_cbox_mode_changed)
-        self.cboxModel.currentIndexChanged.connect(self.on_cbox_model_changed)
 
         self.viewer.Sam_Signal.connect(self.operation)
         self.viewer.Mode_Signal.connect(self.checkmode)
@@ -245,28 +241,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def on_model_loaded(self, predictor):
         self.SamPredictor = predictor
-
-    def init_nnunet(self):
-        from nnUNet.nnunetv2.inference import predict_from_raw_data
-
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        self.nnunet_predictor = predict_from_raw_data.nnUNetPredictor(
-            tile_step_size=0.5,
-            use_gaussian=True,
-            use_mirroring=True,
-            perform_everything_on_device=True,
-            device=device,
-            verbose=False,
-            verbose_preprocessing=False,
-            allow_tqdm=False
-        )
-
-        self.nnunet_predictor.initialize_from_trained_model_folder(
-            resource_path("checkpoints\\Net"),
-            use_folds=(self.cboxModel.currentIndex(),),
-            checkpoint_name="checkpoint_best.pth",
-        )
+        log_info("SAM模型已加载到主窗口")
 
     def setting_slot(self):
         if self.dockWidget_2.isVisible():
@@ -345,24 +320,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def load_Seg_slot(self):
         if self.load_mode == LOADMode.UNLOAD:
+            log_warning("请先输入原始数据")
             QMessageBox.warning(self, '警告！','请先输入原始数据！', QMessageBox.Ok)
             return
         else:
             seg_file, _ = QFileDialog.getOpenFileName(self, "选择文件", "", "NIfTI Files (*.nii *.nii.gz)")
             if seg_file:
-                name = os.path.basename(seg_file).split(".")[0]
-                new_path = os.path.join(self.seg_path, name + '.nii.gz')
-                shutil.copy2(seg_file, new_path)
+                log_info(f"加载分割文件: {seg_file}")
+                name = Path(seg_file).stem.split(".")[0]
+                new_path = Path(self.seg_path) / (name + '.nii.gz')
+                shutil.copy2(seg_file, str(new_path))
                 self.seg_file = seg_file
 
-                seg = sitk.ReadImage(new_path)
+                seg = sitk.ReadImage(str(new_path))
                 seg_data = sitk.GetArrayFromImage(seg)
                 trans = self.transpose("trans")
                 seg_data = np.transpose(seg_data, axes=trans)
                 if seg_data.shape == self.pet.shape:
                     self.seg = seg_data
                     self.update_image()
+                    log_info(f"分割文件加载成功: {seg_file}")
                 else:
+                    log_error(f"分割文件形状不匹配: {seg_data.shape} vs {self.pet.shape}")
                     QMessageBox.warning(self, '警告！', '输入标签与原始数据不符，请检查标注是否正确！', QMessageBox.Ok)
                     return
             else:
@@ -371,14 +350,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # 打开文件
     def load_slot(self):
         """导入文件夹对话框"""
-        file_list = []
-        for filename in os.listdir(self.cache_path):
-            file_path = os.path.join(self.cache_path, filename)
-            file_list += [file_path]
-
-        if len(file_list) > 0:
-            for file in file_list:
-                shutil.rmtree(file)
+        log_info("打开数据加载对话框")
+        cache_path = Path(self.cache_path)
+        if cache_path.exists():
+            for file_path in cache_path.iterdir():
+                if file_path.is_dir():
+                    shutil.rmtree(str(file_path))
+                else:
+                    file_path.unlink()
 
         load_dialog = LoadDialog(self)
         load_dialog.Nifti_Signal.connect(self.load_nifti_slot)
@@ -396,7 +375,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_folder(folder_path, "IMA")
 
     def load_folder(self, folder_path, mode):
-        patient_id = os.path.basename(folder_path)
+        patient_id = Path(folder_path).name
         patient_id = pin.slug(patient_id)
         if '-' in patient_id:
             patient_id = patient_id.replace('-', '')
@@ -408,28 +387,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.patient_id = patient_id
 
-        dicom_path = os.path.join(self.cache_path, self.patient_id)
-        if not os.path.exists(dicom_path):
-            os.makedirs(dicom_path)
+        dicom_path = Path(self.cache_path) / self.patient_id
+        dicom_path.mkdir(parents=True, exist_ok=True)
 
-        dicom_CT_path = os.path.join(dicom_path, 'CT')
-        dicom_PET_path = os.path.join(dicom_path, 'PET')
+        dicom_CT_path = dicom_path / 'CT'
+        dicom_PET_path = dicom_path / 'PET'
 
-        if not os.path.exists(dicom_CT_path):
-            os.makedirs(dicom_CT_path)
-        if not os.path.exists(dicom_PET_path):
-            os.makedirs(dicom_PET_path)
+        dicom_CT_path.mkdir(exist_ok=True)
+        dicom_PET_path.mkdir(exist_ok=True)
 
         if mode == "DICOM":
-            sort_dcm(folder_path, dicom_CT_path, dicom_PET_path)
+            sort_dcm(folder_path, str(dicom_CT_path), str(dicom_PET_path))
         elif mode == "IMA":
-            sort_ima(folder_path, dicom_CT_path, dicom_PET_path)
+            sort_ima(folder_path, str(dicom_CT_path), str(dicom_PET_path))
 
         # 显示对话框
         self.dialog.setWindowTitle("正在导入数据")
         self.dialog.show()
 
-        self.data_path = os.path.join(self.cache_path, self.patient_id)
+        self.data_path = str(dicom_path)
 
         # 创建并启动工作线程
         self.worker_thread = WorkerThread(dicom_path)
@@ -439,34 +415,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def load_nifti_slot(self, pet_path, ct_path):
         """导入nifti文件"""
-        patient_id = os.path.basename(pet_path)
+        patient_id = Path(pet_path).name
         patient_id = pin.slug(patient_id)
         if patient_id.endswith('_0000.nii.gz'):
             self.patient_id = patient_id.replace('_0000.nii.gz', '')
         elif patient_id.endswith('.nii.gz'):
             self.patient_id = patient_id.replace('.nii.gz', '')
-        data_folder = os.path.join(self.cache_path, self.patient_id)
+        data_folder = Path(self.cache_path) / self.patient_id
 
-        if not os.path.exists(data_folder):
-            os.makedirs(data_folder)
-        shutil.copy(pet_path, data_folder)
-        shutil.copy(ct_path, data_folder)
+        data_folder.mkdir(parents=True, exist_ok=True)
+        shutil.copy(pet_path, str(data_folder))
+        shutil.copy(ct_path, str(data_folder))
 
         self.data_path = str(data_folder)
 
-        ct_name = os.path.basename(ct_path)
-        ct_path = os.path.join(self.data_path, ct_name)
-        if not ct_path.endswith("_0001.nii.gz"):
-            ct_name = ct_name.replace(".nii.gz", "")
-            new_ct_path = os.path.join(self.data_path, ct_name + "_0001.nii.gz")
-            os.rename(ct_path, new_ct_path)
+        ct_name = Path(ct_path).name
+        ct_file = data_folder / ct_name
+        if not ct_name.endswith("_0001.nii.gz"):
+            ct_name = Path(ct_path).stem
+            new_ct_path = data_folder / (ct_name + "_0001.nii.gz")
+            ct_file.rename(new_ct_path)
 
-        pet_name = os.path.basename(pet_path)
-        pet_path = os.path.join(self.data_path, pet_name)
-        if not pet_path.endswith("_0000.nii.gz"):
-            pet_name = pet_name.replace(".nii.gz", "")
-            new_pet_path = os.path.join(self.data_path, pet_name + "_0000.nii.gz")
-            os.rename(pet_path, new_pet_path)
+        pet_name = Path(pet_path).name
+        pet_file = data_folder / pet_name
+        if not pet_name.endswith("_0000.nii.gz"):
+            pet_name = Path(pet_path).stem
+            new_pet_path = data_folder / (pet_name + "_0000.nii.gz")
+            pet_file.rename(new_pet_path)
 
         self.MatrixToImage(self.data_path)
 
@@ -476,8 +451,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.load_mode = LOADMode.RELOAD
         def load_data(filepath):
             data = None
-            if os.path.isfile(filepath):
-                image = sitk.ReadImage(filepath)
+            filepath = Path(filepath)
+            if filepath.is_file():
+                image = sitk.ReadImage(str(filepath))
                 image = sitk.DICOMOrient(image, 'LPS')
                 self.viewer.spacing = image.GetSpacing()
                 data = sitk.GetArrayFromImage(image)
@@ -485,14 +461,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 data = np.transpose(data, axes=trans)
             return data
 
-        if os.path.isdir(datapath):
+        datapath = Path(datapath)
+        if datapath.is_dir():
             pet_path = None
             ct_path = None
-            for file in os.listdir(datapath):
-                if file.endswith("_0000.nii.gz"):
-                  pet_path = os.path.join(datapath, file)
-                if file.endswith("_0001.nii.gz"):
-                  ct_path = os.path.join(datapath, file)
+            for file in datapath.iterdir():
+                if file.name.endswith("_0000.nii.gz"):
+                    pet_path = str(file)
+                if file.name.endswith("_0001.nii.gz"):
+                    ct_path = str(file)
 
             if pet_path is None or ct_path is None:
                 QMessageBox.warning(self, "警告", "导入失败，请检查文件格式", QMessageBox.Ok)
@@ -542,44 +519,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_image()
 
-    def on_cbox_model_changed(self, index):
-        if torch.cuda.is_available() or index == 0:
-            self.model = self.cboxModel.currentText()
-        else:
-            QMessageBox.warning(self, '警告', '当前设备不支持U-Mamba')
-            self.cboxModel.setCurrentIndex(0)
-            return
-
     def run_slot(self):
-        """运行nnunet预测"""
-        if self.load_mode != LOADMode.UNLOAD:
-            from PredictThread import PredictThread
-
-            self.dialog.setWindowTitle("正在预测")
-            self.dialog.show()
-
-            if self.data_path.endswith('nii.gz'):
-                predict_path = os.path.dirname(self.data_path)
-            else:
-                predict_path = self.data_path
-
-            save_path = self.seg_path
-
-            def finish_nnunet():
-                """nnunet预测完成"""
-                self.dialog.close()
-                seg_path = os.path.join(self.seg_path, self.patient_id)
-                image = sitk.ReadImage(seg_path + '.nii.gz')
-                ret = sitk.GetArrayFromImage(image)
-                trans = self.transpose("trans")
-                ret = np.transpose(ret, axes=trans)
-
-                self.seg = np.where(ret > 0, ret, self.seg)
-                self.update_image()
-
-            self.predict_thread = PredictThread(self.nnunet_predictor, predict_path, save_path)
-            self.predict_thread.finished.connect(finish_nnunet)
-            self.predict_thread.start()
+        """运行预测"""
+        pass
 
 
     def save_slot(self):
@@ -588,6 +530,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             file_, ok = QFileDialog.getSaveFileName(self, "文件保存", "C:\\Users\\", "NFiTI(*.nii.gz)")
 
             if file_ != "":
+                log_info(f"保存分割文件: {file_}")
                 image = np.copy(self.seg)
                 save = self.transpose("save")
                 image = np.transpose(image, axes=save)
@@ -595,6 +538,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.statusBar().showMessage('已保存文件：' + file_)
                 sitk.WriteImage(image, file_)
         elif self.seg_file:
+            log_info(f"保存分割文件: {self.seg_file}")
             image = np.copy(self.seg)
             save = self.transpose("save")
             image = np.transpose(image, axes=save)
@@ -602,6 +546,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.statusBar().showMessage('已保存文件：' + self.seg_file)
             sitk.WriteImage(image, self.seg_file)
         else:
+            log_warning("无可保存分割图像")
             QMessageBox.warning(self, "警告", "无可保存分割图像！", QMessageBox.Ok)
 
     def crossline_slot(self):
@@ -660,6 +605,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.view_3d_built()
 
     def operation(self, input_box):
+        log_debug(f"SAM操作开始, 输入框: {input_box}")
         try:
             ct_slice = self.ct[:, :, self.layer]
             ct_slice = self.normalize(ct_slice, "CT")
@@ -698,9 +644,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.SamThread.finished.connect(on_sam_finished)
             self.SamThread.start()
         except Exception as e:
-            # SAM操作失败时静默返回，避免中断用户操作
+            log_error(f"SAM操作失败: {e}")
             import traceback
-            print(f"SAM operation failed: {e}")
             traceback.print_exc()
             return
 
@@ -746,14 +691,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """重写关闭事件"""
         reply = QMessageBox.question(self, '退出提示', "确定退出?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            clear_path = [self.cache_path, self.seg_path]
+            log_info("应用程序关闭，清理缓存")
+            clear_path = [Path(self.cache_path), Path(self.seg_path)]
             for directory_path in clear_path:
-                for filename in os.listdir(directory_path):
-                    file_path = os.path.join(directory_path, filename)
-                    if os.path.isfile(file_path) or os.path.islink(file_path):
-                        os.unlink(file_path)
-                    elif os.path.isdir(file_path):
-                        shutil.rmtree(file_path)
+                if directory_path.exists():
+                    for file_path in directory_path.iterdir():
+                        if file_path.is_file() or file_path.is_symlink():
+                            file_path.unlink()
+                        elif file_path.is_dir():
+                            shutil.rmtree(str(file_path))
             event.accept()
         else:
             event.ignore()
