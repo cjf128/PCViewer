@@ -3,6 +3,9 @@ import sys
 import warnings
 from pathlib import Path
 
+if __name__ == "__main__":
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import cv2
 import numpy as np
 import pypinyin as pin
@@ -602,11 +605,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         log_debug(f"SAM操作开始, 输入框: {input_box}")
         try:
             ct_slice = self.ct[:, :, self.layer]
-            ct_slice = self.normalize(ct_slice, "CT")
+            ct_slice = self.normalize(ct_slice, self.ct_ww, self.ct_wl)
             ct_slice = np.stack([ct_slice] * 3, axis=-1)
 
             pet_slice = self.pet[:, :, self.layer]
-            pet_slice = self.normalize(pet_slice, "PET")
+            pet_slice = self.normalize(pet_slice, self.pet_ww, self.pet_wl)
             pet_slice = cv2.applyColorMap(pet_slice, cv2.COLORMAP_HOT)
 
             current_slice = cv2.addWeighted(
@@ -646,18 +649,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             traceback.print_exc()
             return
 
-    def normalize(self, slice, state):
-        if state == "CT":
-            ww = self.ct_ww
-            wl = self.ct_wl
-            window_upper = wl + ww / 2
-            window_lower = wl - ww / 2
-
-        elif state == "PET":
-            ww = self.pet_ww
-            wl = self.pet_wl
-            window_upper = wl + ww / 2
-            window_lower = wl - ww / 2
+    def normalize(self, slice, ww, wl):
+        window_upper = wl + ww / 2
+        window_lower = wl - ww / 2
 
         slice = np.clip(slice, window_lower, window_upper)
         slice = (slice - window_lower) / (window_upper - window_lower) * 255
@@ -827,10 +821,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def prepare_image(self):
         """更新显示图像"""
         ct = np.array(self.ct[:, :, self.layer])
-        ct = self.normalize(ct, "CT")
+        ct = self.normalize(ct, self.ct_ww, self.ct_wl)
 
         pet = np.array(self.pet[:, :, self.layer])
-        pet = self.normalize(pet, "PET")
+        pet = self.normalize(pet, self.pet_ww, self.pet_wl)
 
         new_ct = np.stack([ct] * 3, axis=-1)
         new_pet = cv2.applyColorMap(pet, cv2.COLORMAP_HOT)
@@ -900,7 +894,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":
+    from app.configs import ConfigManager
     app = QApplication(sys.argv)
-    MainWindow = MainWindow()
+    config_manager = ConfigManager()
+    config = config_manager.load()
+    MainWindow = MainWindow(config)
     MainWindow.show()
     sys.exit(app.exec())
