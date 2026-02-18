@@ -4,14 +4,30 @@ __pycache__/
 # 数据示例
 example/
 checkpoints/Net/
-*/.dcm
-*/.ima
-*/.nii
-*/.nii.gz
-*/.onnx
+data/
 
-# 其他类
+# 日志文件
+logs/
+
+# 模型文件
+*.onnx
+*.pt
+*.pth
+
+# DICOM/NIfTI文件
+*.dcm
+*.ima
+*.nii
+*.nii.gz
+
+# IDE配置
 .idea/
 .view/
+.vscode/
 
-
+# Python
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
