@@ -1,26 +1,30 @@
-from PySide6.QtWidgets import QApplication
-from PySide6.QtGui import QIcon
-from app.app import App
-from path import BASE_PATH
-from scripts.logger import setup_logger, log_info, log_error
+import sys
 
-def main():
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication
+
+from app.app import App
+from path import ICONS_PATH
+from scripts.logger import log_info, setup_logger
+
+
+def main() -> int:
     setup_logger()
     log_info("应用程序启动")
-    
-    try:
-        app = QApplication([])
-        app.setWindowIcon(QIcon(str(BASE_PATH / "icons" / "logo.ico")))
-        app.setStyle('Fusion')
-        application = App()
-        application.run()
-        log_info("应用程序初始化完成")
-        app.exec()
-    except Exception as e:
-        log_error(f"应用程序运行错误: {e}")
-        raise
-    finally:
-        log_info("应用程序退出")
+
+    app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(str(ICONS_PATH / "logo.ico")))
+    app.setStyle("Fusion")
+
+    application = App()
+    application.run()
+    log_info("应用程序初始化完成")
+
+    result = app.exec()
+    application.shutdown()
+    log_info("应用程序退出")
+    return result
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

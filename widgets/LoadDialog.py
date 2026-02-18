@@ -1,15 +1,18 @@
 import sys
+from pathlib import Path
+
+if __name__ == "__main__":
+    sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from PySide6.QtCore import Signal, Slot
-from PySide6.QtWidgets import QDialog, QFileDialog, QApplication, QMessageBox
+from PySide6.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox
 
 from ui.LoadDialog_ui import Ui_LoadDialog
 
+
 class LoadDialog(QDialog, Ui_LoadDialog):
-    Nifti_Signal = Signal(str, str)
-    Dicom_Signal = Signal(str)
-    IMA_Signal = Signal(str)
-    
+    FilesSelected = Signal(str, str, str)
+
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         self.setupUi(self)
@@ -23,61 +26,45 @@ class LoadDialog(QDialog, Ui_LoadDialog):
     def on_comboBox_currentTextChanged(self, text) -> None:
         self.lineEdit.clear()
         self.lineEdit_2.clear()
-        self.lineEdit_3.clear()
-        self.lineEdit_4.clear()
         self.load_state = text
 
     @Slot(bool)
     def on_btnSearch_clicked(self, clicked) -> None:
-        data_path, _ = QFileDialog.getOpenFileName(self, "选择文件", "", "NIfTI Files (*.nii *.nii.gz)")
-        if data_path:
-            self.lineEdit.setText(data_path)
+        if self.load_state == "NIfTI":
+            file_filter = "NIfTI Files (*.nii *.nii.gz)"
+        else:
+            file_filter = "DICOM Files (*.dcm *.IMA *.ima);;All Files (*)"
+
+        file_path, _ = QFileDialog.getOpenFileName(self, "选择PET文件", "", file_filter)
+        if file_path:
+            self.lineEdit.setText(file_path)
 
     @Slot(bool)
     def on_btnSearch_2_clicked(self, clicked) -> None:
-        data_path, _ = QFileDialog.getOpenFileName(self, "选择文件", "", "NIfTI Files (*.nii *.nii.gz)")
-        if data_path:
-            self.lineEdit_2.setText(data_path)
+        if self.load_state == "NIfTI":
+            file_filter = "NIfTI Files (*.nii *.nii.gz)"
+        else:
+            file_filter = "DICOM Files (*.dcm *.IMA *.ima);;All Files (*)"
 
-    @Slot(bool)
-    def on_btnSearch_3_clicked(self, clicked) -> None:
-        data_path: str = QFileDialog.getExistingDirectory(self, "选择文件夹")
-        if data_path:
-            self.lineEdit_3.setText(data_path)
-    
-    @Slot(bool)
-    def on_btnSearch_4_clicked(self, clicked) -> None:
-        data_path: str = QFileDialog.getExistingDirectory(self, "选择文件夹")
-        if data_path:
-            self.lineEdit_4.setText(data_path)
-            
+        file_path, _ = QFileDialog.getOpenFileName(self, "选择CT文件", "", file_filter)
+        if file_path:
+            self.lineEdit_2.setText(file_path)
+
     @Slot(bool)
     def on_btnCancel_clicked(self, clicked) -> None:
         self.close()
 
     @Slot(bool)
     def on_btnLoad_clicked(self, clicked) -> None:
-        if self.load_state == "NIfTI":
-            if self.lineEdit.text() == "" or self.lineEdit_2.text() == "":
-                QMessageBox.warning(self, "提示", "请选择文件", QMessageBox.Ok)
-                return
-            else:
-                self.Nifti_Signal.emit(self.lineEdit.text(), self.lineEdit_2.text())
+        pet_file = self.lineEdit.text()
+        ct_file = self.lineEdit_2.text()
 
-        elif self.load_state == "DICOM":
-            if self.lineEdit_3.text() == "":
-                QMessageBox.warning(self, "提示", "请选择文件夹", QMessageBox.Ok)
-                return
-            else:
-                self.Dicom_Signal.emit(self.lineEdit_3.text())
+        if not pet_file or not ct_file:
+            QMessageBox.warning(self, "提示", "请选择PET和CT文件", QMessageBox.Ok)
+            return
 
-        elif self.load_state == "IMA":
-            if self.lineEdit_4.text() == "":
-                QMessageBox.warning(self, "提示", "请选择文件夹", QMessageBox.Ok)
-                return
-            else:
-                self.IMA_Signal.emit(self.lineEdit_4.text())
         self.close()
+        self.FilesSelected.emit(pet_file, ct_file, self.load_state)
 
 
 if __name__ == "__main__":

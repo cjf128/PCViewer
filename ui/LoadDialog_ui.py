@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'LoadDialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.10.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -23,11 +23,10 @@ class Ui_LoadDialog(object):
     def setupUi(self, LoadDialog):
         if not LoadDialog.objectName():
             LoadDialog.setObjectName(u"LoadDialog")
-        LoadDialog.resize(421, 183)
+        LoadDialog.resize(421, 198)
         self.verticalLayout_2 = QVBoxLayout(LoadDialog)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.comboBox = QComboBox(LoadDialog)
-        self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.setObjectName(u"comboBox")
@@ -108,40 +107,6 @@ class Ui_LoadDialog(object):
         self.verticalLayout.addLayout(self.horizontalLayout_4)
 
         self.stackedWidget.addWidget(self.page)
-        self.page_2 = QWidget()
-        self.page_2.setObjectName(u"page_2")
-        self.horizontalLayout_3 = QHBoxLayout(self.page_2)
-        self.horizontalLayout_3.setSpacing(2)
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalLayout_3.setContentsMargins(4, 4, 4, 4)
-        self.lineEdit_3 = QLineEdit(self.page_2)
-        self.lineEdit_3.setObjectName(u"lineEdit_3")
-
-        self.horizontalLayout_3.addWidget(self.lineEdit_3)
-
-        self.btnSearch_3 = QPushButton(self.page_2)
-        self.btnSearch_3.setObjectName(u"btnSearch_3")
-
-        self.horizontalLayout_3.addWidget(self.btnSearch_3)
-
-        self.stackedWidget.addWidget(self.page_2)
-        self.page_3 = QWidget()
-        self.page_3.setObjectName(u"page_3")
-        self.horizontalLayout_7 = QHBoxLayout(self.page_3)
-        self.horizontalLayout_7.setSpacing(2)
-        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
-        self.horizontalLayout_7.setContentsMargins(4, 4, 4, 4)
-        self.lineEdit_4 = QLineEdit(self.page_3)
-        self.lineEdit_4.setObjectName(u"lineEdit_4")
-
-        self.horizontalLayout_7.addWidget(self.lineEdit_4)
-
-        self.btnSearch_4 = QPushButton(self.page_3)
-        self.btnSearch_4.setObjectName(u"btnSearch_4")
-
-        self.horizontalLayout_7.addWidget(self.btnSearch_4)
-
-        self.stackedWidget.addWidget(self.page_3)
 
         self.verticalLayout_2.addWidget(self.stackedWidget)
 
@@ -173,15 +138,12 @@ class Ui_LoadDialog(object):
     def retranslateUi(self, LoadDialog):
         LoadDialog.setWindowTitle(QCoreApplication.translate("LoadDialog", u"Dialog", None))
         self.comboBox.setItemText(0, QCoreApplication.translate("LoadDialog", u"NIfTI", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("LoadDialog", u"DICOM", None))
-        self.comboBox.setItemText(2, QCoreApplication.translate("LoadDialog", u"IMA", None))
+        self.comboBox.setItemText(1, QCoreApplication.translate("LoadDialog", u"DICOM/IMA", None))
 
         self.label.setText(QCoreApplication.translate("LoadDialog", u"PET", None))
         self.btnSearch.setText(QCoreApplication.translate("LoadDialog", u"\u6d4f\u89c8", None))
         self.label_2.setText(QCoreApplication.translate("LoadDialog", u"CT", None))
         self.btnSearch_2.setText(QCoreApplication.translate("LoadDialog", u"\u6d4f\u89c8", None))
-        self.btnSearch_3.setText(QCoreApplication.translate("LoadDialog", u"\u6d4f\u89c8", None))
-        self.btnSearch_4.setText(QCoreApplication.translate("LoadDialog", u"\u6d4f\u89c8", None))
         self.btnLoad.setText(QCoreApplication.translate("LoadDialog", u"\u5bfc\u5165", None))
         self.btnCancel.setText(QCoreApplication.translate("LoadDialog", u"\u53d6\u6d88", None))
     # retranslateUi

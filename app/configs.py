@@ -1,29 +1,30 @@
 from dataclasses import dataclass
+
 from PySide6.QtCore import QSettings
+
+from path import BASE_PATH
+
 
 @dataclass
 class AppConfig:
-    theme: str = "dark"
-    language: str = "zh"
-    width: int = 900
-    height: int = 600
+    width: int = 1500
+    height: int = 1200
 
 
 class ConfigManager:
+    _CONFIG_FILE = "config.ini"
+
     def __init__(self):
-        self._settings = QSettings("MyCompany", "MyApp")
+        config_path = BASE_PATH / self._CONFIG_FILE
+        self._settings = QSettings(str(config_path), QSettings.IniFormat)
 
     def load(self) -> AppConfig:
         return AppConfig(
-            theme=self._settings.value("theme", "dark"),
-            language=self._settings.value("language", "zh"),
-            width=int(self._settings.value("window/width", 900)),
-            height=int(self._settings.value("window/height", 600)),
+            width=int(self._settings.value("window/width", 1500)),
+            height=int(self._settings.value("window/height", 1200)),
         )
 
     def save(self, config: AppConfig):
-        self._settings.setValue("theme", config.theme)
-        self._settings.setValue("language", config.language)
         self._settings.setValue("window/width", config.width)
         self._settings.setValue("window/height", config.height)
-
+        self._settings.sync()

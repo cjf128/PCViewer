@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.10.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -374,7 +374,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 228, 677))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 226, 675))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(2, 2, 2, 2)
@@ -404,6 +404,8 @@ class Ui_MainWindow(object):
 
         self.boxAlphaPet = QDoubleSpinBox(self.groupBox)
         self.boxAlphaPet.setObjectName(u"boxAlphaPet")
+        self.boxAlphaPet.setMinimumSize(QSize(60, 0))
+        self.boxAlphaPet.setMaximumSize(QSize(60, 16777215))
         self.boxAlphaPet.setMaximum(1.000000000000000)
         self.boxAlphaPet.setSingleStep(0.010000000000000)
 
@@ -428,15 +430,17 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.sldPET_ww = QSlider(self.groupBox)
         self.sldPET_ww.setObjectName(u"sldPET_ww")
-        self.sldPET_ww.setMaximum(2500)
+        self.sldPET_ww.setMaximum(20000)
         self.sldPET_ww.setOrientation(Qt.Orientation.Horizontal)
 
         self.horizontalLayout_5.addWidget(self.sldPET_ww)
 
         self.boxPET_ww = QDoubleSpinBox(self.groupBox)
         self.boxPET_ww.setObjectName(u"boxPET_ww")
+        self.boxPET_ww.setMinimumSize(QSize(60, 0))
+        self.boxPET_ww.setMaximumSize(QSize(60, 16777215))
         self.boxPET_ww.setMinimum(0.010000000000000)
-        self.boxPET_ww.setMaximum(25.000000000000000)
+        self.boxPET_ww.setMaximum(200.000000000000000)
         self.boxPET_ww.setSingleStep(0.010000000000000)
 
         self.horizontalLayout_5.addWidget(self.boxPET_ww)
@@ -460,7 +464,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.sldPET_wl = QSlider(self.groupBox)
         self.sldPET_wl.setObjectName(u"sldPET_wl")
-        self.sldPET_wl.setMaximum(1500)
+        self.sldPET_wl.setMaximum(10000)
         self.sldPET_wl.setValue(0)
         self.sldPET_wl.setOrientation(Qt.Orientation.Horizontal)
 
@@ -468,8 +472,10 @@ class Ui_MainWindow(object):
 
         self.boxPET_wl = QDoubleSpinBox(self.groupBox)
         self.boxPET_wl.setObjectName(u"boxPET_wl")
+        self.boxPET_wl.setMinimumSize(QSize(60, 0))
+        self.boxPET_wl.setMaximumSize(QSize(60, 16777215))
         self.boxPET_wl.setMinimum(0.010000000000000)
-        self.boxPET_wl.setMaximum(15.000000000000000)
+        self.boxPET_wl.setMaximum(100.000000000000000)
         self.boxPET_wl.setSingleStep(0.010000000000000)
 
         self.horizontalLayout_6.addWidget(self.boxPET_wl)
@@ -516,6 +522,8 @@ class Ui_MainWindow(object):
 
         self.boxAlphaCt = QDoubleSpinBox(self.groupBox_3)
         self.boxAlphaCt.setObjectName(u"boxAlphaCt")
+        self.boxAlphaCt.setMinimumSize(QSize(60, 0))
+        self.boxAlphaCt.setMaximumSize(QSize(60, 16777215))
         self.boxAlphaCt.setMaximum(1.000000000000000)
         self.boxAlphaCt.setSingleStep(0.010000000000000)
 
@@ -540,7 +548,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
         self.sldCT_ww = QSlider(self.groupBox_3)
         self.sldCT_ww.setObjectName(u"sldCT_ww")
-        self.sldCT_ww.setMaximum(2000)
+        self.sldCT_ww.setMaximum(3000)
         self.sldCT_ww.setValue(1)
         self.sldCT_ww.setOrientation(Qt.Orientation.Horizontal)
 
@@ -548,8 +556,10 @@ class Ui_MainWindow(object):
 
         self.boxCT_ww = QSpinBox(self.groupBox_3)
         self.boxCT_ww.setObjectName(u"boxCT_ww")
+        self.boxCT_ww.setMinimumSize(QSize(60, 0))
+        self.boxCT_ww.setMaximumSize(QSize(60, 16777215))
         self.boxCT_ww.setMinimum(1)
-        self.boxCT_ww.setMaximum(2000)
+        self.boxCT_ww.setMaximum(3000)
 
         self.horizontalLayout_11.addWidget(self.boxCT_ww)
 
@@ -572,16 +582,18 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
         self.sldCT_wl = QSlider(self.groupBox_3)
         self.sldCT_wl.setObjectName(u"sldCT_wl")
-        self.sldCT_wl.setMinimum(-1000)
-        self.sldCT_wl.setMaximum(1000)
+        self.sldCT_wl.setMinimum(-2000)
+        self.sldCT_wl.setMaximum(2000)
         self.sldCT_wl.setOrientation(Qt.Orientation.Horizontal)
 
         self.horizontalLayout_10.addWidget(self.sldCT_wl)
 
         self.boxCT_wl = QSpinBox(self.groupBox_3)
         self.boxCT_wl.setObjectName(u"boxCT_wl")
-        self.boxCT_wl.setMinimum(-1000)
-        self.boxCT_wl.setMaximum(1000)
+        self.boxCT_wl.setMinimumSize(QSize(60, 0))
+        self.boxCT_wl.setMaximumSize(QSize(60, 16777215))
+        self.boxCT_wl.setMinimum(-2000)
+        self.boxCT_wl.setMaximum(2000)
 
         self.horizontalLayout_10.addWidget(self.boxCT_wl)
 
@@ -607,36 +619,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.setSpacing(2)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalLayout_14.setContentsMargins(2, 2, 2, 2)
-        self.horizontalLayout_9 = QHBoxLayout()
-        self.horizontalLayout_9.setSpacing(3)
-        self.horizontalLayout_9.setObjectName(u"horizontalLayout_9")
-        self.label_7 = QLabel(self.groupBox_2)
-        self.label_7.setObjectName(u"label_7")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.label_7.sizePolicy().hasHeightForWidth())
-        self.label_7.setSizePolicy(sizePolicy2)
-        self.label_7.setMaximumSize(QSize(60, 16777215))
-
-        self.horizontalLayout_9.addWidget(self.label_7)
-
-        self.cboxModel = QComboBox(self.groupBox_2)
-        self.cboxModel.addItem("")
-        self.cboxModel.addItem("")
-        self.cboxModel.addItem("")
-        self.cboxModel.setObjectName(u"cboxModel")
-
-        self.horizontalLayout_9.addWidget(self.cboxModel)
-
-
-        self.verticalLayout_14.addLayout(self.horizontalLayout_9)
-
         self.horizontalLayout_19 = QHBoxLayout()
         self.horizontalLayout_19.setSpacing(3)
         self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
         self.label_16 = QLabel(self.groupBox_2)
         self.label_16.setObjectName(u"label_16")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.label_16.sizePolicy().hasHeightForWidth())
         self.label_16.setSizePolicy(sizePolicy2)
         self.label_16.setMaximumSize(QSize(60, 16777215))
@@ -670,6 +660,8 @@ class Ui_MainWindow(object):
 
         self.boxPaint = QSpinBox(self.groupBox_2)
         self.boxPaint.setObjectName(u"boxPaint")
+        self.boxPaint.setMinimumSize(QSize(60, 0))
+        self.boxPaint.setMaximumSize(QSize(60, 16777215))
         self.boxPaint.setMinimum(1)
         self.boxPaint.setMaximum(30)
 
@@ -699,6 +691,8 @@ class Ui_MainWindow(object):
 
         self.boxAlphaSeg = QDoubleSpinBox(self.groupBox_2)
         self.boxAlphaSeg.setObjectName(u"boxAlphaSeg")
+        self.boxAlphaSeg.setMinimumSize(QSize(60, 0))
+        self.boxAlphaSeg.setMaximumSize(QSize(60, 16777215))
         self.boxAlphaSeg.setDecimals(2)
         self.boxAlphaSeg.setMaximum(1.000000000000000)
         self.boxAlphaSeg.setSingleStep(0.010000000000000)
@@ -817,11 +811,6 @@ class Ui_MainWindow(object):
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u5bbd\uff1a    ", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u4f4d\uff1a    ", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Segmentation", None))
-        self.label_7.setText(QCoreApplication.translate("MainWindow", u"\u6a21\u578b\u9009\u62e9\uff1a", None))
-        self.cboxModel.setItemText(0, QCoreApplication.translate("MainWindow", u"nnUNet", None))
-        self.cboxModel.setItemText(1, QCoreApplication.translate("MainWindow", u"U-MambaBot", None))
-        self.cboxModel.setItemText(2, QCoreApplication.translate("MainWindow", u"U-MambaEnc", None))
-
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"\u6807\u7b7e\u9009\u62e9\uff1a", None))
         self.cboxMode.setItemText(0, QCoreApplication.translate("MainWindow", u"\u539f\u53d1\u7076", None))
         self.cboxMode.setItemText(1, QCoreApplication.translate("MainWindow", u"\u8f6c\u79fb\u7076", None))

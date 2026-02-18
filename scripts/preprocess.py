@@ -1,35 +1,37 @@
-from pathlib import Path
+from typing import Tuple
 
+import numpy as np
 import SimpleITK as sitk
 
+from scripts.basic import read_dicom_series, resize_image
 from scripts.pet2suv import pet_to_suv
-from scripts.basic import Clamp_value, Clamp_ww_wl, read_dicom_series, resize_image_itk
-
-def convert_dcm_to_nii_and_pet2suv(data_path: str) -> bool:
-    data_path = Path(data_path)
-    patient_id = data_path.name
-    for folder in data_path.iterdir():
-        if 'CT' in folder.name:
-            dicom_path_CT = data_path / 'CT'
-        
-            ct_img = read_dicom_series(str(dicom_path_CT))
-            ct_img = Clamp_ww_wl(ct_img, 400, 40)
-
-            filename_final_CT: str = patient_id + "_0001.nii.gz"
-            save_path_CT = data_path / filename_final_CT
-            sitk.WriteImage(ct_img, str(save_path_CT))
 
 
-        if 'PET' in folder.name:
-            dicom_path_PET = data_path / 'PET'
+def process_dicom_data(
+    ct_folder: str,
+    pet_folder: str,
+) -> Tuple[sitk.Image, sitk.Image]:
+    ct_img = read_dicom_series(ct_folder, "CT")
+    pet_suv_img = pet_to_suv(pet_folder)
+    pet_aligned = resize_image(pet_suv_img, ct_img, sitk.sitkLinear)
+    return ct_img, pet_aligned
 
-            pet_suv_img = pet_to_suv(str(dicom_path_PET))
 
-            suv_resampled = resize_image_itk(pet_suv_img, ct_img, sitk.sitkLinear)
-            suv_image = Clamp_value(suv_resampled, 0.0, 20.0)
+def process_nifti_data(
+    pet_path: str,
+    ct_path: str,
+) -> Tuple[sitk.Image, sitk.Image]:
+    ct_img = sitk.ReadImage(ct_path)
+    ct_img = sitk.DICOMOrient(ct_img, "LPS")
 
-            filename_final_PET: str = patient_id + "_0000.nii.gz"
-            save_path_PET = data_path / filename_final_PET
-            sitk.WriteImage(suv_image, str(save_path_PET))
+    pet_img = sitk.ReadImage(pet_path)
+    pet_img = sitk.DICOMOrient(pet_img, "LPS")
 
-    return 1
+    pet_aligned = resize_image(pet_img, ct_img, sitk.sitkLinear)
+    return ct_img, pet_aligned
+
+
+def sitk_to_numpy(img: sitk.Image) -> Tuple[np.ndarray, Tuple[float, float, float]]:
+    data = sitk.GetArrayFromImage(img)
+    spacing = img.GetSpacing()
+    return data, spacing

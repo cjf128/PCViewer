@@ -1,16 +1,19 @@
-from app.configs import ConfigManager
+from app.configs import AppConfig, ConfigManager
 from widgets.MainWindow import MainWindow
 
 
 class App:
     def __init__(self):
-        self.config_manager = ConfigManager()
-        self.config = self.config_manager.load()
+        self._config_manager = ConfigManager()
+        self._config = self._config_manager.load()
+        self._main_window = MainWindow(self._config)
 
-        self.main_window = MainWindow(self.config)
+    @property
+    def config(self) -> AppConfig:
+        return self._config
 
     def run(self):
-        self.main_window.show()
+        self._main_window.show()
 
     def shutdown(self):
-        self.config_manager.save(self.config)
+        self._config_manager.save(self._config)
