@@ -3,7 +3,6 @@ import numpy as np
 import onnxruntime as ort
 from numpy import ndarray
 
-
 class SAM2Image:
     def __init__(self, encoder_path: str, decoder_path: str) -> None:
         # Initialize models

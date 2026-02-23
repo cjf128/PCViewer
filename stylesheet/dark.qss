@@ -1,0 +1,126 @@
+/* 全局基础设置 */
+QWidget {
+    background-color: #1E1E1E;
+    color: #D4D4D4;
+    font-family: "Segoe UI", "Microsoft YaHei";
+}
+
+/* 输入类控件 */
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {
+    background-color: #333333;
+    border: 1px solid #3F3F46;
+    border-radius: 2px;
+    padding: 4px 6px;
+    color: #FFFFFF;
+}
+
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus {
+    border: 1px solid #007ACC;
+}
+
+/* SpinBox 上下按钮 - 使用更简洁的边框样式 */
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: right top;
+    width: 16px;
+    border-left: 1px solid #3F3F46;
+    background-color: #2D2D2D;
+}
+
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: right bottom;
+    width: 16px;
+    border-left: 1px solid #3F3F46;
+    background-color: #2D2D2D;
+}
+
+/* 按钮类 */
+QPushButton {
+    background-color: #333333;
+    border: 1px solid #454545;
+    border-radius: 2px;
+    padding: 4px 12px;
+    color: #FFFFFF;
+}
+
+QPushButton:hover {
+    background-color: #3E3E42;
+    border: 1px solid #007ACC;
+}
+
+/* 列表、树、表格 */
+QTreeView, QTableWidget, QListView {
+    background-color: #252526;
+    border: 1px solid #3F3F46;
+    gridline-color: #333333;
+    selection-background-color: #094771;
+    selection-color: #FFFFFF;
+}
+
+QHeaderView::section {
+    background-color: #2D2D2D;
+    color: #AAAAAA;
+    padding: 4px;
+    border: 1px solid #3F3F46;
+}
+
+/* 滚动条 */
+QScrollBar:vertical {
+    background: #1E1E1E;
+    width: 11px;
+    margin: 0;
+}
+
+QScrollBar::handle:vertical {
+    background: #424242;
+    min-height: 20px;
+    border-radius: 0;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0;
+}
+
+QScrollBar:horizontal {
+    background: #1E1E1E;
+    height: 11px;
+    margin: 0;
+}
+
+QScrollBar::handle:horizontal {
+    background: #424242;
+    min-width: 20px;
+    border-radius: 0;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0;
+}
+
+/* 下拉框 */
+QComboBox {
+    background-color: #333333;
+    border: 1px solid #3F3F46;
+    border-radius: 2px;
+    padding: 4px 6px;
+    color: #FFFFFF;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 20px;
+}
+
+QComboBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    margin-right: 4px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #252526;
+    border: 1px solid #3F3F46;
+    selection-background-color: #094771;
+    selection-color: #FFFFFF;
+}

@@ -18,13 +18,13 @@ from PySide6.QtWidgets import (
 
 from app.mode import VIEWERMode, VIEWMode
 
-
 class ImageViewer(QGraphicsView):
     Sam_Signal = Signal(np.ndarray)
     Mode_Signal = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent, main_window):
         super().__init__(parent)
+        self.main_window = main_window
 
         self.point_list = []
         self.input_box = []
@@ -305,6 +305,6 @@ class ImageViewer(QGraphicsView):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = ImageViewer()
+    window = ImageViewer(None, None)
     window.show()
     sys.exit(app.exec())

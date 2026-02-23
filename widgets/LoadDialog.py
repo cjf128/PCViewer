@@ -13,8 +13,9 @@ from ui.LoadDialog_ui import Ui_LoadDialog
 class LoadDialog(QDialog, Ui_LoadDialog):
     FilesSelected = Signal(str, str, str)
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent, main_window):
         super().__init__(parent)
+        self.main_window = main_window
         self.setupUi(self)
         self.config()
 
@@ -69,6 +70,6 @@ class LoadDialog(QDialog, Ui_LoadDialog):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    ui = LoadDialog()
+    ui = LoadDialog(None, None)
     ui.show()
     sys.exit(app.exec_())

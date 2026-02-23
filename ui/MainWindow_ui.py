@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.2
+## Created by: Qt User Interface Compiler version 6.9.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,22 +16,18 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
-    QDoubleSpinBox, QFrame, QGroupBox, QHBoxLayout,
-    QLabel, QMainWindow, QMenu, QMenuBar,
-    QPushButton, QScrollArea, QScrollBar, QSizePolicy,
-    QSlider, QSpacerItem, QSpinBox, QSplitter,
-    QStackedWidget, QStatusBar, QToolBar, QVBoxLayout,
+from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QFrame,
+    QHBoxLayout, QHeaderView, QMainWindow, QMenu,
+    QMenuBar, QPushButton, QScrollBar, QSizePolicy,
+    QSpacerItem, QSpinBox, QSplitter, QStackedWidget,
+    QStatusBar, QTableView, QToolBar, QVBoxLayout,
     QWidget)
-
-from widgets.ImageViewer import ImageViewer
-import designer_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1140, 789)
+        MainWindow.resize(1255, 789)
         MainWindow.setMinimumSize(QSize(0, 0))
         MainWindow.setAnimated(True)
         self.setting_atn = QAction(MainWindow)
@@ -39,113 +35,96 @@ class Ui_MainWindow(object):
         self.setting_atn.setCheckable(True)
         self.setting_atn.setChecked(True)
         icon = QIcon()
-        if QIcon.hasThemeIcon(QIcon.ThemeIcon.DocumentProperties):
-            icon = QIcon.fromTheme(QIcon.ThemeIcon.DocumentProperties)
-        else:
-            icon.addFile(u":/iocns/icons/setting_dark.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-
+        icon.addFile(u":/iocns/icons/setting_dark.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.setting_atn.setIcon(icon)
         self.load_atn = QAction(MainWindow)
         self.load_atn.setObjectName(u"load_atn")
         icon1 = QIcon()
-        if QIcon.hasThemeIcon(QIcon.ThemeIcon.FolderOpen):
-            icon1 = QIcon.fromTheme(QIcon.ThemeIcon.FolderOpen)
-        else:
-            icon1.addFile(u":/iocns/icons/openfile_dark.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-
+        icon1.addFile(u":/iocns/icons/openfile_dark.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.load_atn.setIcon(icon1)
         self.load_atn.setMenuRole(QAction.MenuRole.NoRole)
         self.load_atn.setIconVisibleInMenu(True)
         self.save_atn = QAction(MainWindow)
         self.save_atn.setObjectName(u"save_atn")
         icon2 = QIcon()
-        if QIcon.hasThemeIcon(QIcon.ThemeIcon.DocumentSave):
-            icon2 = QIcon.fromTheme(QIcon.ThemeIcon.DocumentSave)
-        else:
-            icon2.addFile(u":/iocns/icons/save_dark.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-
+        icon2.addFile(u":/iocns/icons/save_dark.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.save_atn.setIcon(icon2)
         self.move_atn = QAction(MainWindow)
         self.move_atn.setObjectName(u"move_atn")
         self.move_atn.setCheckable(True)
         self.move_atn.setChecked(False)
-        icon3 = QIcon()
-        icon3.addFile(u":/iocns/icons/move.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.move_atn.setIcon(icon3)
         self.win_atn = QAction(MainWindow)
         self.win_atn.setObjectName(u"win_atn")
         self.win_atn.setCheckable(True)
-        icon4 = QIcon()
-        icon4.addFile(u":/iocns/icons/contrast.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.win_atn.setIcon(icon4)
         self.paint_atn = QAction(MainWindow)
         self.paint_atn.setObjectName(u"paint_atn")
         self.paint_atn.setCheckable(True)
-        icon5 = QIcon()
-        icon5.addFile(u":/iocns/icons/paint.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.paint_atn.setIcon(icon5)
         self.eraser_atn = QAction(MainWindow)
         self.eraser_atn.setObjectName(u"eraser_atn")
         self.eraser_atn.setCheckable(True)
-        icon6 = QIcon()
-        icon6.addFile(u":/iocns/icons/eraser.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.eraser_atn.setIcon(icon6)
-        self.run_atn = QAction(MainWindow)
-        self.run_atn.setObjectName(u"run_atn")
-        icon7 = QIcon()
-        icon7.addFile(u":/iocns/icons/run.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.run_atn.setIcon(icon7)
-        self.actionexit = QAction(MainWindow)
-        self.actionexit.setObjectName(u"actionexit")
-        self.actionsave = QAction(MainWindow)
-        self.actionsave.setObjectName(u"actionsave")
-        self.actionopen = QAction(MainWindow)
-        self.actionopen.setObjectName(u"actionopen")
+        self.exit_action = QAction(MainWindow)
+        self.exit_action.setObjectName(u"exit_action")
+        self.save_action = QAction(MainWindow)
+        self.save_action.setObjectName(u"save_action")
+        self.open_action = QAction(MainWindow)
+        self.open_action.setObjectName(u"open_action")
         self.sam_atn = QAction(MainWindow)
         self.sam_atn.setObjectName(u"sam_atn")
         self.sam_atn.setCheckable(True)
-        icon8 = QIcon()
-        icon8.addFile(u":/iocns/icons/meta.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.sam_atn.setIcon(icon8)
-        self.actionfile = QAction(MainWindow)
-        self.actionfile.setObjectName(u"actionfile")
-        self.actionfile.setCheckable(True)
-        self.actionfile.setChecked(True)
-        self.actionpaint = QAction(MainWindow)
-        self.actionpaint.setObjectName(u"actionpaint")
-        self.actionpaint.setCheckable(True)
-        self.actionpaint.setChecked(True)
-        self.actiontool = QAction(MainWindow)
-        self.actiontool.setObjectName(u"actiontool")
-        self.actiontool.setCheckable(True)
-        self.actiontool.setChecked(True)
-        self.actionrun = QAction(MainWindow)
-        self.actionrun.setObjectName(u"actionrun")
-        self.actionrun.setCheckable(True)
-        self.actionrun.setChecked(True)
+        self.file_action = QAction(MainWindow)
+        self.file_action.setObjectName(u"file_action")
+        self.file_action.setCheckable(True)
+        self.file_action.setChecked(True)
+        self.paint_action = QAction(MainWindow)
+        self.paint_action.setObjectName(u"paint_action")
+        self.paint_action.setCheckable(True)
+        self.paint_action.setChecked(True)
         self.aim_atn = QAction(MainWindow)
         self.aim_atn.setObjectName(u"aim_atn")
         self.aim_atn.setCheckable(True)
         self.aim_atn.setChecked(True)
-        icon9 = QIcon()
-        icon9.addFile(u":/iocns/icons/aim.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.aim_atn.setIcon(icon9)
-        self.actioncrossline = QAction(MainWindow)
-        self.actioncrossline.setObjectName(u"actioncrossline")
-        self.actioncrossline.setCheckable(True)
-        self.actioncrossline.setChecked(False)
+        self.crossline_action = QAction(MainWindow)
+        self.crossline_action.setObjectName(u"crossline_action")
+        self.crossline_action.setCheckable(True)
+        self.crossline_action.setChecked(False)
         self.redo_atn = QAction(MainWindow)
         self.redo_atn.setObjectName(u"redo_atn")
-        icon10 = QIcon()
-        icon10.addFile(u":/iocns/icons/redo.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.redo_atn.setIcon(icon10)
-        self.actionsegload = QAction(MainWindow)
-        self.actionsegload.setObjectName(u"actionsegload")
-        self.loadseg_atn = QAction(MainWindow)
-        self.loadseg_atn.setObjectName(u"loadseg_atn")
-        icon11 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.FolderNew))
-        self.loadseg_atn.setIcon(icon11)
-        self.loadseg_atn.setMenuRole(QAction.MenuRole.NoRole)
+        self.add_action = QAction(MainWindow)
+        self.add_action.setObjectName(u"add_action")
+        self.add_atn = QAction(MainWindow)
+        self.add_atn.setObjectName(u"add_atn")
+        self.add_atn.setMenuRole(QAction.MenuRole.NoRole)
+        self.imageseting_action = QAction(MainWindow)
+        self.imageseting_action.setObjectName(u"imageseting_action")
+        self.imageseting_action.setCheckable(True)
+        self.imageseting_action.setChecked(True)
+        self.segmentsetting_action = QAction(MainWindow)
+        self.segmentsetting_action.setObjectName(u"segmentsetting_action")
+        self.segmentsetting_action.setCheckable(True)
+        self.segmentsetting_action.setChecked(True)
+        self.info_action = QAction(MainWindow)
+        self.info_action.setObjectName(u"info_action")
+        self.info_action.setCheckable(True)
+        self.info_action.setChecked(True)
+        self.dark_action = QAction(MainWindow)
+        self.dark_action.setObjectName(u"dark_action")
+        self.dark_action.setCheckable(True)
+        self.dark_action.setChecked(True)
+        self.light_action = QAction(MainWindow)
+        self.light_action.setObjectName(u"light_action")
+        self.light_action.setCheckable(True)
+        self.setting_actionfile = QAction(MainWindow)
+        self.setting_actionfile.setObjectName(u"setting_actionfile")
+        self.setting_actionfile.setCheckable(True)
+        self.setting_actionfile.setChecked(True)
+        self.sam_action = QAction(MainWindow)
+        self.sam_action.setObjectName(u"sam_action")
+        self.sam_action.setCheckable(True)
+        self.data_atn = QAction(MainWindow)
+        self.data_atn.setObjectName(u"data_atn")
+        self.data_atn.setCheckable(True)
+        self.data_atn.setChecked(True)
+        self.data_atn.setMenuRole(QAction.MenuRole.NoRole)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -243,11 +222,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.viewer = ImageViewer(self.page)
-        self.viewer.setObjectName(u"viewer")
-        self.viewer.setStyleSheet(u"background-color: rgb(0, 0, 0);")
+        self.image_frame = QFrame(self.page)
+        self.image_frame.setObjectName(u"image_frame")
+        self.image_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.image_frame.setFrameShadow(QFrame.Shadow.Raised)
 
-        self.verticalLayout_2.addWidget(self.viewer)
+        self.verticalLayout_2.addWidget(self.image_frame)
 
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
@@ -258,7 +238,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.view_frame = QFrame(self.page_2)
         self.view_frame.setObjectName(u"view_frame")
-        self.view_frame.setStyleSheet(u"background-color: rgb(0, 0, 0);")
+        self.view_frame.setStyleSheet(u"")
         self.view_frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.view_frame.setFrameShadow(QFrame.Shadow.Raised)
 
@@ -279,7 +259,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.btnH = QPushButton(self.frame_6)
         self.btnH.setObjectName(u"btnH")
-        self.btnH.setMaximumSize(QSize(32, 32))
+        self.btnH.setMaximumSize(QSize(48, 32))
         self.btnH.setCheckable(True)
         self.btnH.setChecked(False)
 
@@ -287,14 +267,14 @@ class Ui_MainWindow(object):
 
         self.btnS = QPushButton(self.frame_6)
         self.btnS.setObjectName(u"btnS")
-        self.btnS.setMaximumSize(QSize(32, 32))
+        self.btnS.setMaximumSize(QSize(48, 32))
         self.btnS.setCheckable(True)
 
         self.horizontalLayout_7.addWidget(self.btnS)
 
         self.btnG = QPushButton(self.frame_6)
         self.btnG.setObjectName(u"btnG")
-        self.btnG.setMaximumSize(QSize(32, 32))
+        self.btnG.setMaximumSize(QSize(48, 32))
         self.btnG.setCheckable(True)
 
         self.horizontalLayout_7.addWidget(self.btnG)
@@ -312,9 +292,9 @@ class Ui_MainWindow(object):
 
         self.btnReset = QPushButton(self.frame_6)
         self.btnReset.setObjectName(u"btnReset")
-        icon12 = QIcon()
-        icon12.addFile(u":/icons/icons/fix_light.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btnReset.setIcon(icon12)
+        icon3 = QIcon()
+        icon3.addFile(u":/icons/icons/fix_light.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btnReset.setIcon(icon3)
 
         self.horizontalLayout_7.addWidget(self.btnReset)
 
@@ -334,11 +314,15 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 1140, 33))
+        self.menuBar.setGeometry(QRect(0, 0, 1255, 33))
         self.muFile = QMenu(self.menuBar)
         self.muFile.setObjectName(u"muFile")
         self.muView = QMenu(self.menuBar)
         self.muView.setObjectName(u"muView")
+        self.menu = QMenu(self.menuBar)
+        self.menu.setObjectName(u"menu")
+        self.menutheme = QMenu(self.menu)
+        self.menutheme.setObjectName(u"menutheme")
         MainWindow.setMenuBar(self.menuBar)
         self.toolBar = QToolBar(MainWindow)
         self.toolBar.setObjectName(u"toolBar")
@@ -361,401 +345,131 @@ class Ui_MainWindow(object):
         MainWindow.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.toolBar_run)
         self.dockWidget_2 = QDockWidget(MainWindow)
         self.dockWidget_2.setObjectName(u"dockWidget_2")
-        self.dockWidget_2.setMinimumSize(QSize(230, 93))
+        self.dockWidget_2.setMinimumSize(QSize(230, 39))
         self.dockWidget_2.setFloating(False)
         self.dockWidgetContents_2 = QWidget()
         self.dockWidgetContents_2.setObjectName(u"dockWidgetContents_2")
-        self.verticalLayout_4 = QVBoxLayout(self.dockWidgetContents_2)
-        self.verticalLayout_4.setSpacing(0)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
-        self.scrollArea_2 = QScrollArea(self.dockWidgetContents_2)
-        self.scrollArea_2.setObjectName(u"scrollArea_2")
-        self.scrollArea_2.setWidgetResizable(True)
-        self.scrollAreaWidgetContents_2 = QWidget()
-        self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 226, 675))
-        self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_3 = QVBoxLayout(self.dockWidgetContents_2)
+        self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(2, 2, 2, 2)
-        self.groupBox = QGroupBox(self.scrollAreaWidgetContents_2)
-        self.groupBox.setObjectName(u"groupBox")
-        self.verticalLayout_10 = QVBoxLayout(self.groupBox)
-        self.verticalLayout_10.setSpacing(2)
-        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
-        self.verticalLayout_10.setContentsMargins(2, 2, 2, 2)
-        self.verticalLayout_6 = QVBoxLayout()
-        self.verticalLayout_6.setSpacing(4)
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.verticalLayout_6.setContentsMargins(2, 2, 2, 2)
-        self.label_2 = QLabel(self.groupBox)
-        self.label_2.setObjectName(u"label_2")
-
-        self.verticalLayout_6.addWidget(self.label_2)
-
-        self.horizontalLayout_4 = QHBoxLayout()
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.sldAlphaPet = QSlider(self.groupBox)
-        self.sldAlphaPet.setObjectName(u"sldAlphaPet")
-        self.sldAlphaPet.setMaximum(100)
-        self.sldAlphaPet.setOrientation(Qt.Orientation.Horizontal)
-
-        self.horizontalLayout_4.addWidget(self.sldAlphaPet)
-
-        self.boxAlphaPet = QDoubleSpinBox(self.groupBox)
-        self.boxAlphaPet.setObjectName(u"boxAlphaPet")
-        self.boxAlphaPet.setMinimumSize(QSize(60, 0))
-        self.boxAlphaPet.setMaximumSize(QSize(60, 16777215))
-        self.boxAlphaPet.setMaximum(1.000000000000000)
-        self.boxAlphaPet.setSingleStep(0.010000000000000)
-
-        self.horizontalLayout_4.addWidget(self.boxAlphaPet)
-
-
-        self.verticalLayout_6.addLayout(self.horizontalLayout_4)
-
-
-        self.verticalLayout_10.addLayout(self.verticalLayout_6)
-
-        self.verticalLayout_8 = QVBoxLayout()
-        self.verticalLayout_8.setSpacing(4)
-        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.verticalLayout_8.setContentsMargins(2, 2, 2, 2)
-        self.label_6 = QLabel(self.groupBox)
-        self.label_6.setObjectName(u"label_6")
-
-        self.verticalLayout_8.addWidget(self.label_6)
-
-        self.horizontalLayout_5 = QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.sldPET_ww = QSlider(self.groupBox)
-        self.sldPET_ww.setObjectName(u"sldPET_ww")
-        self.sldPET_ww.setMaximum(20000)
-        self.sldPET_ww.setOrientation(Qt.Orientation.Horizontal)
-
-        self.horizontalLayout_5.addWidget(self.sldPET_ww)
-
-        self.boxPET_ww = QDoubleSpinBox(self.groupBox)
-        self.boxPET_ww.setObjectName(u"boxPET_ww")
-        self.boxPET_ww.setMinimumSize(QSize(60, 0))
-        self.boxPET_ww.setMaximumSize(QSize(60, 16777215))
-        self.boxPET_ww.setMinimum(0.010000000000000)
-        self.boxPET_ww.setMaximum(200.000000000000000)
-        self.boxPET_ww.setSingleStep(0.010000000000000)
-
-        self.horizontalLayout_5.addWidget(self.boxPET_ww)
-
-
-        self.verticalLayout_8.addLayout(self.horizontalLayout_5)
-
-
-        self.verticalLayout_10.addLayout(self.verticalLayout_8)
-
-        self.verticalLayout_9 = QVBoxLayout()
-        self.verticalLayout_9.setSpacing(4)
-        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.verticalLayout_9.setContentsMargins(2, 2, 2, 2)
-        self.label_4 = QLabel(self.groupBox)
-        self.label_4.setObjectName(u"label_4")
-
-        self.verticalLayout_9.addWidget(self.label_4)
-
-        self.horizontalLayout_6 = QHBoxLayout()
-        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-        self.sldPET_wl = QSlider(self.groupBox)
-        self.sldPET_wl.setObjectName(u"sldPET_wl")
-        self.sldPET_wl.setMaximum(10000)
-        self.sldPET_wl.setValue(0)
-        self.sldPET_wl.setOrientation(Qt.Orientation.Horizontal)
-
-        self.horizontalLayout_6.addWidget(self.sldPET_wl)
-
-        self.boxPET_wl = QDoubleSpinBox(self.groupBox)
-        self.boxPET_wl.setObjectName(u"boxPET_wl")
-        self.boxPET_wl.setMinimumSize(QSize(60, 0))
-        self.boxPET_wl.setMaximumSize(QSize(60, 16777215))
-        self.boxPET_wl.setMinimum(0.010000000000000)
-        self.boxPET_wl.setMaximum(100.000000000000000)
-        self.boxPET_wl.setSingleStep(0.010000000000000)
-
-        self.horizontalLayout_6.addWidget(self.boxPET_wl)
-
-
-        self.verticalLayout_9.addLayout(self.horizontalLayout_6)
-
-
-        self.verticalLayout_10.addLayout(self.verticalLayout_9)
-
-
-        self.verticalLayout_3.addWidget(self.groupBox)
-
-        self.line = QFrame(self.scrollAreaWidgetContents_2)
-        self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.Shape.HLine)
-        self.line.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.verticalLayout_3.addWidget(self.line)
-
-        self.groupBox_3 = QGroupBox(self.scrollAreaWidgetContents_2)
-        self.groupBox_3.setObjectName(u"groupBox_3")
-        self.verticalLayout_16 = QVBoxLayout(self.groupBox_3)
-        self.verticalLayout_16.setSpacing(2)
-        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
-        self.verticalLayout_16.setContentsMargins(2, 2, 2, 2)
-        self.verticalLayout_7 = QVBoxLayout()
-        self.verticalLayout_7.setSpacing(4)
-        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.verticalLayout_7.setContentsMargins(2, 2, 2, 2)
-        self.label_3 = QLabel(self.groupBox_3)
-        self.label_3.setObjectName(u"label_3")
-
-        self.verticalLayout_7.addWidget(self.label_3)
-
-        self.horizontalLayout_8 = QHBoxLayout()
-        self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
-        self.sldAlphaCt = QSlider(self.groupBox_3)
-        self.sldAlphaCt.setObjectName(u"sldAlphaCt")
-        self.sldAlphaCt.setMaximum(100)
-        self.sldAlphaCt.setOrientation(Qt.Orientation.Horizontal)
-
-        self.horizontalLayout_8.addWidget(self.sldAlphaCt)
-
-        self.boxAlphaCt = QDoubleSpinBox(self.groupBox_3)
-        self.boxAlphaCt.setObjectName(u"boxAlphaCt")
-        self.boxAlphaCt.setMinimumSize(QSize(60, 0))
-        self.boxAlphaCt.setMaximumSize(QSize(60, 16777215))
-        self.boxAlphaCt.setMaximum(1.000000000000000)
-        self.boxAlphaCt.setSingleStep(0.010000000000000)
-
-        self.horizontalLayout_8.addWidget(self.boxAlphaCt)
-
-
-        self.verticalLayout_7.addLayout(self.horizontalLayout_8)
-
-
-        self.verticalLayout_16.addLayout(self.verticalLayout_7)
-
-        self.verticalLayout_12 = QVBoxLayout()
-        self.verticalLayout_12.setSpacing(4)
-        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.verticalLayout_12.setContentsMargins(2, 2, 2, 2)
-        self.label_8 = QLabel(self.groupBox_3)
-        self.label_8.setObjectName(u"label_8")
-
-        self.verticalLayout_12.addWidget(self.label_8)
-
-        self.horizontalLayout_11 = QHBoxLayout()
-        self.horizontalLayout_11.setObjectName(u"horizontalLayout_11")
-        self.sldCT_ww = QSlider(self.groupBox_3)
-        self.sldCT_ww.setObjectName(u"sldCT_ww")
-        self.sldCT_ww.setMaximum(3000)
-        self.sldCT_ww.setValue(1)
-        self.sldCT_ww.setOrientation(Qt.Orientation.Horizontal)
-
-        self.horizontalLayout_11.addWidget(self.sldCT_ww)
-
-        self.boxCT_ww = QSpinBox(self.groupBox_3)
-        self.boxCT_ww.setObjectName(u"boxCT_ww")
-        self.boxCT_ww.setMinimumSize(QSize(60, 0))
-        self.boxCT_ww.setMaximumSize(QSize(60, 16777215))
-        self.boxCT_ww.setMinimum(1)
-        self.boxCT_ww.setMaximum(3000)
-
-        self.horizontalLayout_11.addWidget(self.boxCT_ww)
-
-
-        self.verticalLayout_12.addLayout(self.horizontalLayout_11)
-
-
-        self.verticalLayout_16.addLayout(self.verticalLayout_12)
-
-        self.verticalLayout_11 = QVBoxLayout()
-        self.verticalLayout_11.setSpacing(4)
-        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.verticalLayout_11.setContentsMargins(2, 2, 2, 2)
-        self.label_5 = QLabel(self.groupBox_3)
-        self.label_5.setObjectName(u"label_5")
-
-        self.verticalLayout_11.addWidget(self.label_5)
-
-        self.horizontalLayout_10 = QHBoxLayout()
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
-        self.sldCT_wl = QSlider(self.groupBox_3)
-        self.sldCT_wl.setObjectName(u"sldCT_wl")
-        self.sldCT_wl.setMinimum(-2000)
-        self.sldCT_wl.setMaximum(2000)
-        self.sldCT_wl.setOrientation(Qt.Orientation.Horizontal)
-
-        self.horizontalLayout_10.addWidget(self.sldCT_wl)
-
-        self.boxCT_wl = QSpinBox(self.groupBox_3)
-        self.boxCT_wl.setObjectName(u"boxCT_wl")
-        self.boxCT_wl.setMinimumSize(QSize(60, 0))
-        self.boxCT_wl.setMaximumSize(QSize(60, 16777215))
-        self.boxCT_wl.setMinimum(-2000)
-        self.boxCT_wl.setMaximum(2000)
-
-        self.horizontalLayout_10.addWidget(self.boxCT_wl)
-
-
-        self.verticalLayout_11.addLayout(self.horizontalLayout_10)
-
-
-        self.verticalLayout_16.addLayout(self.verticalLayout_11)
-
-
-        self.verticalLayout_3.addWidget(self.groupBox_3)
-
-        self.line_2 = QFrame(self.scrollAreaWidgetContents_2)
-        self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.Shape.HLine)
-        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.verticalLayout_3.addWidget(self.line_2)
-
-        self.groupBox_2 = QGroupBox(self.scrollAreaWidgetContents_2)
-        self.groupBox_2.setObjectName(u"groupBox_2")
-        self.verticalLayout_14 = QVBoxLayout(self.groupBox_2)
-        self.verticalLayout_14.setSpacing(2)
-        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.verticalLayout_14.setContentsMargins(2, 2, 2, 2)
-        self.horizontalLayout_19 = QHBoxLayout()
-        self.horizontalLayout_19.setSpacing(3)
-        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
-        self.label_16 = QLabel(self.groupBox_2)
-        self.label_16.setObjectName(u"label_16")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.label_16.sizePolicy().hasHeightForWidth())
-        self.label_16.setSizePolicy(sizePolicy2)
-        self.label_16.setMaximumSize(QSize(60, 16777215))
-
-        self.horizontalLayout_19.addWidget(self.label_16)
-
-        self.cboxMode = QComboBox(self.groupBox_2)
-        self.cboxMode.addItem("")
-        self.cboxMode.addItem("")
-        self.cboxMode.setObjectName(u"cboxMode")
-
-        self.horizontalLayout_19.addWidget(self.cboxMode)
-
-
-        self.verticalLayout_14.addLayout(self.horizontalLayout_19)
-
-        self.label = QLabel(self.groupBox_2)
-        self.label.setObjectName(u"label")
-
-        self.verticalLayout_14.addWidget(self.label)
-
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.sldPaint = QSlider(self.groupBox_2)
-        self.sldPaint.setObjectName(u"sldPaint")
-        self.sldPaint.setMinimum(1)
-        self.sldPaint.setMaximum(30)
-        self.sldPaint.setOrientation(Qt.Orientation.Horizontal)
-
-        self.horizontalLayout_2.addWidget(self.sldPaint)
-
-        self.boxPaint = QSpinBox(self.groupBox_2)
-        self.boxPaint.setObjectName(u"boxPaint")
-        self.boxPaint.setMinimumSize(QSize(60, 0))
-        self.boxPaint.setMaximumSize(QSize(60, 16777215))
-        self.boxPaint.setMinimum(1)
-        self.boxPaint.setMaximum(30)
-
-        self.horizontalLayout_2.addWidget(self.boxPaint)
-
-
-        self.verticalLayout_14.addLayout(self.horizontalLayout_2)
-
-        self.label_9 = QLabel(self.groupBox_2)
-        self.label_9.setObjectName(u"label_9")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.label_9.sizePolicy().hasHeightForWidth())
-        self.label_9.setSizePolicy(sizePolicy3)
-
-        self.verticalLayout_14.addWidget(self.label_9)
-
-        self.horizontalLayout_12 = QHBoxLayout()
-        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
-        self.sldAlphaSeg = QSlider(self.groupBox_2)
-        self.sldAlphaSeg.setObjectName(u"sldAlphaSeg")
-        self.sldAlphaSeg.setMaximum(100)
-        self.sldAlphaSeg.setOrientation(Qt.Orientation.Horizontal)
-
-        self.horizontalLayout_12.addWidget(self.sldAlphaSeg)
-
-        self.boxAlphaSeg = QDoubleSpinBox(self.groupBox_2)
-        self.boxAlphaSeg.setObjectName(u"boxAlphaSeg")
-        self.boxAlphaSeg.setMinimumSize(QSize(60, 0))
-        self.boxAlphaSeg.setMaximumSize(QSize(60, 16777215))
-        self.boxAlphaSeg.setDecimals(2)
-        self.boxAlphaSeg.setMaximum(1.000000000000000)
-        self.boxAlphaSeg.setSingleStep(0.010000000000000)
-
-        self.horizontalLayout_12.addWidget(self.boxAlphaSeg)
-
-
-        self.verticalLayout_14.addLayout(self.horizontalLayout_12)
-
-
-        self.verticalLayout_3.addWidget(self.groupBox_2)
-
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout_3.addItem(self.verticalSpacer)
-
-        self.line_3 = QFrame(self.scrollAreaWidgetContents_2)
-        self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.Shape.HLine)
-        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.verticalLayout_3.addWidget(self.line_3)
-
-        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
-
-        self.verticalLayout_4.addWidget(self.scrollArea_2)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.FileSetting = QWidget(self.dockWidgetContents_2)
+        self.FileSetting.setObjectName(u"FileSetting")
+
+        self.verticalLayout_3.addWidget(self.FileSetting)
 
         self.dockWidget_2.setWidget(self.dockWidgetContents_2)
         MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget_2)
+        self.dockWidget = QDockWidget(MainWindow)
+        self.dockWidget.setObjectName(u"dockWidget")
+        self.dockWidgetContents = QWidget()
+        self.dockWidgetContents.setObjectName(u"dockWidgetContents")
+        self.verticalLayout_4 = QVBoxLayout(self.dockWidgetContents)
+        self.verticalLayout_4.setSpacing(0)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.ImageSetting = QWidget(self.dockWidgetContents)
+        self.ImageSetting.setObjectName(u"ImageSetting")
+
+        self.verticalLayout_4.addWidget(self.ImageSetting)
+
+        self.dockWidget.setWidget(self.dockWidgetContents)
+        MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget)
+        self.dockWidget_3 = QDockWidget(MainWindow)
+        self.dockWidget_3.setObjectName(u"dockWidget_3")
+        self.dockWidgetContents_3 = QWidget()
+        self.dockWidgetContents_3.setObjectName(u"dockWidgetContents_3")
+        self.verticalLayout_6 = QVBoxLayout(self.dockWidgetContents_3)
+        self.verticalLayout_6.setSpacing(0)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
+        self.SegmentSetting = QWidget(self.dockWidgetContents_3)
+        self.SegmentSetting.setObjectName(u"SegmentSetting")
+
+        self.verticalLayout_6.addWidget(self.SegmentSetting)
+
+        self.dockWidget_3.setWidget(self.dockWidgetContents_3)
+        MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget_3)
+        self.dockWidget_4 = QDockWidget(MainWindow)
+        self.dockWidget_4.setObjectName(u"dockWidget_4")
+        self.dockWidget_4.setFloating(False)
+        self.dockWidgetContents_4 = QWidget()
+        self.dockWidgetContents_4.setObjectName(u"dockWidgetContents_4")
+        self.verticalLayout_7 = QVBoxLayout(self.dockWidgetContents_4)
+        self.verticalLayout_7.setSpacing(0)
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.InfoSetting = QWidget(self.dockWidgetContents_4)
+        self.InfoSetting.setObjectName(u"InfoSetting")
+        self.verticalLayout_9 = QVBoxLayout(self.InfoSetting)
+        self.verticalLayout_9.setSpacing(0)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.tableView = QTableView(self.InfoSetting)
+        self.tableView.setObjectName(u"tableView")
+
+        self.verticalLayout_9.addWidget(self.tableView)
+
+
+        self.verticalLayout_7.addWidget(self.InfoSetting)
+
+        self.dockWidget_4.setWidget(self.dockWidgetContents_4)
+        MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget_4)
+        self.dockWidget_5 = QDockWidget(MainWindow)
+        self.dockWidget_5.setObjectName(u"dockWidget_5")
+        self.dockWidget_5.setMinimumSize(QSize(200, 39))
+        self.dockWidgetContents_5 = QWidget()
+        self.dockWidgetContents_5.setObjectName(u"dockWidgetContents_5")
+        self.verticalLayout_8 = QVBoxLayout(self.dockWidgetContents_5)
+        self.verticalLayout_8.setSpacing(0)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.SAMSetting = QWidget(self.dockWidgetContents_5)
+        self.SAMSetting.setObjectName(u"SAMSetting")
+
+        self.verticalLayout_8.addWidget(self.SAMSetting)
+
+        self.dockWidget_5.setWidget(self.dockWidgetContents_5)
+        MainWindow.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dockWidget_5)
+        self.dockWidget_4.raise_()
+        self.dockWidget_2.raise_()
 
         self.menuBar.addAction(self.muFile.menuAction())
+        self.menuBar.addAction(self.menu.menuAction())
         self.menuBar.addAction(self.muView.menuAction())
-        self.muFile.addAction(self.actionopen)
-        self.muFile.addAction(self.actionsegload)
-        self.muFile.addAction(self.actionsave)
-        self.muFile.addAction(self.actionexit)
-        self.muView.addAction(self.actionfile)
-        self.muView.addAction(self.actionpaint)
-        self.muView.addAction(self.actiontool)
-        self.muView.addAction(self.actionrun)
-        self.muView.addAction(self.actioncrossline)
+        self.muFile.addAction(self.open_action)
+        self.muFile.addAction(self.add_action)
+        self.muFile.addAction(self.save_action)
+        self.muFile.addAction(self.exit_action)
+        self.muView.addAction(self.file_action)
+        self.muView.addAction(self.paint_action)
+        self.muView.addAction(self.crossline_action)
+        self.menu.addAction(self.setting_actionfile)
+        self.menu.addAction(self.imageseting_action)
+        self.menu.addAction(self.segmentsetting_action)
+        self.menu.addAction(self.info_action)
+        self.menu.addSeparator()
+        self.menu.addAction(self.menutheme.menuAction())
+        self.menu.addSeparator()
+        self.menu.addAction(self.sam_action)
+        self.menutheme.addAction(self.dark_action)
+        self.menutheme.addAction(self.light_action)
+        self.toolBar.addAction(self.data_atn)
         self.toolBar.addAction(self.setting_atn)
+        self.toolBar.addAction(self.sam_atn)
         self.toolBar_file.addAction(self.load_atn)
-        self.toolBar_file.addAction(self.loadseg_atn)
+        self.toolBar_file.addAction(self.add_atn)
         self.toolBar_file.addAction(self.save_atn)
         self.toolBar_draw.addAction(self.aim_atn)
         self.toolBar_draw.addAction(self.move_atn)
         self.toolBar_draw.addAction(self.win_atn)
         self.toolBar_draw.addAction(self.paint_atn)
         self.toolBar_draw.addAction(self.eraser_atn)
-        self.toolBar_draw.addAction(self.sam_atn)
-        self.toolBar_run.addAction(self.run_atn)
         self.toolBar_run.addAction(self.redo_atn)
 
         self.retranslateUi(MainWindow)
         self.sldLayer.valueChanged.connect(self.boxLayer.setValue)
         self.boxLayer.valueChanged.connect(self.sldLayer.setValue)
-        self.sldCT_ww.valueChanged.connect(self.boxCT_ww.setValue)
-        self.boxCT_ww.valueChanged.connect(self.sldCT_ww.setValue)
-        self.boxCT_wl.valueChanged.connect(self.sldCT_wl.setValue)
-        self.sldCT_wl.valueChanged.connect(self.boxCT_wl.setValue)
-        self.sldPaint.valueChanged.connect(self.boxPaint.setValue)
-        self.boxPaint.valueChanged.connect(self.sldPaint.setValue)
 
         self.stackedWidget.setCurrentIndex(0)
 
@@ -767,25 +481,42 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.setting_atn.setText(QCoreApplication.translate("MainWindow", u"\u8bbe\u7f6e", None))
         self.load_atn.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u5165", None))
+#if QT_CONFIG(shortcut)
+        self.load_atn.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+O", None))
+#endif // QT_CONFIG(shortcut)
         self.save_atn.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58", None))
+#if QT_CONFIG(shortcut)
+        self.save_atn.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+S", None))
+#endif // QT_CONFIG(shortcut)
         self.move_atn.setText(QCoreApplication.translate("MainWindow", u"\u79fb\u52a8", None))
         self.win_atn.setText(QCoreApplication.translate("MainWindow", u"\u8c03\u7a97", None))
         self.paint_atn.setText(QCoreApplication.translate("MainWindow", u"\u6807\u6ce8", None))
         self.eraser_atn.setText(QCoreApplication.translate("MainWindow", u"\u64e6\u9664", None))
-        self.run_atn.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u884c", None))
-        self.actionexit.setText(QCoreApplication.translate("MainWindow", u"\u9000\u51fa", None))
-        self.actionsave.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u4e3a", None))
-        self.actionopen.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00\u6587\u4ef6\u5939", None))
+        self.exit_action.setText(QCoreApplication.translate("MainWindow", u"\u9000\u51fa", None))
+        self.save_action.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u4e3a", None))
+        self.open_action.setText(QCoreApplication.translate("MainWindow", u"\u6253\u5f00\u6587\u4ef6\u5939", None))
         self.sam_atn.setText(QCoreApplication.translate("MainWindow", u"SAM", None))
-        self.actionfile.setText(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6", None))
-        self.actionpaint.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf", None))
-        self.actiontool.setText(QCoreApplication.translate("MainWindow", u"\u4fa7\u680f", None))
-        self.actionrun.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u884c", None))
+        self.file_action.setText(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6", None))
+        self.paint_action.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf", None))
         self.aim_atn.setText(QCoreApplication.translate("MainWindow", u"\u51c6\u5fc3", None))
-        self.actioncrossline.setText(QCoreApplication.translate("MainWindow", u"\u5b9a\u4f4d\u7ebf", None))
+        self.crossline_action.setText(QCoreApplication.translate("MainWindow", u"\u5b9a\u4f4d\u7ebf", None))
         self.redo_atn.setText(QCoreApplication.translate("MainWindow", u"\u91cd\u505a", None))
-        self.actionsegload.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u5165\u6807\u6ce8", None))
-        self.loadseg_atn.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u5165\u6807\u6ce8", None))
+        self.add_action.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u5165\u6807\u6ce8", None))
+        self.add_atn.setText(QCoreApplication.translate("MainWindow", u"\u5bfc\u5165\u6807\u6ce8", None))
+#if QT_CONFIG(shortcut)
+        self.add_atn.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+A", None))
+#endif // QT_CONFIG(shortcut)
+        self.imageseting_action.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bbe\u7f6e", None))
+        self.segmentsetting_action.setText(QCoreApplication.translate("MainWindow", u"\u6807\u6ce8\u8bbe\u7f6e", None))
+        self.info_action.setText(QCoreApplication.translate("MainWindow", u"\u4fe1\u606f\u8bbe\u7f6e", None))
+        self.dark_action.setText(QCoreApplication.translate("MainWindow", u"dark", None))
+        self.light_action.setText(QCoreApplication.translate("MainWindow", u"light", None))
+        self.setting_actionfile.setText(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6\u7ba1\u7406", None))
+        self.sam_action.setText(QCoreApplication.translate("MainWindow", u"DeepLearning", None))
+        self.data_atn.setText(QCoreApplication.translate("MainWindow", u"data", None))
+#if QT_CONFIG(tooltip)
+        self.data_atn.setToolTip(QCoreApplication.translate("MainWindow", u"\u5bfc\u5165\u6570\u636e", None))
+#endif // QT_CONFIG(tooltip)
         self.boxPET.setText(QCoreApplication.translate("MainWindow", u"PET", None))
         self.boxCT.setText(QCoreApplication.translate("MainWindow", u"CT", None))
         self.boxSeg.setText(QCoreApplication.translate("MainWindow", u"Seg", None))
@@ -797,25 +528,16 @@ class Ui_MainWindow(object):
         self.btnReset.setText(QCoreApplication.translate("MainWindow", u"\u590d\u4f4d", None))
         self.muFile.setTitle(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6", None))
         self.muView.setTitle(QCoreApplication.translate("MainWindow", u"\u89c6\u56fe", None))
+        self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u7f16\u8f91", None))
+        self.menutheme.setTitle(QCoreApplication.translate("MainWindow", u"theme", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u4fa7\u680f", None))
         self.toolBar_file.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u5de5\u5177\u680f", None))
         self.toolBar_draw.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u5de5\u5177", None))
         self.toolBar_run.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u7a0b\u5e8f", None))
-        self.dockWidget_2.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u8bbe\u7f6e", None))
-        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"PET", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u900f\u660e\u5ea6\uff1a  ", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u5bbd\uff1a    ", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u4f4d\uff1a    ", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"CT", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u900f\u660e\u5ea6\uff1a  ", None))
-        self.label_8.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u5bbd\uff1a    ", None))
-        self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u4f4d\uff1a    ", None))
-        self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Segmentation", None))
-        self.label_16.setText(QCoreApplication.translate("MainWindow", u"\u6807\u7b7e\u9009\u62e9\uff1a", None))
-        self.cboxMode.setItemText(0, QCoreApplication.translate("MainWindow", u"\u539f\u53d1\u7076", None))
-        self.cboxMode.setItemText(1, QCoreApplication.translate("MainWindow", u"\u8f6c\u79fb\u7076", None))
-
-        self.label.setText(QCoreApplication.translate("MainWindow", u"\u7b14\u5237\u5927\u5c0f", None))
-        self.label_9.setText(QCoreApplication.translate("MainWindow", u"\u900f\u660e\u5ea6\uff1a  ", None))
+        self.dockWidget_2.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6\u7ba1\u7406", None))
+        self.dockWidget.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bbe\u7f6e", None))
+        self.dockWidget_3.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u6807\u6ce8\u8bbe\u7f6e", None))
+        self.dockWidget_4.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u4fe1\u606f\u663e\u793a", None))
+        self.dockWidget_5.setWindowTitle(QCoreApplication.translate("MainWindow", u"Segment Anything Model", None))
     # retranslateUi
 

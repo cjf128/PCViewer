@@ -12,7 +12,7 @@ import pypinyin as pin
 import SimpleITK as sitk
 import vtk
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QActionGroup, QImage, QPixmap, QUndoCommand, QUndoStack
+from PySide6.QtGui import QActionGroup, QIcon, QImage, QPixmap, QUndoCommand, QUndoStack
 from PySide6.QtWidgets import (
     QApplication,
     QButtonGroup,
@@ -27,10 +27,15 @@ from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from app.configs import AppConfig
 from app.mode import LOADMode, VIEWERMode, VIEWMode
-from path import CACHE_PATH, SEGMENTATION_PATH
+from path import CACHE_PATH, ICONS_PATH, SEGMENTATION_PATH, STYLESHEET_PATH
 from scripts.logger import log_debug, log_error, log_info, log_warning
 from ui.MainWindow_ui import Ui_MainWindow
+from widgets.FileDocker import FileDocker
+from widgets.ImageDocker import ImageDocker
+from widgets.ImageViewer import ImageViewer
 from widgets.LoadDialog import LoadDialog
+from widgets.SamDocker import SamDocker
+from widgets.SegmentDocker import SegmentDocker
 from widgets.WorkerThread import (
     BuiltThread,
     DicomWorker,
@@ -68,8 +73,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self._config = config
-
-        self.resize(config.width, config.height)
 
         self.patient_id: str = ""
 
@@ -125,13 +128,62 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("鼻咽癌PET/CT图像全身病灶检测软件")
 
         self.init_ui()
+        self.config()
         self.init_connectAction()
 
+    def config(self) -> None:
+        theme = self._config.theme
+        self.resize(self._config.width, self._config.height)
+        with open(str(STYLESHEET_PATH / f"{theme}.qss"), "r", encoding="utf-8") as f:
+            self.setStyleSheet(f.read())
+
+        self.load_atn.setIcon(QIcon(str(ICONS_PATH / theme / "load.png")))
+        self.add_atn.setIcon(QIcon(str(ICONS_PATH / theme / "add.png")))
+        self.save_atn.setIcon(QIcon(str(ICONS_PATH / theme / "save.png")))
+        self.aim_atn.setIcon(QIcon(str(ICONS_PATH / theme / "cursor.png")))
+        self.move_atn.setIcon(QIcon(str(ICONS_PATH / theme / "move.png")))
+        self.win_atn.setIcon(QIcon(str(ICONS_PATH / theme / "contrast.png")))
+        self.paint_atn.setIcon(QIcon(str(ICONS_PATH / theme / "paint.png")))
+        self.eraser_atn.setIcon(QIcon(str(ICONS_PATH / theme / "eraser.png")))
+        self.redo_atn.setIcon(QIcon(str(ICONS_PATH / theme / "redo.png")))
+
+        self.sam_atn.setIcon(QIcon(str(ICONS_PATH / theme / "meta.png")))
+        self.data_atn.setIcon(QIcon(str(ICONS_PATH / theme / "database.png")))
+        self.setting_atn.setIcon(QIcon(str(ICONS_PATH / theme / "setting.png")))
+
     def init_ui(self):
+        self.file_Setting = FileDocker(self, self)
+        self.file_Setting_layout = QVBoxLayout(self.FileSetting)
+        self.file_Setting_layout.addWidget(self.file_Setting)
+        self.file_Setting_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.image_setting = ImageDocker(self, self)
+        self.image_setting_layout = QVBoxLayout(self.ImageSetting)
+        self.image_setting_layout.addWidget(self.image_setting)
+        self.image_setting_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.segment_setting = SegmentDocker(self, self)
+        self.segment_setting_layout = QVBoxLayout(self.SegmentSetting)
+        self.segment_setting_layout.addWidget(self.segment_setting)
+        self.segment_setting_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.viewer = ImageViewer(self, self)
+        self.image_viewer_layout = QVBoxLayout(self.image_frame)
+        self.image_viewer_layout.addWidget(self.viewer)
+        self.image_viewer_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.sam_Setting = SamDocker(self, self)
+        self.sam_Setting_layout = QVBoxLayout(self.SAMSetting)
+        self.sam_Setting_layout.addWidget(self.sam_Setting)
+        self.sam_Setting_layout.setContentsMargins(0, 0, 0, 0)
+
         self.view_3d = QVTKRenderWindowInteractor()
         self.view_layout = QVBoxLayout()
         self.view_layout.addWidget(self.view_3d)
         self.view_frame.setLayout(self.view_layout)
+
+        self._vtk_actor_cache = None
+        self._seg_cache_hash = None
 
         self.atn_group = QActionGroup(self)
         self.atn_group.setExclusive(True)
@@ -167,83 +219,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         layout.addWidget(progress_bar)
         self.dialog.setLayout(layout)
 
-        self.statusbar = QMainWindow.statusBar(self)
-        self.statusbar.setStyleSheet("background-color: #1A89FF;")
+        self.tabifyDockWidget(self.dockWidget_2, self.dockWidget)
+        self.tabifyDockWidget(self.dockWidget, self.dockWidget_3)
+        self.tabifyDockWidget(self.dockWidget_3, self.dockWidget_4)
+
+        self.dockWidget_2.raise_()
+        self.dockWidget_5.setVisible(False)
 
     def init_connectAction(self):
         """初始化信号与槽连接"""
-        self.sldAlphaCt.valueChanged.connect(
-            lambda v: self.boxAlphaCt.setValue(v / 100)
-        )
-        self.boxAlphaCt.valueChanged.connect(
-            lambda v: self.sldAlphaCt.setValue(int(v * 100))
-        )
-        self.sldAlphaPet.valueChanged.connect(
-            lambda v: self.boxAlphaPet.setValue(v / 100)
-        )
-        self.boxAlphaPet.valueChanged.connect(
-            lambda v: self.sldAlphaPet.setValue(int(v * 100))
-        )
-        self.sldPET_ww.valueChanged.connect(lambda v: self.boxPET_ww.setValue(v / 100))
-        self.boxPET_ww.valueChanged.connect(
-            lambda v: self.sldPET_ww.setValue(int(v * 100))
-        )
-        self.sldPET_wl.valueChanged.connect(lambda v: self.boxPET_wl.setValue(v / 100))
-        self.boxPET_wl.valueChanged.connect(
-            lambda v: self.sldPET_wl.setValue(int(v * 100))
-        )
-        self.sldAlphaSeg.valueChanged.connect(
-            lambda v: self.boxAlphaSeg.setValue(v / 100)
-        )
-        self.boxAlphaSeg.valueChanged.connect(
-            lambda v: self.sldAlphaSeg.setValue(int(v * 100))
-        )
-
         self.load_atn.triggered.connect(self.load_slot)
-        self.loadseg_atn.triggered.connect(self.load_Seg_slot)
+        self.add_atn.triggered.connect(self.load_Seg_slot)
         self.save_atn.triggered.connect(self.save_slot)
-        self.run_atn.triggered.connect(self.run_slot)
         self.redo_atn.triggered.connect(self.redo_slot)
         self.setting_atn.triggered.connect(self.setting_slot)
+        self.data_atn.triggered.connect(self.data_slot)
 
-        self.aim_atn.triggered.connect(self.aim_slot)
-        self.sam_atn.triggered.connect(self.sam_slot)
-        self.paint_atn.triggered.connect(self.paint_slot)
-        self.move_atn.triggered.connect(self.move_slot)
-        self.win_atn.triggered.connect(self.win_slot)
-        self.eraser_atn.triggered.connect(self.eraser_slot)
+        self.aim_atn.triggered.connect(lambda: self._set_mode(VIEWERMode.AIM))
+        self.sam_atn.triggered.connect(lambda: self._set_mode(VIEWERMode.SAM))
+        self.paint_atn.triggered.connect(lambda: self._set_mode(VIEWERMode.PAINT))
+        self.move_atn.triggered.connect(lambda: self._set_mode(VIEWERMode.MOVE))
+        self.win_atn.triggered.connect(lambda: self._set_mode(VIEWERMode.WIN))
+        self.eraser_atn.triggered.connect(lambda: self._set_mode(VIEWERMode.ERASER))
 
-        self.actionopen.triggered.connect(self.load_slot)
-        self.actionsegload.triggered.connect(self.load_Seg_slot)
-        self.actionsave.triggered.connect(self.save_slot)
-        self.actionexit.triggered.connect(self.close)
-        self.actiontool.triggered.connect(self.setting_slot)
-        self.actioncrossline.triggered.connect(self.crossline_slot)
+        self.open_action.triggered.connect(self.load_slot)
+        self.add_action.triggered.connect(self.load_Seg_slot)
+        self.save_action.triggered.connect(self.save_slot)
+        self.exit_action.triggered.connect(self.close)
+        self.crossline_action.triggered.connect(self.crossline_slot)
 
-        self.actionfile.triggered.connect(self.toggle_toolBar_file)
-        self.actionpaint.triggered.connect(self.toggle_toolBar_draw)
-        self.actionrun.triggered.connect(self.toggle_toolBar_run)
+        self.file_action.triggered.connect(self.toggle_toolBar_file)
+        self.paint_action.triggered.connect(self.toggle_toolBar_draw)
 
-        self.boxCT_ww.valueChanged.connect(
-            lambda v: self.update_property_and_refresh("ct_ww", v)
-        )
-        self.boxCT_wl.valueChanged.connect(
-            lambda v: self.update_property_and_refresh("ct_wl", v)
-        )
-        self.boxPET_ww.valueChanged.connect(
-            lambda v: self.update_property_and_refresh("pet_ww", v)
-        )
-        self.boxPET_wl.valueChanged.connect(
-            lambda v: self.update_property_and_refresh("pet_wl", v)
-        )
-        self.boxAlphaCt.valueChanged.connect(lambda: self.set_alpha("CT"))
-        self.boxAlphaPet.valueChanged.connect(lambda: self.set_alpha("PET"))
-        self.boxAlphaSeg.valueChanged.connect(
-            lambda v: self.update_property_and_refresh("seg_alpha", v)
-        )
-        self.boxPaint.valueChanged.connect(
-            lambda v: self.update_property_and_refresh("radius", v)
-        )
         self.boxLayer.valueChanged.connect(
             lambda v: self.update_property_and_refresh("layer", v)
         )
@@ -260,10 +267,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btnCa.clicked.connect(self.screen_shot)
         self.btnReset.clicked.connect(self.reset_slot)
 
-        self.cboxMode.currentIndexChanged.connect(self.on_cbox_mode_changed)
-
         self.viewer.Sam_Signal.connect(self.operation)
-        self.viewer.Mode_Signal.connect(self.checkmode)
+        self.viewer.Mode_Signal.connect(lambda: self._set_mode(VIEWERMode.MOVE))
 
     def transpose(self, mode):
         if mode == "trans":
@@ -285,20 +290,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.SamPredictor = predictor
         log_info("SAM模型已加载到主窗口")
 
-    def setting_slot(self):
+    def data_slot(self):
         if self.dockWidget_2.isVisible():
             self.dockWidget_2.hide()
         else:
             self.dockWidget_2.show()
+            self.dockWidget_2.raise_()
+
+    def setting_slot(self):
+        if self.dockWidget.isVisible():
+            self.dockWidget.hide()
+            self.dockWidget_3.hide()
+            self.dockWidget_4.hide()
+        else:
+            self.dockWidget.show()
+            self.dockWidget_3.show()
+            self.dockWidget_4.show()
+            self.dockWidget.raise_()
 
     def toggle_toolBar_file(self):
         self.toolBar_file.setVisible(not self.toolBar_file.isVisible())
 
     def toggle_toolBar_draw(self):
         self.toolBar_draw.setVisible(not self.toolBar_draw.isVisible())
-
-    def toggle_toolBar_run(self):
-        self.toolBar_run.setVisible(not self.toolBar_run.isVisible())
 
     def screen_shot(self):
         if self.load_mode != LOADMode.UNLOAD:
@@ -335,21 +349,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.load_mode = LOADMode.CHANGE
             self.setting()
-
-    def on_cbox_mode_changed(self, index):
-        """改变病灶标注类型"""
-        self.color_label = index + 1
-
-    def set_alpha(self, state):
-        if state == "CT":
-            self.ct_alpha = self.boxAlphaCt.value()
-            self.boxAlphaPet.setValue(1 - self.ct_alpha)
-            self.pet_alpha = 1 - self.ct_alpha
-        elif state == "PET":
-            self.pet_alpha = self.boxAlphaPet.value()
-            self.boxAlphaCt.setValue(1 - self.pet_alpha)
-            self.ct_alpha = 1 - self.pet_alpha
-        self.update_image()
 
     def reset_slot(self):
         """复位处理"""
@@ -420,7 +419,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 else:
                     file_path.unlink()
 
-        load_dialog = LoadDialog(self)
+        load_dialog = LoadDialog(self, self)
         load_dialog.FilesSelected.connect(self.on_files_selected)
         load_dialog.show()
 
@@ -490,23 +489,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stackedWidget.setCurrentIndex(0)
 
         if self.load_mode != LOADMode.CHANGE:
-            self.boxAlphaCt.setValue(self.ct_alpha)
-            self.boxCT_wl.setValue(self.ct_wl)
-            self.boxCT_ww.setValue(self.ct_ww)
+            self.image_setting.boxAlphaCt.setValue(self.ct_alpha)
+            self.image_setting.boxCT_wl.setValue(self.ct_wl)
+            self.image_setting.boxCT_ww.setValue(self.ct_ww)
+            self.image_setting.boxAlphaPet.setValue(self.pet_alpha)
 
-            self.boxAlphaPet.setValue(self.pet_alpha)
-            self.boxPaint.setValue(self.radius)
+            self.segment_setting.boxPaint.setValue(self.radius)
 
             pet_max = np.max(self.pet)
             self.pet_ww = pet_max
             self.pet_wl = pet_max / 2
-            self.boxPET_wl.setValue(self.pet_wl)
-            self.boxPET_ww.setValue(self.pet_ww)
+            self.image_setting.boxPET_wl.setValue(self.pet_wl)
+            self.image_setting.boxPET_ww.setValue(self.pet_ww)
 
-            self.boxAlphaSeg.setValue(self.seg_alpha)
+            self.segment_setting.boxAlphaSeg.setValue(self.seg_alpha)
 
             self.aim_atn.setChecked(True)
-            self.aim_slot()
+            self._set_mode(VIEWERMode.AIM)
 
         self.sldLayer.setMaximum(self.ct.shape[2] - 1)
         self.boxLayer.setMaximum(self.ct.shape[2] - 1)
@@ -549,48 +548,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def crossline_slot(self):
         self.viewer.cross_show = not self.viewer.cross_show
 
-    def checkmode(self):
-        self.aim_slot()
-        self.sam_slot()
-        self.paint_slot()
-        self.eraser_slot()
-        self.move_slot()
-        self.win_slot()
-
-    def aim_slot(self):
-        """目标工具-设置按键冲突，调整图像状态"""
-        if self.aim_atn.isChecked() and self.load_mode != LOADMode.UNLOAD:
-            self.viewer.mode = VIEWERMode.AIM
-            self.update_all()
-
-    def sam_slot(self):
-        """使用SAM画框-设置按键冲突，调整图像状态"""
-        if self.sam_atn.isChecked() and self.load_mode != LOADMode.UNLOAD:
-            self.viewer.mode = VIEWERMode.SAM
-            self.update_all()
-
-    def paint_slot(self):
-        """画笔工具-设置按键冲突，调整图像状态"""
-        if self.paint_atn.isChecked() and self.load_mode != LOADMode.UNLOAD:
-            self.viewer.mode = VIEWERMode.PAINT
-            self.update_all()
-
-    def eraser_slot(self):
-        """擦除工具-设置按键冲突，调整图像状态"""
-        if self.eraser_atn.isChecked() and self.load_mode != LOADMode.UNLOAD:
-            self.viewer.mode = VIEWERMode.ERASER
-            self.update_all()
-
-    def move_slot(self):
-        """图像移动工具-设置按键冲突，调整图像状态"""
-        if self.move_atn.isChecked() and self.load_mode != LOADMode.UNLOAD:
-            self.viewer.mode = VIEWERMode.MOVE
-            self.update_all()
-
-    def win_slot(self):
-        """调窗工具-设置按键冲突，调整图像状态"""
-        if self.win_atn.isChecked() and self.load_mode != LOADMode.UNLOAD:
-            self.viewer.mode = VIEWERMode.WIN
+    def _set_mode(self, mode: VIEWERMode):
+        if self.load_mode != LOADMode.UNLOAD:
+            self.viewer.mode = mode
             self.update_all()
 
     def update_all(self):
@@ -637,7 +597,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         current_layer, old_slice, new_slice, "SAM分割"
                     )
                 self.update_all()
-                self.checkmode()
+                self._set_mode(VIEWERMode.SAM)
 
             self.SamThread = SamThread(self.SamPredictor, input_box)
             self.SamThread.finished.connect(on_sam_finished)
@@ -750,8 +710,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 self.ct_ww += int(delta.x())
                 self.ct_wl += int(delta.y())
-                self.boxCT_ww.setValue(self.ct_ww)
-                self.boxCT_wl.setValue(self.ct_wl)
+                self.image_setting.boxCT_ww.setValue(self.ct_ww)
+                self.image_setting.boxCT_wl.setValue(self.ct_wl)
 
             elif self.paint_atn.isChecked() or self.eraser_atn.isChecked():
                 point = self.viewer.point  # 获取 QPoint 对象
@@ -861,8 +821,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.view_3d.GetRenderWindow().AddRenderer(self.renderer)
             self.iren = self.view_3d.GetRenderWindow().GetInteractor()
             self.iren.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
-
-        self.renderer.RemoveAllViewProps()
+            self.renderer.SetBackground(0, 0, 0)
 
         if self.load_mode != LOADMode.UNLOAD and np.any(self.seg):
             seg = self.seg.copy()
@@ -870,18 +829,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             seg = np.transpose(seg, axes=save)
             data = np.ascontiguousarray(seg)
 
+            current_hash = hash(data.tobytes())
+            if (
+                current_hash == self._seg_cache_hash
+                and self._vtk_actor_cache is not None
+            ):
+                if self.renderer.GetActors().GetNumberOfItems() == 0:
+                    self.renderer.AddActor(self._vtk_actor_cache)
+                    self.renderer.ResetCamera()
+                self.view_3d.GetRenderWindow().Render()
+                return
+
+            self.renderer.RemoveAllViewProps()
+
             def add_vtk_actor(actor):
                 self.renderer.AddActor(actor)
                 self.renderer.ResetCamera()
+                self._vtk_actor_cache = actor
+                self._seg_cache_hash = current_hash
                 self.view_3d.GetRenderWindow().Render()
 
-            # 启动 VTK 处理线程
             self.Built_Thread = BuiltThread(data, self.viewer.spacing)
             self.Built_Thread.actor_ready.connect(add_vtk_actor)
             self.Built_Thread.start()
         else:
+            self.renderer.RemoveAllViewProps()
+            self._vtk_actor_cache = None
+            self._seg_cache_hash = None
             self.renderer.ResetCamera()
-            self.renderer.SetBackground(0, 0, 0)
             self.view_3d.GetRenderWindow().Render()
 
     def commit_seg_change(self, layer, old_slice, new_slice, description="编辑"):
@@ -895,6 +870,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 if __name__ == "__main__":
     from app.configs import ConfigManager
+
     app = QApplication(sys.argv)
     config_manager = ConfigManager()
     config = config_manager.load()

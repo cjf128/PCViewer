@@ -114,13 +114,13 @@ class SamThread(QThread):
 class ModelLoader(QThread):
     finished = Signal(object)
 
-    _ENCODER_MODEL = "sam2.1_hiera_base_plus_encoder.onnx"
-    _DECODER_MODEL = "sam2.1_hiera_base_plus_decoder.onnx"
+    _ENCODER_MODEL = "checkpoints/sam2.1_hiera_base_plus_encoder.onnx"
+    _DECODER_MODEL = "checkpoints/sam2.1_hiera_base_plus_decoder.onnx"
 
     def run(self):
         log_info("开始加载SAM2模型")
         try:
-            from sam2 import SAM2Image
+            from models.sam2 import SAM2Image
 
             encoder_path = MODELS_PATH / self._ENCODER_MODEL
             decoder_path = MODELS_PATH / self._DECODER_MODEL

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1140</width>
+    <width>1255</width>
     <height>789</height>
    </rect>
   </property>
@@ -246,9 +246,12 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="ImageViewer" name="viewer">
-                 <property name="styleSheet">
-                  <string notr="true">background-color: rgb(0, 0, 0);</string>
+                <widget class="QFrame" name="image_frame">
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
                  </property>
                 </widget>
                </item>
@@ -274,7 +277,7 @@
                <item>
                 <widget class="QFrame" name="view_frame">
                  <property name="styleSheet">
-                  <string notr="true">background-color: rgb(0, 0, 0);</string>
+                  <string notr="true"/>
                  </property>
                  <property name="frameShape">
                   <enum>QFrame::Shape::StyledPanel</enum>
@@ -322,7 +325,7 @@
                <widget class="QPushButton" name="btnH">
                 <property name="maximumSize">
                  <size>
-                  <width>32</width>
+                  <width>48</width>
                   <height>32</height>
                  </size>
                 </property>
@@ -341,7 +344,7 @@
                <widget class="QPushButton" name="btnS">
                 <property name="maximumSize">
                  <size>
-                  <width>32</width>
+                  <width>48</width>
                   <height>32</height>
                  </size>
                 </property>
@@ -357,7 +360,7 @@
                <widget class="QPushButton" name="btnG">
                 <property name="maximumSize">
                  <size>
-                  <width>32</width>
+                  <width>48</width>
                   <height>32</height>
                  </size>
                 </property>
@@ -427,7 +430,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1140</width>
+     <width>1255</width>
      <height>33</height>
     </rect>
    </property>
@@ -435,20 +438,18 @@
     <property name="title">
      <string>文件</string>
     </property>
-    <addaction name="actionopen"/>
-    <addaction name="actionsegload"/>
-    <addaction name="actionsave"/>
-    <addaction name="actionexit"/>
+    <addaction name="open_action"/>
+    <addaction name="add_action"/>
+    <addaction name="save_action"/>
+    <addaction name="exit_action"/>
    </widget>
    <widget class="QMenu" name="muView">
     <property name="title">
      <string>视图</string>
     </property>
-    <addaction name="actionfile"/>
-    <addaction name="actionpaint"/>
-    <addaction name="actiontool"/>
-    <addaction name="actionrun"/>
-    <addaction name="actioncrossline"/>
+    <addaction name="file_action"/>
+    <addaction name="paint_action"/>
+    <addaction name="crossline_action"/>
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
@@ -458,18 +459,17 @@
      <property name="title">
       <string>theme</string>
      </property>
-     <addaction name="actiondark"/>
-     <addaction name="actionlight"/>
-     <addaction name="actiondefault"/>
+     <addaction name="dark_action"/>
+     <addaction name="light_action"/>
     </widget>
-    <addaction name="actionfilesetting"/>
-    <addaction name="actionimageseting"/>
-    <addaction name="actionsegmentsetting"/>
-    <addaction name="actioninfo"/>
+    <addaction name="setting_actionfile"/>
+    <addaction name="imageseting_action"/>
+    <addaction name="segmentsetting_action"/>
+    <addaction name="info_action"/>
     <addaction name="separator"/>
     <addaction name="menutheme"/>
     <addaction name="separator"/>
-    <addaction name="actionDeepLearning"/>
+    <addaction name="sam_action"/>
    </widget>
    <addaction name="muFile"/>
    <addaction name="menu"/>
@@ -494,8 +494,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="data_atn"/>
    <addaction name="setting_atn"/>
-   <addaction name="dl_atn"/>
+   <addaction name="sam_atn"/>
   </widget>
   <widget class="QToolBar" name="toolBar_file">
    <property name="minimumSize">
@@ -520,7 +521,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="load_atn"/>
-   <addaction name="loadseg_atn"/>
+   <addaction name="add_atn"/>
    <addaction name="save_atn"/>
   </widget>
   <widget class="QToolBar" name="toolBar_draw">
@@ -541,7 +542,6 @@
    <addaction name="win_atn"/>
    <addaction name="paint_atn"/>
    <addaction name="eraser_atn"/>
-   <addaction name="sam_atn"/>
   </widget>
   <widget class="QToolBar" name="toolBar_run">
    <property name="windowTitle">
@@ -556,7 +556,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="run_atn"/>
    <addaction name="redo_atn"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
@@ -593,7 +592,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="FileDocker" name="FileSetting" native="true"/>
+      <widget class="QWidget" name="FileSetting" native="true"/>
      </item>
     </layout>
    </widget>
@@ -623,7 +622,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="ImageDocker" name="ImageSetting" native="true"/>
+      <widget class="QWidget" name="ImageSetting" native="true"/>
      </item>
     </layout>
    </widget>
@@ -653,7 +652,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="SegmentDocker" name="SegmentSetting" native="true"/>
+      <widget class="QWidget" name="SegmentSetting" native="true"/>
      </item>
     </layout>
    </widget>
@@ -663,7 +662,7 @@
     <bool>false</bool>
    </property>
    <property name="windowTitle">
-    <string>信息设置</string>
+    <string>信息显示</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -686,7 +685,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="InfoDocker" name="InfoSetting" native="true">
+      <widget class="QWidget" name="InfoSetting" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_9">
         <property name="spacing">
          <number>0</number>
@@ -720,7 +719,7 @@
     </size>
    </property>
    <property name="windowTitle">
-    <string>DeepLearning</string>
+    <string>Segment Anything Model</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -743,7 +742,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QWidget" name="DLSetting" native="true"/>
+      <widget class="QWidget" name="SAMSetting" native="true"/>
      </item>
     </layout>
    </widget>
@@ -756,7 +755,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::DocumentProperties">
+    <iconset>
      <normaloff>:/iocns/icons/setting_dark.png</normaloff>:/iocns/icons/setting_dark.png</iconset>
    </property>
    <property name="text">
@@ -765,7 +764,7 @@
   </action>
   <action name="load_atn">
    <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::FolderOpen">
+    <iconset>
      <normaloff>:/iocns/icons/openfile_dark.png</normaloff>:/iocns/icons/openfile_dark.png</iconset>
    </property>
    <property name="text">
@@ -783,7 +782,7 @@
   </action>
   <action name="save_atn">
    <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::DocumentSave">
+    <iconset>
      <normaloff>:/iocns/icons/save_dark.png</normaloff>:/iocns/icons/save_dark.png</iconset>
    </property>
    <property name="text">
@@ -800,10 +799,6 @@
    <property name="checked">
     <bool>false</bool>
    </property>
-   <property name="icon">
-    <iconset resource="../designer.qrc">
-     <normaloff>:/iocns/icons/move.png</normaloff>:/iocns/icons/move.png</iconset>
-   </property>
    <property name="text">
     <string>移动</string>
    </property>
@@ -811,10 +806,6 @@
   <action name="win_atn">
    <property name="checkable">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../designer.qrc">
-     <normaloff>:/iocns/icons/contrast.png</normaloff>:/iocns/icons/contrast.png</iconset>
    </property>
    <property name="text">
     <string>调窗</string>
@@ -824,10 +815,6 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="../designer.qrc">
-     <normaloff>:/iocns/icons/paint.png</normaloff>:/iocns/icons/paint.png</iconset>
-   </property>
    <property name="text">
     <string>标注</string>
    </property>
@@ -836,34 +823,21 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="../designer.qrc">
-     <normaloff>:/iocns/icons/eraser.png</normaloff>:/iocns/icons/eraser.png</iconset>
-   </property>
    <property name="text">
     <string>擦除</string>
    </property>
   </action>
-  <action name="run_atn">
-   <property name="icon">
-    <iconset resource="../designer.qrc">
-     <normaloff>:/iocns/icons/run.png</normaloff>:/iocns/icons/run.png</iconset>
-   </property>
-   <property name="text">
-    <string>运行</string>
-   </property>
-  </action>
-  <action name="actionexit">
+  <action name="exit_action">
    <property name="text">
     <string>退出</string>
    </property>
   </action>
-  <action name="actionsave">
+  <action name="save_action">
    <property name="text">
     <string>保存为</string>
    </property>
   </action>
-  <action name="actionopen">
+  <action name="open_action">
    <property name="text">
     <string>打开文件夹</string>
    </property>
@@ -872,15 +846,11 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="../designer.qrc">
-     <normaloff>:/iocns/icons/meta.png</normaloff>:/iocns/icons/meta.png</iconset>
-   </property>
    <property name="text">
     <string>SAM</string>
    </property>
   </action>
-  <action name="actionfile">
+  <action name="file_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -891,7 +861,7 @@
     <string>文件</string>
    </property>
   </action>
-  <action name="actionpaint">
+  <action name="paint_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -902,28 +872,6 @@
     <string>图像</string>
    </property>
   </action>
-  <action name="actiontool">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>侧栏</string>
-   </property>
-  </action>
-  <action name="actionrun">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>运行</string>
-   </property>
-  </action>
   <action name="aim_atn">
    <property name="checkable">
     <bool>true</bool>
@@ -931,15 +879,11 @@
    <property name="checked">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="../designer.qrc">
-     <normaloff>:/iocns/icons/aim.png</normaloff>:/iocns/icons/aim.png</iconset>
-   </property>
    <property name="text">
     <string>准心</string>
    </property>
   </action>
-  <action name="actioncrossline">
+  <action name="crossline_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -951,23 +895,16 @@
    </property>
   </action>
   <action name="redo_atn">
-   <property name="icon">
-    <iconset resource="../designer.qrc">
-     <normaloff>:/iocns/icons/redo.png</normaloff>:/iocns/icons/redo.png</iconset>
-   </property>
    <property name="text">
     <string>重做</string>
    </property>
   </action>
-  <action name="actionsegload">
+  <action name="add_action">
    <property name="text">
     <string>导入标注</string>
    </property>
   </action>
-  <action name="loadseg_atn">
-   <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::FolderNew"/>
-   </property>
+  <action name="add_atn">
    <property name="text">
     <string>导入标注</string>
    </property>
@@ -978,7 +915,7 @@
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
-  <action name="actionimageseting">
+  <action name="imageseting_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -989,7 +926,7 @@
     <string>图像设置</string>
    </property>
   </action>
-  <action name="actionsegmentsetting">
+  <action name="segmentsetting_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1000,7 +937,7 @@
     <string>标注设置</string>
    </property>
   </action>
-  <action name="actioninfo">
+  <action name="info_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1011,15 +948,18 @@
     <string>信息设置</string>
    </property>
   </action>
-  <action name="actiondark">
+  <action name="dark_action">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>dark</string>
    </property>
   </action>
-  <action name="actionlight">
+  <action name="light_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1027,7 +967,7 @@
     <string>light</string>
    </property>
   </action>
-  <action name="actionfilesetting">
+  <action name="setting_actionfile">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1038,18 +978,7 @@
     <string>文件管理</string>
    </property>
   </action>
-  <action name="actiondefault">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>default</string>
-   </property>
-  </action>
-  <action name="actionDeepLearning">
+  <action name="sam_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1057,15 +986,18 @@
     <string>DeepLearning</string>
    </property>
   </action>
-  <action name="dl_atn">
+  <action name="data_atn">
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::Computer"/>
+   <property name="checked">
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>deeplearning</string>
+    <string>data</string>
+   </property>
+   <property name="toolTip">
+    <string>导入数据</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -1074,40 +1006,7 @@
   <zorder>dockWidget_4</zorder>
   <zorder>dockWidget_2</zorder>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>ImageViewer</class>
-   <extends>QGraphicsView</extends>
-   <header>widgets.ImageViewer</header>
-  </customwidget>
-  <customwidget>
-   <class>ImageDocker</class>
-   <extends>QWidget</extends>
-   <header>widgets.ImageDocker</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>FileDocker</class>
-   <extends>QWidget</extends>
-   <header>widgets.FileDocker</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SegmentDocker</class>
-   <extends>QWidget</extends>
-   <header>widgets.SegmentDocker</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>InfoDocker</class>
-   <extends>QWidget</extends>
-   <header>widgets.InfoDocker</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
- <resources>
-  <include location="../designer.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>sldLayer</sender>
