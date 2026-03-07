@@ -3,7 +3,7 @@ import yaml
 from pathlib import Path
 from PySide6.QtWidgets import QApplication, QWidget, QTableWidgetItem, QColorDialog, QAbstractItemView
 from PySide6.QtGui import QColor
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 
 if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -42,6 +42,8 @@ class SegmentDocker(QWidget, Ui_Form):
         self.tableWidget.cellDoubleClicked.connect(self.change_color)
         # 当选择行变化时，发送信号
         self.tableWidget.itemSelectionChanged.connect(self.on_label_selected)
+        # 当表格被点击时，处理点击事件
+        self.tableWidget.cellClicked.connect(self.on_cell_clicked)
 
     def init_labels(self):
         """初始化标签表格"""
@@ -51,16 +53,42 @@ class SegmentDocker(QWidget, Ui_Form):
         # 清空表格
         self.tableWidget.setRowCount(0)
         
+        # 确保表格有3列
+        if self.tableWidget.columnCount() < 3:
+            self.tableWidget.setColumnCount(3)
+        
+        # 设置列标题
+        self.tableWidget.setHorizontalHeaderLabels(['', 'Name', 'Color'])
+        
         # 按标签ID排序
         sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
+        
+        # 创建按钮组，实现互斥
+        from PySide6.QtWidgets import QButtonGroup
+        self.radio_group = QButtonGroup()
+        self.radio_group.setExclusive(True)
         
         # 填充表格
         for idx, (label_id, label_info) in enumerate(sorted_labels):
             self.tableWidget.insertRow(idx)
             
+            # 选择radio button列
+            from PySide6.QtWidgets import QRadioButton, QWidget, QVBoxLayout
+            radio_widget = QWidget()
+            radio_layout = QVBoxLayout(radio_widget)
+            radio_layout.setAlignment(Qt.AlignCenter)
+            radio_button = QRadioButton()
+            radio_button.clicked.connect(lambda checked, lid=int(label_id): self.on_select_button_clicked(lid))
+            radio_layout.addWidget(radio_button)
+            radio_widget.setLayout(radio_layout)
+            self.tableWidget.setCellWidget(idx, 0, radio_widget)
+            
+            # 将radio button添加到按钮组
+            self.radio_group.addButton(radio_button)
+            
             # 名称列
             name_item = QTableWidgetItem(label_info['name'])
-            self.tableWidget.setItem(idx, 0, name_item)
+            self.tableWidget.setItem(idx, 1, name_item)
             
             # 颜色列
             color_item = QTableWidgetItem()
@@ -68,15 +96,22 @@ class SegmentDocker(QWidget, Ui_Form):
             color_item.setBackground(color)
             # 不显示颜色文本
             color_item.setText('')
-            self.tableWidget.setItem(idx, 1, color_item)
+            self.tableWidget.setItem(idx, 2, color_item)
         
-        # 设置选择行为为整行选择
-        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
-        # 设置选择模式为单选
-        self.tableWidget.setSelectionMode(QAbstractItemView.SingleSelection)
+        # 默认选中第一个按钮
+        if self.radio_group.buttons():
+            self.radio_group.buttons()[0].setChecked(True)
+            # 发送第一个标签的选择信号
+            if sorted_labels:
+                first_label_id = int(sorted_labels[0][0])
+                self.on_select_button_clicked(first_label_id)
+        
+        # 禁用整行选择
+        self.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
         # 设置列宽，固定列宽
-        self.tableWidget.setColumnWidth(0, 100)  # Name列固定宽度250
-        self.tableWidget.setColumnWidth(1, 150)  # Label列固定宽度150
+        self.tableWidget.setColumnWidth(0, 60)   # Select列固定宽度60
+        self.tableWidget.setColumnWidth(1, 100)  # Name列固定宽度100
+        self.tableWidget.setColumnWidth(2, 100)  # Color列固定宽度100
 
     def add_label(self):
         """添加新标签"""
@@ -102,22 +137,47 @@ class SegmentDocker(QWidget, Ui_Form):
 
     def delete_label(self):
         """删除选中标签"""
-        selected_row = self.tableWidget.currentRow()
-        if selected_row >= 0:
-            # 从MainWindow的配置中获取标签
-            labels = self.main_window._config.label
-            
-            # 获取要删除的标签ID
+        # 从MainWindow的配置中获取标签
+        labels = self.main_window._config.label
+        
+        # 确保至少有一个标签
+        if len(labels) > 0:
             # 按标签ID排序
             sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
-            if selected_row < len(sorted_labels):
-                label_id = int(sorted_labels[selected_row][0])
-                # 删除标签
-                del labels[str(label_id)]
+            
+            # 获取当前选中的radio button
+            checked_button = self.radio_group.checkedButton()
+            if checked_button:
+                # 找到选中按钮对应的标签ID
+                for idx, (label_id, label_info) in enumerate(sorted_labels):
+                    # 获取当前行的radio button
+                    radio_widget = self.tableWidget.cellWidget(idx, 0)
+                    if radio_widget:
+                        # 获取widget中的radio button
+                        for child in radio_widget.children():
+                            if hasattr(child, 'isChecked') and child.isChecked():
+                                # 删除标签
+                                del labels[str(label_id)]
+                                
+                                # 更新MainWindow的seg数组，将所有使用该标签ID的体素设置为0
+                                if hasattr(self.main_window, 'seg') and self.main_window.seg.size > 0:
+                                    self.main_window.seg[self.main_window.seg == int(label_id)] = 0
+                                
+                                # 更新表格
+                                self.init_labels()
+                                # 刷新图像
+                                if hasattr(self.main_window, 'update_image'):
+                                    self.main_window.update_image()
+                                return
+            
+            # 如果没有选中的按钮，默认删除第一个标签
+            if sorted_labels:
+                label_id = sorted_labels[0][0]
+                del labels[label_id]
                 
                 # 更新MainWindow的seg数组，将所有使用该标签ID的体素设置为0
                 if hasattr(self.main_window, 'seg') and self.main_window.seg.size > 0:
-                    self.main_window.seg[self.main_window.seg == label_id] = 0
+                    self.main_window.seg[self.main_window.seg == int(label_id)] = 0
                 
                 # 更新表格
                 self.init_labels()
@@ -127,27 +187,28 @@ class SegmentDocker(QWidget, Ui_Form):
 
     def update_label(self, row, column):
         """更新标签信息"""
-        if column == 0:  # 只处理名称列的修改
+        if column == 1:  # 只处理名称列的修改（现在名称列的索引是1）
             # 从MainWindow的配置中获取标签
             labels = self.main_window._config.label
             
-            # 获取标签ID
-            label_ids = list(labels.keys())
-            if row < len(label_ids):
-                label_id = label_ids[row]
+            # 按标签ID排序
+            sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
+            if row < len(sorted_labels):
+                label_id = sorted_labels[row][0]
                 # 更新名称
-                labels[label_id]['name'] = self.tableWidget.item(row, 0).text()
+                labels[label_id]['name'] = self.tableWidget.item(row, 1).text()
 
     def change_color(self, row, column):
         """修改标签颜色"""
-        if column == 1:  # 只处理颜色列的双击
+        if column == 2:  # 只处理颜色列的双击（现在颜色列的索引是2）
             # 打开颜色选择对话框
             color_dialog = QColorDialog()
             # 从MainWindow的配置中获取当前颜色
             labels = self.main_window._config.label
-            label_ids = list(labels.keys())
-            if row < len(label_ids):
-                label_id = label_ids[row]
+            # 按标签ID排序
+            sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
+            if row < len(sorted_labels):
+                label_id = sorted_labels[row][0]
                 current_color = labels[label_id]['color']
                 color_dialog.setCurrentColor(QColor(current_color))
                 
@@ -155,13 +216,17 @@ class SegmentDocker(QWidget, Ui_Form):
                     new_color = color_dialog.currentColor().name()
                     
                     # 更新表格
-                    color_item = self.tableWidget.item(row, 1)
+                    color_item = self.tableWidget.item(row, 2)
                     color_item.setBackground(QColor(new_color))
                     # 不显示颜色文本
                     color_item.setText('')
                     
                     # 更新配置
                     labels[label_id]['color'] = new_color
+                    
+                    # 刷新图像
+                    if hasattr(self.main_window, 'update_image'):
+                        self.main_window.update_image()
     
     def on_label_selected(self):
         """当选择标签时，发送信号给MainWindow"""
@@ -176,6 +241,29 @@ class SegmentDocker(QWidget, Ui_Form):
                 label_id = int(sorted_labels[row][0])
                 # 发送信号
                 self.label_selected.emit(label_id)
+    
+    def on_select_button_clicked(self, label_id):
+        """当点击选择按钮时，发送信号给MainWindow"""
+        # 发送信号
+        self.label_selected.emit(label_id)
+    
+    def on_cell_clicked(self, row, column):
+        """当点击表格单元格时，选中对应行的radio button"""
+        # 获取当前行的radio button
+        radio_widget = self.tableWidget.cellWidget(row, 0)
+        if radio_widget:
+            # 获取widget中的radio button
+            for child in radio_widget.children():
+                if hasattr(child, 'setChecked'):
+                    # 选中radio button
+                    child.setChecked(True)
+                    # 获取标签ID
+                    labels = self.main_window._config.label
+                    sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
+                    if row < len(sorted_labels):
+                        label_id = int(sorted_labels[row][0])
+                        # 发送选择信号
+                        self.on_select_button_clicked(label_id)
 
 
 if __name__ == "__main__":
