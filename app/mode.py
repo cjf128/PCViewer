@@ -21,3 +21,8 @@ class VIEWMode(Enum):
     SAGITTAL = 1
     CORONAL = 2
     VIEW_3D = 3
+
+class SAMMode(Enum):
+    BOX = 0
+    ADD = 1
+    SUB = 2

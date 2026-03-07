@@ -78,9 +78,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 初始化标签配置
         if self._config.label is None or len(self._config.label) == 0:
             self._config.label = {
-                '1': {'name': 'Label 1', 'color': '#FF0000'},
+                '1': {'name': 'Label 1', 'color': '#0000FF'},
                 '2': {'name': 'Label 2', 'color': '#00FF00'},
-                '3': {'name': 'Label 3', 'color': '#0000FF'}
+                '3': {'name': 'Label 3', 'color': '#FF00FF'}
             }
 
         self.patient_id: str = ""
@@ -613,12 +613,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def _update_mode_from_buttons(self):
         """根据按钮状态更新模式"""
         if self.load_mode != LOADMode.UNLOAD:
-            if self.paint_atn.isChecked():
+            if self.aim_atn.isChecked():
+                self.viewer.mode = VIEWERMode.AIM
+            elif self.move_atn.isChecked():
+                self.viewer.mode = VIEWERMode.MOVE
+            elif self.win_atn.isChecked():
+                self.viewer.mode = VIEWERMode.WIN
+            elif self.paint_atn.isChecked():
                 self.viewer.mode = VIEWERMode.PAINT
+            elif self.sam_atn.isChecked():
+                self.viewer.mode = VIEWERMode.SAM
             elif self.eraser_atn.isChecked():
                 self.viewer.mode = VIEWERMode.ERASER
             else:
-                self.viewer.mode = VIEWERMode.MOVE
+                self.viewer.mode = VIEWERMode.NORMAL
             self.update_all()
 
     def update_all(self):
@@ -629,8 +637,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.stackedWidget.currentIndex() == 1:
                 self.view_3d_built()
 
-    def operation(self, input_box):
-        log_debug(f"SAM操作开始, 输入框: {input_box}")
+    def operation(self, input_data):
+        log_debug(f"SAM操作开始, 输入数据: {input_data}")
         # 显示运行状态对话框
         try:
             ct_slice = self.ct[:, :, self.layer]
@@ -648,6 +656,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.layer != self.num:
                 self.SamPredictor.set_image(current_slice)
                 self.num = self.layer
+
+            # 获取当前SAM模式
+            current_mode = 'BOX'  # 默认BOX模式
+            is_positive = True  # 默认是正点
+            if hasattr(self, 'sam_Setting') and hasattr(self.sam_Setting, 'current_mode'):
+                from app.mode import SAMMode
+                sam_mode = self.sam_Setting.current_mode
+                if sam_mode == SAMMode.BOX:
+                    current_mode = 'BOX'
+                elif sam_mode == SAMMode.ADD:
+                    current_mode = 'ADD'
+                    is_positive = True
+                elif sam_mode == SAMMode.SUB:
+                    current_mode = 'SUB'
+                    is_positive = False
 
             # 在 SAM 修改前先缓存当前层的切片，供撤销使用
             old_slice = self.seg[:, :, self.layer].copy()
@@ -669,7 +692,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self._set_mode(VIEWERMode.SAM)
 
             # 启动SAM线程
-            self.SamThread = SamThread(self.SamPredictor, input_box)
+            self.SamThread = SamThread(self.SamPredictor, input_data, current_mode, is_positive)
             self.SamThread.finished.connect(on_sam_finished)
             self.SamThread.start()
         except Exception as e:

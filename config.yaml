@@ -16,6 +16,6 @@ label:
     color: '#00ff5d'
     name: Label 2
 window:
-  height: 720
+  height: 874
   theme: dark
-  width: 1184
+  width: 1251

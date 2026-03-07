@@ -16,7 +16,7 @@ from PySide6.QtWidgets import (
     QGraphicsView,
 )
 
-from app.mode import VIEWERMode, VIEWMode
+from app.mode import VIEWERMode, VIEWMode, SAMMode
 
 class ImageViewer(QGraphicsView):
     Sam_Signal = Signal(np.ndarray)
@@ -129,24 +129,49 @@ class ImageViewer(QGraphicsView):
                     self.update()
 
                 if self.mode == VIEWERMode.SAM:
+                    # 获取当前SAM模式
+                    current_mode = SAMMode.BOX  # 默认BOX模式
+                    if hasattr(self.main_window, 'sam_Setting') and hasattr(self.main_window.sam_Setting, 'current_mode'):
+                        current_mode = self.main_window.sam_Setting.current_mode
+                    
                     self.setCursor(Qt.CrossCursor)
-                    self.start_point = self.pixmap_item.mapFromScene(
-                        self.scene_pos
-                    ).toPoint()
-                    self.end_point = self.start_point
-                    self.rect_item = QGraphicsRectItem(
-                        QRect(self.start_point, self.end_point)
-                    )
-                    scale = self.transform().m11()
-                    if scale < 1:
-                        pen_size = 2
-                    elif scale < 2:
-                        pen_size = 1
+                    
+                    if current_mode == SAMMode.BOX:
+                        # BOX模式：画框
+                        self.start_point = self.pixmap_item.mapFromScene(
+                            self.scene_pos
+                        ).toPoint()
+                        self.end_point = self.start_point
+                        self.rect_item = QGraphicsRectItem(
+                            QRect(self.start_point, self.end_point)
+                        )
+                        scale = self.transform().m11()
+                        if scale < 1:
+                            pen_size = 2
+                        elif scale < 2:
+                            pen_size = 1
+                        else:
+                            pen_size = 0.5
+                        self.rect_item.setPen(QPen(QColor("blue"), pen_size))
+                        self.rect_item.setTransform(self.pixmap_item.transform())
+                        self.scene.addItem(self.rect_item)
                     else:
-                        pen_size = 0.5
-                    self.rect_item.setPen(QPen(QColor("blue"), pen_size))
-                    self.rect_item.setTransform(self.pixmap_item.transform())
-                    self.scene.addItem(self.rect_item)
+                        # ADD或SUB模式：准备画点
+                        self.point_item = QGraphicsEllipseItem(
+                            QRect(
+                                self.point.x() - 5,  # 点的半径为5
+                                self.point.y() - 5,
+                                10,
+                                10
+                            )
+                        )
+                        # 根据模式设置点的颜色
+                        if current_mode == SAMMode.ADD:
+                            self.point_item.setBrush(QColor("green"))  # ADD模式用绿色点
+                        else:  # SUB模式
+                            self.point_item.setBrush(QColor("red"))  # SUB模式用红色点
+                        self.point_item.setTransform(self.pixmap_item.transform())
+                        self.scene.addItem(self.point_item)
 
                 if self.mode == VIEWERMode.PAINT:
                     self.draw_state = 1
@@ -192,19 +217,27 @@ class ImageViewer(QGraphicsView):
                 )
 
             if self.mode == VIEWERMode.SAM and event.buttons() & Qt.LeftButton:
-                self.end_point = self.pixmap_item.mapFromScene(self.scene_pos).toPoint()
-                if self.rect_item:
-                    self.rect_item.setRect(
-                        QRect(self.start_point, self.end_point).normalized()
-                    )
-                    self.input_box = np.array(
-                        [
-                            self.start_point.x(),
-                            self.start_point.y(),
-                            self.end_point.x(),
-                            self.end_point.y(),
-                        ]
-                    )
+                # 获取当前SAM模式
+                current_mode = SAMMode.BOX  # 默认BOX模式
+                if hasattr(self.main_window, 'sam_Setting') and hasattr(self.main_window.sam_Setting, 'current_mode'):
+                    current_mode = self.main_window.sam_Setting.current_mode
+                
+                if current_mode == SAMMode.BOX:
+                    # BOX模式：继续画框
+                    self.end_point = self.pixmap_item.mapFromScene(self.scene_pos).toPoint()
+                    if self.rect_item:
+                        self.rect_item.setRect(
+                            QRect(self.start_point, self.end_point).normalized()
+                        )
+                        self.input_box = np.array(
+                            [
+                                self.start_point.x(),
+                                self.start_point.y(),
+                                self.end_point.x(),
+                                self.end_point.y(),
+                            ]
+                        )
+                # ADD和SUB模式：不移动点，点在mousePressEvent时已经确定
 
             if self.mode == VIEWERMode.PAINT or self.mode == VIEWERMode.ERASER:
                 if self.ellipse_item:
@@ -230,12 +263,25 @@ class ImageViewer(QGraphicsView):
         super().mouseReleaseEvent(event)
         if self.pixmap_item is not None:
             if event.button() == Qt.LeftButton:
-                if self.mode == VIEWERMode.SAM and np.any(self.input_box):
+                if self.mode == VIEWERMode.SAM:
+                    # 获取当前SAM模式
+                    current_mode = SAMMode.BOX  # 默认BOX模式
+                    if hasattr(self.main_window, 'sam_Setting') and hasattr(self.main_window.sam_Setting, 'current_mode'):
+                        current_mode = self.main_window.sam_Setting.current_mode
+                    
                     self.setCursor(Qt.ArrowCursor)
-                    self.Sam_Signal.emit(self.input_box)
+                    
+                    if current_mode == SAMMode.BOX and np.any(self.input_box):
+                        # BOX模式：发送输入框
+                        self.Sam_Signal.emit(self.input_box)
+                    elif current_mode in [SAMMode.ADD, SAMMode.SUB]:
+                        # ADD或SUB模式：发送点坐标
+                        point_coords = (self.point.x(), self.point.y())
+                        self.Sam_Signal.emit(np.array(point_coords))
+                    
                     self.mode = VIEWERMode.NORMAL
-            else:
-                self.Mode_Signal.emit()
+
+            self.Mode_Signal.emit()
 
         event.ignore()
 

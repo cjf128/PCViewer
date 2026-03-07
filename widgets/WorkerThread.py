@@ -129,13 +129,15 @@ class NiftiWorker(QThread):
 class SamThread(QThread):
     finished = Signal(np.ndarray)
 
-    def __init__(self, predictor, input_box: np.ndarray):
+    def __init__(self, predictor, input_data, mode, is_positive=False):
         super().__init__()
         self.predictor = predictor
-        self.input_box = input_box
+        self.input_data = input_data
+        self.mode = mode
+        self.is_positive = is_positive
 
     def _normalize_box(self) -> Tuple[int, int, int, int]:
-        box = self.input_box.copy()
+        box = self.input_data.copy()
         if box[0] > box[2]:
             box[0], box[2] = box[2], box[0]
         if box[1] > box[3]:
@@ -143,16 +145,28 @@ class SamThread(QThread):
         return int(box[0]), int(box[1]), int(box[2]), int(box[3])
 
     def run(self):
-        log_debug(f"开始SAM预测, 输入框: {self.input_box}")
+        log_debug(f"开始SAM预测, 模式: {self.mode}, 输入数据: {self.input_data}")
         try:
-            x1, y1, x2, y2 = self._normalize_box()
-            masks = self.predictor.set_box(((x1, y1), (x2, y2)), label_id=0)
-            mask = masks[0].astype(np.uint8)
+            if self.mode == 'BOX':
+                # BOX模式
+                x1, y1, x2, y2 = self._normalize_box()
+                masks = self.predictor.set_box(((x1, y1), (x2, y2)), label_id=0)
+                mask = masks[0].astype(np.uint8)
+            elif self.mode in ['ADD', 'SUB']:
+                # ADD或SUB模式
+                point_coords = self.input_data
+                masks = self.predictor.add_point(point_coords, self.is_positive, label_id=0)
+                mask = masks[0].astype(np.uint8)
+            else:
+                log_error(f"未知的SAM模式: {self.mode}")
+                return
 
             log_debug(f"SAM预测完成, mask形状: {mask.shape}")
             self.finished.emit(mask)
         except Exception as e:
             log_error(f"SAM预测时发生错误: {e}")
+            import traceback
+            traceback.print_exc()
 
 
 class ModelLoader(QThread):
