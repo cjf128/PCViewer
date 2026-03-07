@@ -469,7 +469,7 @@
     <addaction name="separator"/>
     <addaction name="menutheme"/>
     <addaction name="separator"/>
-    <addaction name="sam_action"/>
+    <addaction name="dl_action"/>
    </widget>
    <addaction name="muFile"/>
    <addaction name="menu"/>
@@ -496,7 +496,6 @@
    </attribute>
    <addaction name="data_atn"/>
    <addaction name="setting_atn"/>
-   <addaction name="sam_atn"/>
   </widget>
   <widget class="QToolBar" name="toolBar_file">
    <property name="minimumSize">
@@ -556,6 +555,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="sam_atn"/>
    <addaction name="redo_atn"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
@@ -719,7 +719,7 @@
     </size>
    </property>
    <property name="windowTitle">
-    <string>Segment Anything Model</string>
+    <string>人工智能</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -978,12 +978,15 @@
     <string>文件管理</string>
    </property>
   </action>
-  <action name="sam_action">
+  <action name="dl_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>DeepLearning</string>
+    <string>人工智能</string>
    </property>
   </action>
   <action name="data_atn">

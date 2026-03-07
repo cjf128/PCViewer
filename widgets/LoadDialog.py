@@ -64,6 +64,28 @@ class LoadDialog(QDialog, Ui_LoadDialog):
             QMessageBox.warning(self, "提示", "请选择PET和CT文件", QMessageBox.Ok)
             return
 
+        # 记录文件路径到配置中
+        if self.main_window:
+            # 获取当前数据数量，确定新数据的序号
+            data_count = len(self.main_window._config.data)
+            new_data_id = data_count + 1
+            
+            # 存储文件路径和导入方式
+            self.main_window._config.data[str(new_data_id)] = {
+                'pet': pet_file,
+                'ct': ct_file,
+                'type': self.load_state
+            }
+            
+            # 保存配置
+            from app.configs import ConfigManager
+            config_manager = ConfigManager()
+            config_manager.save(self.main_window._config)
+            
+            # 立即更新FileDocker的文件列表
+            if hasattr(self.main_window, 'file_Setting'):
+                self.main_window.file_Setting.load_file_list()
+
         self.close()
         self.FilesSelected.emit(pet_file, ct_file, self.load_state)
 

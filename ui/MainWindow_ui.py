@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.10.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -117,9 +117,10 @@ class Ui_MainWindow(object):
         self.setting_actionfile.setObjectName(u"setting_actionfile")
         self.setting_actionfile.setCheckable(True)
         self.setting_actionfile.setChecked(True)
-        self.sam_action = QAction(MainWindow)
-        self.sam_action.setObjectName(u"sam_action")
-        self.sam_action.setCheckable(True)
+        self.dl_action = QAction(MainWindow)
+        self.dl_action.setObjectName(u"dl_action")
+        self.dl_action.setCheckable(True)
+        self.dl_action.setChecked(True)
         self.data_atn = QAction(MainWindow)
         self.data_atn.setObjectName(u"data_atn")
         self.data_atn.setCheckable(True)
@@ -451,12 +452,11 @@ class Ui_MainWindow(object):
         self.menu.addSeparator()
         self.menu.addAction(self.menutheme.menuAction())
         self.menu.addSeparator()
-        self.menu.addAction(self.sam_action)
+        self.menu.addAction(self.dl_action)
         self.menutheme.addAction(self.dark_action)
         self.menutheme.addAction(self.light_action)
         self.toolBar.addAction(self.data_atn)
         self.toolBar.addAction(self.setting_atn)
-        self.toolBar.addAction(self.sam_atn)
         self.toolBar_file.addAction(self.load_atn)
         self.toolBar_file.addAction(self.add_atn)
         self.toolBar_file.addAction(self.save_atn)
@@ -465,6 +465,7 @@ class Ui_MainWindow(object):
         self.toolBar_draw.addAction(self.win_atn)
         self.toolBar_draw.addAction(self.paint_atn)
         self.toolBar_draw.addAction(self.eraser_atn)
+        self.toolBar_run.addAction(self.sam_atn)
         self.toolBar_run.addAction(self.redo_atn)
 
         self.retranslateUi(MainWindow)
@@ -512,7 +513,7 @@ class Ui_MainWindow(object):
         self.dark_action.setText(QCoreApplication.translate("MainWindow", u"dark", None))
         self.light_action.setText(QCoreApplication.translate("MainWindow", u"light", None))
         self.setting_actionfile.setText(QCoreApplication.translate("MainWindow", u"\u6587\u4ef6\u7ba1\u7406", None))
-        self.sam_action.setText(QCoreApplication.translate("MainWindow", u"DeepLearning", None))
+        self.dl_action.setText(QCoreApplication.translate("MainWindow", u"\u4eba\u5de5\u667a\u80fd", None))
         self.data_atn.setText(QCoreApplication.translate("MainWindow", u"data", None))
 #if QT_CONFIG(tooltip)
         self.data_atn.setToolTip(QCoreApplication.translate("MainWindow", u"\u5bfc\u5165\u6570\u636e", None))
@@ -538,6 +539,6 @@ class Ui_MainWindow(object):
         self.dockWidget.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bbe\u7f6e", None))
         self.dockWidget_3.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u6807\u6ce8\u8bbe\u7f6e", None))
         self.dockWidget_4.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u4fe1\u606f\u663e\u793a", None))
-        self.dockWidget_5.setWindowTitle(QCoreApplication.translate("MainWindow", u"Segment Anything Model", None))
+        self.dockWidget_5.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u4eba\u5de5\u667a\u80fd", None))
     # retranslateUi
 

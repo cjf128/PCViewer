@@ -1,0 +1,15 @@
+data:
+  '1':
+    ct: D:/Python/Viewer/example/H000282_0001.nii.gz
+    name: '1'
+    pet: D:/Python/Viewer/example/H000282_0000.nii.gz
+    type: NIfTI
+  '2':
+    ct: D:/Python/Viewer/example/蔡林穿_H012848/1.2.840.113619.2.290.3.34212609.383.1677488593.927.3.dcm
+    name: 病人
+    pet: D:/Python/Viewer/example/蔡林穿_H012848/1.2.840.113619.2.290.34212609.1677547953.84745.dcm
+    type: DICOM/IMA
+window:
+  height: 811
+  theme: dark
+  width: 1308

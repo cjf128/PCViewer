@@ -33,6 +33,7 @@ class ImageViewer(QGraphicsView):
         self.mode = VIEWERMode.NORMAL
         self.view_mode = VIEWMode.CROSS
 
+        self.wheel = False
         self.show_crosshair = False
         self.cross_show = False
 
@@ -54,6 +55,7 @@ class ImageViewer(QGraphicsView):
     def config(self):
         self.setMouseTracking(True)
         self.scene = QGraphicsScene()
+        self.scene.setBackgroundBrush(QColor(Qt.black))
         self.setScene(self.scene)
 
         self.setTransformationAnchor(QGraphicsView.AnchorViewCenter)
@@ -248,12 +250,14 @@ class ImageViewer(QGraphicsView):
         event.ignore()
 
     def enterEvent(self, event):
+        self.wheel = True
         if self.mode == VIEWERMode.PAINT or self.mode == VIEWERMode.ERASER:
             self.setCursor(Qt.BlankCursor)
         super().enterEvent(event)
 
     def leaveEvent(self, event):
         self.unsetCursor()
+        self.wheel = False
         super().leaveEvent(event)
 
     def drawForeground(self, painter, rect):

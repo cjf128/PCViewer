@@ -34,7 +34,7 @@ from widgets.FileDocker import FileDocker
 from widgets.ImageDocker import ImageDocker
 from widgets.ImageViewer import ImageViewer
 from widgets.LoadDialog import LoadDialog
-from widgets.SamDocker import SamDocker
+from widgets.DLDocker import DLDocker
 from widgets.SegmentDocker import SegmentDocker
 from widgets.WorkerThread import (
     BuiltThread,
@@ -125,7 +125,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.model_loader.finished.connect(self.on_model_loaded)
         self.model_loader.start()
 
-        self.setWindowTitle("鼻咽癌PET/CT图像全身病灶检测软件")
+        self.setWindowTitle("PET/CT图像全身病灶检测软件")
 
         self.init_ui()
         self.config()
@@ -172,7 +172,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.image_viewer_layout.addWidget(self.viewer)
         self.image_viewer_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.sam_Setting = SamDocker(self, self)
+        self.sam_Setting = DLDocker(self, self)
         self.sam_Setting_layout = QVBoxLayout(self.SAMSetting)
         self.sam_Setting_layout.addWidget(self.sam_Setting)
         self.sam_Setting_layout.setContentsMargins(0, 0, 0, 0)
@@ -224,7 +224,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabifyDockWidget(self.dockWidget_3, self.dockWidget_4)
 
         self.dockWidget_2.raise_()
-        self.dockWidget_5.setVisible(False)
 
     def init_connectAction(self):
         """初始化信号与槽连接"""
@@ -450,6 +449,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._load_nifti_files(pet_file, ct_file)
         else:
             self._load_dicom_files(pet_file, ct_file, data_folder)
+    
+    def reload_data(self, data_id):
+        """重新导入指定ID的数据"""
+        if data_id in self._config.data:
+            data_info = self._config.data[data_id]
+            pet_file = data_info.get('pet')
+            ct_file = data_info.get('ct')
+            file_type = data_info.get('type')
+            
+            if pet_file and ct_file:
+                log_info(f"重新导入数据 - ID: {data_id}, PET: {pet_file}, CT: {ct_file}, 类型: {file_type}")
+                self.on_files_selected(pet_file, ct_file, file_type)
+            else:
+                log_error(f"数据ID {data_id} 的文件路径不完整")
+        else:
+            log_error(f"未找到数据ID {data_id}")
+    
+    def on_data_loaded(self, ct_data: np.ndarray, pet_data: np.ndarray, spacing: tuple):
+        """数据加载完成后的处理"""
+        self.load_mode = LOADMode.RELOAD
+
+        trans = self.transpose("trans")
+        self.ct = np.transpose(ct_data, axes=trans)
+        self.pet = np.transpose(pet_data, axes=trans)
+        self.seg = np.zeros_like(self.pet)
+        self.viewer.spacing = spacing
+
+        self.undo_stack.clear()
+
+        self.setting()
+        
+        # 更新FileDocker的文件列表
+        if hasattr(self, 'file_Setting'):
+            self.file_Setting.load_file_list()
 
     def _load_dicom_files(self, pet_file: str, ct_file: str, data_folder: Path):
         """处理DICOM/IMA文件"""
@@ -563,6 +596,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def operation(self, input_box):
         log_debug(f"SAM操作开始, 输入框: {input_box}")
+        # 显示运行状态对话框
         try:
             ct_slice = self.ct[:, :, self.layer]
             ct_slice = self.normalize(ct_slice, self.ct_ww, self.ct_wl)
@@ -599,6 +633,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.update_all()
                 self._set_mode(VIEWERMode.SAM)
 
+            # 启动SAM线程
             self.SamThread = SamThread(self.SamPredictor, input_box)
             self.SamThread.finished.connect(on_sam_finished)
             self.SamThread.start()
@@ -761,7 +796,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.radius -= 1
                     self.boxPaint.setValue(self.radius)
 
-        elif self.load_mode != LOADMode.UNLOAD:
+        elif self.load_mode != LOADMode.UNLOAD and self.viewer.wheel:
             old_layer = self.layer
             if angle.y() > 0 and self.layer < self.ct.shape[2] - 1:
                 self.layer += 1

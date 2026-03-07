@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-
-from PySide6.QtCore import QSettings
+import yaml
 
 from path import BASE_PATH
 
@@ -10,24 +9,44 @@ class AppConfig:
     width: int = 1500
     height: int = 1200
     theme: str = "dark"
+    data: dict = None
+    
+    def __post_init__(self):
+        if self.data is None:
+            self.data = {}
 
 
 class ConfigManager:
-    _CONFIG_FILE = "config.ini"
+    _CONFIG_FILE = "config.yaml"
 
     def __init__(self):
-        config_path = BASE_PATH / self._CONFIG_FILE
-        self._settings = QSettings(str(config_path), QSettings.IniFormat)
+        self._config_path = BASE_PATH / self._CONFIG_FILE
 
     def load(self) -> AppConfig:
-        return AppConfig(
-            width=int(self._settings.value("window/width", 1500)),
-            height=int(self._settings.value("window/height", 1200)),
-            theme=self._settings.value("window/theme", "dark"),
-        )
+        try:
+            with open(self._config_path, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
+                if data:
+                    window_data = data.get('window', {})
+                    app_data = data.get('data', {})
+                    return AppConfig(
+                        width=int(window_data.get('width', 1500)),
+                        height=int(window_data.get('height', 1200)),
+                        theme=window_data.get('theme', 'dark'),
+                        data=app_data
+                    )
+        except (FileNotFoundError, yaml.YAMLError):
+            pass
+        return AppConfig()
 
     def save(self, config: AppConfig):
-        self._settings.setValue("window/width", config.width)
-        self._settings.setValue("window/height", config.height)
-        self._settings.setValue("window/theme", config.theme)
-        self._settings.sync()
+        data = {
+            'window': {
+                'width': config.width,
+                'height': config.height,
+                'theme': config.theme
+            },
+            'data': config.data
+        }
+        with open(self._config_path, 'w', encoding='utf-8') as f:
+            yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
