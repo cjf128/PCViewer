@@ -17,11 +17,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QDockWidget, QFrame,
-    QHBoxLayout, QHeaderView, QMainWindow, QMenu,
-    QMenuBar, QPushButton, QScrollBar, QSizePolicy,
-    QSpacerItem, QSpinBox, QSplitter, QStackedWidget,
-    QStatusBar, QTableView, QToolBar, QVBoxLayout,
-    QWidget)
+    QHBoxLayout, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QScrollBar, QSizePolicy, QSpacerItem,
+    QSpinBox, QSplitter, QStackedWidget, QStatusBar,
+    QToolBar, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -406,11 +405,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
-        self.tableView = QTableView(self.InfoSetting)
-        self.tableView.setObjectName(u"tableView")
-
-        self.verticalLayout_9.addWidget(self.tableView)
-
 
         self.verticalLayout_7.addWidget(self.InfoSetting)
 

@@ -96,6 +96,33 @@ class FileDocker(QWidget, Ui_Form):
         # 显示菜单
         menu.exec(self.treeView.mapToGlobal(position))
     
+    def rename_data(self, index):
+        """重命名数据"""
+        # 获取选中的item
+        item = self.model.itemFromIndex(index)
+        # 从item的data中获取数据ID
+        data_id = item.data(Qt.UserRole)
+        
+        if data_id and self.main_window and hasattr(self.main_window, '_config'):
+            # 弹出输入对话框，让用户输入新的名称
+            new_name, ok = QInputDialog.getText(
+                self, "重命名", f"请输入新的名称:",
+                text=item.text()
+            )
+            
+            if ok and new_name:
+                # 更新配置中的数据名称
+                if data_id in self.main_window._config.data:
+                    self.main_window._config.data[data_id]['name'] = new_name
+                    
+                    # 保存配置
+                    from app.configs import ConfigManager
+                    config_manager = ConfigManager()
+                    config_manager.save(self.main_window._config)
+                    
+                    # 更新文件列表
+                    self.load_file_list()
+    
     def delete_data(self, index):
         """删除数据"""
         # 获取选中的item

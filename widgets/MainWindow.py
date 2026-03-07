@@ -36,6 +36,7 @@ from widgets.ImageViewer import ImageViewer
 from widgets.LoadDialog import LoadDialog
 from widgets.DLDocker import DLDocker
 from widgets.SegmentDocker import SegmentDocker
+from widgets.InfoDocker import InfoDocker
 from widgets.WorkerThread import (
     BuiltThread,
     DicomWorker,
@@ -124,6 +125,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.seg_path: Path = SEGMENTATION_PATH
         self.data_path: Path = ""
         self.seg_file: Path = ""
+        self.file_type: str = ""
 
         self.SamPredictor = None
         self.undo_stack = QUndoStack(self)
@@ -186,6 +188,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sam_Setting_layout = QVBoxLayout(self.SAMSetting)
         self.sam_Setting_layout.addWidget(self.sam_Setting)
         self.sam_Setting_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.info_setting = InfoDocker(self, self)
+        info_layout = self.InfoSetting.layout()
+        if info_layout:
+            info_layout.addWidget(self.info_setting)
 
         self.view_3d = QVTKRenderWindowInteractor()
         self.view_layout = QVBoxLayout()
@@ -450,6 +457,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             patient_id = patient_id[4:]
 
         self.patient_id = patient_id
+        self.file_type = file_type
 
         data_folder = Path(self.cache_path) / self.patient_id
         data_folder.mkdir(parents=True, exist_ok=True)
@@ -476,7 +484,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             log_error(f"未找到数据ID {data_id}")
     
-    def on_data_loaded(self, ct_data: np.ndarray, pet_data: np.ndarray, spacing: tuple):
+    def on_data_loaded(self, ct_data: np.ndarray, pet_data: np.ndarray, spacing: tuple, patient_info=None):
         """数据加载完成后的处理"""
         self.load_mode = LOADMode.RELOAD
 
@@ -489,6 +497,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.undo_stack.clear()
 
         self.setting()
+        
+        # 更新信息显示
+        self.update_info_docker(patient_info)
         
         # 更新FileDocker的文件列表
         if hasattr(self, 'file_Setting'):
@@ -508,7 +519,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker_thread.finished.connect(self.on_data_loaded)
         self.worker_thread.start()
 
-    def on_data_loaded(self, ct_data: np.ndarray, pet_data: np.ndarray, spacing: tuple):
+    def on_data_loaded(self, ct_data: np.ndarray, pet_data: np.ndarray, spacing: tuple, patient_info=None):
         """数据加载完成后的处理"""
         self.load_mode = LOADMode.RELOAD
 
@@ -521,6 +532,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.undo_stack.clear()
 
         self.setting()
+        
+        # 更新信息显示
+        self.update_info_docker(patient_info)
 
     def setting(self):
         """导入数据后初始化层数"""
@@ -697,6 +711,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_color_label(self, label_id):
         """更新颜色标签"""
         self.color_label = label_id
+    
+    def update_info_docker(self, patient_info=None):
+        """更新信息显示"""
+        if self.load_mode != LOADMode.UNLOAD:
+            # 收集信息
+            info = {}
+            
+            # 维度信息
+            if hasattr(self, 'ct') and self.ct.size > 0:
+                info['维度'] = f"{self.ct.shape[0]}*{self.ct.shape[1]}*{self.ct.shape[2]}"
+            
+            # Spacing信息
+            if hasattr(self.viewer, 'spacing') and self.viewer.spacing:
+                info['Spacing'] = f"{self.viewer.spacing[0]:.3f}, {self.viewer.spacing[1]:.3f}, {self.viewer.spacing[2]:.3f}"
+            
+            # 坐标系方向
+            info['坐标系方向'] = 'LAS'  # 假设默认是LAS
+            
+            # CT和PET的最小值和最大值
+            if hasattr(self, 'ct') and self.ct.size > 0:
+                info['CT最小值'] = f"{np.min(self.ct):.2f}"
+                info['CT最大值'] = f"{np.max(self.ct):.2f}"
+            if hasattr(self, 'pet') and self.pet.size > 0:
+                info['PET最小值'] = f"{np.min(self.pet):.2f}"
+                info['PET最大值'] = f"{np.max(self.pet):.2f}"
+            
+            # 患者信息
+            if patient_info:
+                # 按照固定顺序添加患者信息
+                patient_keys = ['患者名', '性别', '出生日期', '体重']
+                # 仅在DICOM模式下显示患者ID
+                if self.file_type != "NIfTI":
+                    patient_keys.insert(1, '患者ID')
+                for key in patient_keys:
+                    if key in patient_info:
+                        info[key] = patient_info[key]
+                # 添加其他可能的患者信息
+                for key, value in patient_info.items():
+                    if key not in patient_keys:
+                        info[key] = value
+            elif hasattr(self, 'patient_id') and self.patient_id and self.file_type != "NIfTI":
+                info['患者ID'] = self.patient_id
+            
+            # 更新InfoDocker
+            if hasattr(self, 'info_setting'):
+                self.info_setting.update_info(info)
 
     def closeEvent(self, event):
         reply = QMessageBox.question(

@@ -4,6 +4,7 @@ from typing import Tuple
 
 import numpy as np
 import vtk
+import SimpleITK as sitk
 from PySide6.QtCore import QThread, Signal
 from vtkmodules.util import numpy_support
 
@@ -14,7 +15,7 @@ from scripts.sort_dicom import sort_dicom_series
 
 
 class DicomWorker(QThread):
-    finished = Signal(np.ndarray, np.ndarray, tuple)
+    finished = Signal(np.ndarray, np.ndarray, tuple, dict)
 
     def __init__(self, pet_file: str, ct_file: str, cache_folder: Path):
         super().__init__()
@@ -48,19 +49,42 @@ class DicomWorker(QThread):
             ct_data, spacing = sitk_to_numpy(ct_img)
             pet_data, _ = sitk_to_numpy(pet_img)
 
+            # 提取患者信息
+            patient_info = {}
+            # 从DICOM文件中提取患者信息
+            try:
+                # 获取CT文件夹中的第一个DICOM文件
+                ct_files = list(ct_folder.glob('*.dcm'))
+                if ct_files:
+                    ct_file = str(ct_files[0])
+                    img = sitk.ReadImage(ct_file)
+                    # 提取DICOM标签
+                    if '0010|0010' in img.GetMetaDataKeys():
+                        patient_info['患者名'] = img.GetMetaData('0010|0010')
+                    if '0010|0020' in img.GetMetaDataKeys():
+                        patient_info['患者ID'] = img.GetMetaData('0010|0020')
+                    if '0010|0030' in img.GetMetaDataKeys():
+                        patient_info['出生日期'] = img.GetMetaData('0010|0030')
+                    if '0010|0040' in img.GetMetaDataKeys():
+                        patient_info['性别'] = img.GetMetaData('0010|0040')
+                    if '0010|1030' in img.GetMetaDataKeys():
+                        patient_info['体重'] = img.GetMetaData('0010|1030')
+            except Exception as e:
+                log_error(f"提取DICOM患者信息时发生错误: {e}")
+
             shutil.rmtree(str(ct_folder))
             shutil.rmtree(str(pet_folder))
 
             log_info(
                 f"DICOM数据处理完成, CT形状: {ct_data.shape}, PET形状: {pet_data.shape}"
             )
-            self.finished.emit(ct_data, pet_data, spacing)
+            self.finished.emit(ct_data, pet_data, spacing, patient_info)
         except Exception as e:
             log_error(f"处理DICOM数据时发生错误: {e}")
 
 
 class NiftiWorker(QThread):
-    finished = Signal(np.ndarray, np.ndarray, tuple)
+    finished = Signal(np.ndarray, np.ndarray, tuple, dict)
 
     def __init__(self, pet_path: str, ct_path: str):
         super().__init__()
@@ -74,10 +98,30 @@ class NiftiWorker(QThread):
             ct_data, spacing = sitk_to_numpy(ct_img)
             pet_data, _ = sitk_to_numpy(pet_img)
 
+            # 提取患者信息
+            patient_info = {}
+            # 从NIfTI文件中提取患者信息
+            try:
+                # 读取CT文件获取元数据
+                ct_img = sitk.ReadImage(self.ct_path)
+                # 提取NIfTI头信息
+                if ct_img.HasMetaDataKey('PatientName'):
+                    patient_info['患者名'] = ct_img.GetMetaData('PatientName')
+                if ct_img.HasMetaDataKey('PatientID'):
+                    patient_info['患者ID'] = ct_img.GetMetaData('PatientID')
+                if ct_img.HasMetaDataKey('PatientBirthDate'):
+                    patient_info['出生日期'] = ct_img.GetMetaData('PatientBirthDate')
+                if ct_img.HasMetaDataKey('PatientSex'):
+                    patient_info['性别'] = ct_img.GetMetaData('PatientSex')
+                if ct_img.HasMetaDataKey('PatientWeight'):
+                    patient_info['体重'] = ct_img.GetMetaData('PatientWeight')
+            except Exception as e:
+                log_error(f"提取NIfTI患者信息时发生错误: {e}")
+
             log_info(
                 f"NIfTI数据处理完成, CT形状: {ct_data.shape}, PET形状: {pet_data.shape}"
             )
-            self.finished.emit(ct_data, pet_data, spacing)
+            self.finished.emit(ct_data, pet_data, spacing, patient_info)
         except Exception as e:
             log_error(f"处理NIfTI数据时发生错误: {e}")
 
