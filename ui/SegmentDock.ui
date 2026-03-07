@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>218</width>
-        <height>301</height>
+        <width>216</width>
+        <height>299</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -280,5 +280,38 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>sldPaint</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>boxPaint</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>82</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>boxPaint</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sldPaint</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>87</x>
+     <y>195</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

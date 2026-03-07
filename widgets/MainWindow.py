@@ -74,6 +74,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self._config = config
 
+        # 初始化标签配置
+        if self._config.label is None or len(self._config.label) == 0:
+            self._config.label = {
+                '1': {'name': 'Label 1', 'color': '#FF0000'},
+                '2': {'name': 'Label 2', 'color': '#00FF00'},
+                '3': {'name': 'Label 3', 'color': '#0000FF'}
+            }
+
         self.patient_id: str = ""
 
         # 图像透明度参数
@@ -166,6 +174,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.segment_setting_layout = QVBoxLayout(self.SegmentSetting)
         self.segment_setting_layout.addWidget(self.segment_setting)
         self.segment_setting_layout.setContentsMargins(0, 0, 0, 0)
+        # 连接SegmentDocker的label_selected信号
+        self.segment_setting.label_selected.connect(self.update_color_label)
 
         self.viewer = ImageViewer(self, self)
         self.image_viewer_layout = QVBoxLayout(self.image_frame)
@@ -267,7 +277,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btnReset.clicked.connect(self.reset_slot)
 
         self.viewer.Sam_Signal.connect(self.operation)
-        self.viewer.Mode_Signal.connect(lambda: self._set_mode(VIEWERMode.MOVE))
+        self.viewer.Mode_Signal.connect(self._update_mode_from_buttons)
 
     def transpose(self, mode):
         if mode == "trans":
@@ -586,6 +596,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.viewer.mode = mode
             self.update_all()
 
+    def _update_mode_from_buttons(self):
+        """根据按钮状态更新模式"""
+        if self.load_mode != LOADMode.UNLOAD:
+            if self.paint_atn.isChecked():
+                self.viewer.mode = VIEWERMode.PAINT
+            elif self.eraser_atn.isChecked():
+                self.viewer.mode = VIEWERMode.ERASER
+            else:
+                self.viewer.mode = VIEWERMode.MOVE
+            self.update_all()
+
     def update_all(self):
         """更新-以防按键冲突后仍有残留项"""
         if self.load_mode != LOADMode.UNLOAD:
@@ -672,6 +693,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._seg_before_edit = None
         if self.load_mode != LOADMode.UNLOAD:
             self.update_image()
+    
+    def update_color_label(self, label_id):
+        """更新颜色标签"""
+        self.color_label = label_id
 
     def closeEvent(self, event):
         reply = QMessageBox.question(
@@ -684,6 +709,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if reply == QMessageBox.Yes:
             self._config.width = self.width()
             self._config.height = self.height()
+
+            # 保存配置
+            from app.configs import ConfigManager
+            config_manager = ConfigManager()
+            config_manager.save(self._config)
 
             log_info("应用程序关闭，清理缓存")
             clear_path = [Path(self.cache_path), Path(self.seg_path)]
@@ -791,10 +821,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.paint_atn.isChecked() or self.eraser_atn.isChecked():
                 if angle.y() > 0 and self.radius < 30:
                     self.radius += 1
-                    self.boxPaint.setValue(self.radius)
+                    self.segment_setting.boxPaint.setValue(self.radius)
                 elif angle.y() < 0 and self.radius > 1:
                     self.radius -= 1
-                    self.boxPaint.setValue(self.radius)
+                    self.segment_setting.boxPaint.setValue(self.radius)
 
         elif self.load_mode != LOADMode.UNLOAD and self.viewer.wheel:
             old_layer = self.layer
@@ -825,9 +855,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         new_pet = cv2.applyColorMap(pet, cv2.COLORMAP_HOT)
         seg = np.array(self.seg[:, :, self.layer], dtype=np.uint8)
 
+        # 获取标签颜色配置
+        label_colors = []
+        for label_id, label_info in self._config.label.items():
+            # 解析颜色值
+            color = label_info['color']
+            # 将十六进制颜色转换为RGB
+            r = int(color[1:3], 16)
+            g = int(color[3:5], 16)
+            b = int(color[5:7], 16)
+            label_colors.append((int(label_id), (b, g, r)))
+        
+        # 按标签序号排序
+        label_colors.sort(key=lambda x: x[0])
+        
         overlay = np.zeros_like(new_ct)
-        overlay[seg == 1] = [255, 0, 0]
-        overlay[seg == 2] = [0, 255, 0]
+        # 为每个标签设置颜色
+        for label_id, color in label_colors:
+            overlay[seg == label_id] = color
 
         ct_alpha = self.ct_alpha if self.boxCT.isChecked() else 0
         pet_alpha = self.pet_alpha if self.boxPET.isChecked() else 0

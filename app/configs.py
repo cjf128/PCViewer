@@ -10,10 +10,13 @@ class AppConfig:
     height: int = 1200
     theme: str = "dark"
     data: dict = None
+    label: dict = None
     
     def __post_init__(self):
         if self.data is None:
             self.data = {}
+        if self.label is None:
+            self.label = {}
 
 
 class ConfigManager:
@@ -29,11 +32,13 @@ class ConfigManager:
                 if data:
                     window_data = data.get('window', {})
                     app_data = data.get('data', {})
+                    app_label = data.get('label', {})
                     return AppConfig(
                         width=int(window_data.get('width', 1500)),
                         height=int(window_data.get('height', 1200)),
                         theme=window_data.get('theme', 'dark'),
-                        data=app_data
+                        data=app_data,
+                        label=app_label
                     )
         except (FileNotFoundError, yaml.YAMLError):
             pass
@@ -46,7 +51,8 @@ class ConfigManager:
                 'height': config.height,
                 'theme': config.theme
             },
-            'data': config.data
+            'data': config.data,
+            'label': config.label
         }
         with open(self._config_path, 'w', encoding='utf-8') as f:
             yaml.dump(data, f, default_flow_style=False, allow_unicode=True)

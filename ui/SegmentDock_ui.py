@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'SegmentDock.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.10.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -35,7 +35,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 218, 301))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 216, 299))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setSpacing(2)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
@@ -159,6 +159,8 @@ class Ui_Form(object):
 
 
         self.retranslateUi(Form)
+        self.sldPaint.valueChanged.connect(self.boxPaint.setValue)
+        self.boxPaint.valueChanged.connect(self.sldPaint.setValue)
 
         QMetaObject.connectSlotsByName(Form)
     # setupUi

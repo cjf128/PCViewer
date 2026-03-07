@@ -47,6 +47,7 @@ class ImageViewer(QGraphicsView):
         self.end_point = QPoint()
         self.last_mouse_position = QPoint()
 
+        self.draw_state = 0
         self.radius = 0
         self.ellipse_pos = [0, 0]
         self.position = [0, 0, 0]
