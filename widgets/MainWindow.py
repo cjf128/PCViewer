@@ -236,11 +236,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         layout.addWidget(progress_bar)
         self.dialog.setLayout(layout)
 
-        self.tabifyDockWidget(self.dockWidget_2, self.dockWidget)
         self.tabifyDockWidget(self.dockWidget, self.dockWidget_3)
         self.tabifyDockWidget(self.dockWidget_3, self.dockWidget_4)
 
         self.dockWidget_2.raise_()
+        self.dockWidget.raise_()
 
     def init_connectAction(self):
         """初始化信号与槽连接"""
