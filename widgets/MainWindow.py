@@ -626,8 +626,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.viewer.mode = VIEWERMode.SAM
             elif self.eraser_atn.isChecked():
                 self.viewer.mode = VIEWERMode.ERASER
-            else:
-                self.viewer.mode = VIEWERMode.NORMAL
             self.update_all()
 
     def update_all(self):
@@ -640,8 +638,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def operation(self, input_data):
         log_debug(f"SAM操作开始, 输入数据: {input_data}")
-        # 显示运行状态对话框
-        try:
+        try:       
             ct_slice = self.ct[:, :, self.layer]
             ct_slice = self.normalize(ct_slice, self.ct_ww, self.ct_wl)
             ct_slice = np.stack([ct_slice] * 3, axis=-1)
@@ -679,7 +676,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # 使用闭包正确捕获old_slice和layer值
             def on_sam_finished(mask):
-                # SAM返回mask后，更新seg
                 self.seg[:, :, current_layer] = np.where(
                     mask > 0, self.color_label, self.seg[:, :, current_layer]
                 )
@@ -690,7 +686,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         current_layer, old_slice, new_slice, "SAM分割"
                     )
                 self.update_all()
-                self._set_mode(VIEWERMode.SAM)
+                self._update_mode_from_buttons()
 
             # 启动SAM线程
             self.SamThread = SamThread(self.SamPredictor, input_data, current_mode, is_positive)

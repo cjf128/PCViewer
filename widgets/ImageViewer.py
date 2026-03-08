@@ -280,8 +280,8 @@ class ImageViewer(QGraphicsView):
                         self.Sam_Signal.emit(np.array(point_coords))
                     
                     self.mode = VIEWERMode.NORMAL
-
-            self.Mode_Signal.emit()
+            else:
+                self.Mode_Signal.emit()
 
         event.ignore()
 

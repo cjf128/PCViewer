@@ -3,7 +3,6 @@ from typing import Dict, Tuple
 import pydicom
 import SimpleITK as sitk
 
-
 def _parse_dicom_time(time_str: str) -> float:
     time_str = str(time_str)
     if "." in time_str:

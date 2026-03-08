@@ -4,7 +4,7 @@ import numpy as np
 import SimpleITK as sitk
 
 from scripts.basic import read_dicom_series, resize_image
-from scripts.PET2SUV import pet_to_suv
+from scripts.pet2suv import pet_to_suv
 
 
 def process_dicom_data(
