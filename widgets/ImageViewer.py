@@ -126,7 +126,7 @@ class ImageViewer(QGraphicsView):
                 if self.mode == VIEWERMode.AIM:
                     self.position[0] = pos.x()
                     self.position[1] = pos.y()
-                    self.update()
+                    self.viewport().update()
 
                 if self.mode == VIEWERMode.SAM:
                     # 获取当前SAM模式
@@ -204,7 +204,7 @@ class ImageViewer(QGraphicsView):
             if self.mode == VIEWERMode.AIM and (event.buttons() & Qt.LeftButton):
                 self.position[0] = pos.x()
                 self.position[1] = pos.y()
-                self.update()
+                self.viewport().update()
 
             if self.mode == VIEWERMode.MOVE and (
                 event.buttons() & Qt.LeftButton or event.buttons() & Qt.MiddleButton
@@ -215,6 +215,9 @@ class ImageViewer(QGraphicsView):
                 self.verticalScrollBar().setValue(
                     self.verticalScrollBar().value() - self.delta.y()
                 )
+                self.position[0] = pos.x()
+                self.position[1] = pos.y()
+                self.viewport().update()
 
             if self.mode == VIEWERMode.SAM and event.buttons() & Qt.LeftButton:
                 # 获取当前SAM模式
