@@ -197,6 +197,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.view_3d = QVTKRenderWindowInteractor()
         self.view_layout = QVBoxLayout()
         self.view_layout.addWidget(self.view_3d)
+        self.view_layout.setContentsMargins(0, 0, 0, 0)
         self.view_frame.setLayout(self.view_layout)
 
         self._vtk_actor_cache = None
@@ -853,8 +854,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.win_atn.isChecked() and self.viewer.underMouse():
                 delta = self.viewer.delta
 
-                self.ct_ww = np.clip(self.ct_ww, 1, 2000)
-                self.ct_wl = np.clip(self.ct_wl, -1000, 1000)
+                self.ct_ww = np.clip(self.ct_ww, 1, 4000)
+                self.ct_wl = np.clip(self.ct_wl, -2000, 2000)
 
                 self.ct_ww += int(delta.x())
                 self.ct_wl += int(delta.y())
