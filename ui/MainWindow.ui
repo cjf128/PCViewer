@@ -462,18 +462,25 @@
      <addaction name="dark_action"/>
      <addaction name="light_action"/>
     </widget>
-    <addaction name="setting_actionfile"/>
+    <addaction name="filesetting_action"/>
     <addaction name="imageseting_action"/>
     <addaction name="segmentsetting_action"/>
     <addaction name="info_action"/>
     <addaction name="separator"/>
     <addaction name="menutheme"/>
     <addaction name="separator"/>
-    <addaction name="dl_action"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <addaction name="about_action"/>
+    <addaction name="github_action"/>
    </widget>
    <addaction name="muFile"/>
    <addaction name="menu"/>
    <addaction name="muView"/>
+   <addaction name="menu_2"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="minimumSize">
@@ -559,6 +566,12 @@
    <addaction name="redo_atn"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget_2">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>230</width>
@@ -579,7 +592,7 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -835,7 +848,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>文件</string>
+    <string>文件工具栏</string>
    </property>
   </action>
   <action name="paint_action">
@@ -846,7 +859,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>图像</string>
+    <string>图像工具栏</string>
    </property>
   </action>
   <action name="aim_atn">
@@ -944,7 +957,7 @@
     <string>light</string>
    </property>
   </action>
-  <action name="setting_actionfile">
+  <action name="filesetting_action">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -953,17 +966,6 @@
    </property>
    <property name="text">
     <string>文件管理</string>
-   </property>
-  </action>
-  <action name="dl_action">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>人工智能</string>
    </property>
   </action>
   <action name="data_atn">
@@ -981,6 +983,16 @@
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="about_action">
+   <property name="text">
+    <string>about</string>
+   </property>
+  </action>
+  <action name="github_action">
+   <property name="text">
+    <string>github</string>
    </property>
   </action>
   <zorder>dockWidget_4</zorder>

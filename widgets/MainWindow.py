@@ -146,6 +146,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with open(str(STYLESHEET_PATH / f"{theme}.qss"), "r", encoding="utf-8") as f:
             self.setStyleSheet(f.read())
 
+        self.theme_button_group = QActionGroup(self)
+        self.theme_button_group.setExclusive(True)
+        self.theme_button_group.addAction(self.dark_action)
+        self.theme_button_group.addAction(self.light_action)
+        
+        # 根据配置设置初始状态
+        if theme == "dark":
+            self.dark_action.setChecked(True)
+        else:
+            self.light_action.setChecked(True)
+
         self.load_atn.setIcon(QIcon(str(ICONS_PATH / theme / "load.png")))
         self.add_atn.setIcon(QIcon(str(ICONS_PATH / theme / "add.png")))
         self.save_atn.setIcon(QIcon(str(ICONS_PATH / theme / "save.png")))
@@ -261,6 +272,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.file_action.triggered.connect(self.toggle_toolBar_file)
         self.paint_action.triggered.connect(self.toggle_toolBar_draw)
+        
+        # 绑定 dockWidget 显示/隐藏到 action
+        self.filesetting_action.triggered.connect(lambda: self.dockWidget_2.setVisible(self.filesetting_action.isChecked()))
+        self.imageseting_action.triggered.connect(lambda: self.dockWidget.setVisible(self.imageseting_action.isChecked()))
+        self.segmentsetting_action.triggered.connect(lambda: self.dockWidget_3.setVisible(self.segmentsetting_action.isChecked()))
+        self.info_action.triggered.connect(lambda: self.dockWidget_4.setVisible(self.info_action.isChecked()))
 
         self.boxLayer.valueChanged.connect(
             lambda v: self.update_property_and_refresh("layer", v)
@@ -280,6 +297,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.viewer.Sam_Signal.connect(self.operation)
         self.viewer.Mode_Signal.connect(self._update_mode_from_buttons)
+        
+        # 主题切换信号槽
+        self.dark_action.triggered.connect(lambda: self.change_theme("dark"))
+        self.light_action.triggered.connect(lambda: self.change_theme("light"))
 
     def transpose(self, mode):
         if mode == "trans":
@@ -365,6 +386,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """复位处理"""
         if self.load_mode != LOADMode.UNLOAD:
             self.viewer.fitInView(self.viewer.pixmap_item, Qt.KeepAspectRatio)
+    
+    def change_theme(self, theme):
+        """切换主题"""
+        # 更新配置
+        self._config.theme = theme
+        
+        # 保存配置
+        from app.configs import ConfigManager
+        config_manager = ConfigManager()
+        config_manager.save(self._config)
+        
+        # 更新样式
+        with open(str(STYLESHEET_PATH / f"{theme}.qss"), "r", encoding="utf-8") as f:
+            self.setStyleSheet(f.read())
+        
+        # 重新加载图标
+        self.load_atn.setIcon(QIcon(str(ICONS_PATH / theme / "load.png")))
+        self.add_atn.setIcon(QIcon(str(ICONS_PATH / theme / "add.png")))
+        self.save_atn.setIcon(QIcon(str(ICONS_PATH / theme / "save.png")))
+        self.aim_atn.setIcon(QIcon(str(ICONS_PATH / theme / "cursor.png")))
+        self.move_atn.setIcon(QIcon(str(ICONS_PATH / theme / "move.png")))
+        self.win_atn.setIcon(QIcon(str(ICONS_PATH / theme / "contrast.png")))
+        self.paint_atn.setIcon(QIcon(str(ICONS_PATH / theme / "paint.png")))
+        self.eraser_atn.setIcon(QIcon(str(ICONS_PATH / theme / "eraser.png")))
+        self.redo_atn.setIcon(QIcon(str(ICONS_PATH / theme / "redo.png")))
+
+        self.sam_atn.setIcon(QIcon(str(ICONS_PATH / theme / "meta.png")))
+        self.data_atn.setIcon(QIcon(str(ICONS_PATH / theme / "database.png")))
+        self.setting_atn.setIcon(QIcon(str(ICONS_PATH / theme / "setting.png")))
+
+        self.segment_setting.pushButton_3.setIcon(QIcon(str(ICONS_PATH / theme / "frame.png")))
+        self.segment_setting.pushButton_4.setIcon(QIcon(str(ICONS_PATH / theme / "point.png")))
+        
+        # 刷新界面
+        self.update_all()
 
     def redo_slot(self):
         """重做-清空标注"""
