@@ -4,8 +4,14 @@ from pathlib import Path
 if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from PySide6.QtWidgets import QApplication, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QApplication,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
 
 
 class InfoDocker(QWidget):
@@ -20,37 +26,38 @@ class InfoDocker(QWidget):
         # 创建布局
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        
+
         # 创建表格
         self.tableWidget = QTableWidget()
         self.tableWidget.setColumnCount(2)
-        self.tableWidget.setHorizontalHeaderLabels(['属性', '值'])
+        self.tableWidget.setHorizontalHeaderLabels(["属性", "值"])
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        
+
         layout.addWidget(self.tableWidget)
 
     def update_info(self, info):
         """更新信息"""
         # 清空表格
         self.tableWidget.setRowCount(0)
-        
+
         # 添加信息
         for key, value in info.items():
             row = self.tableWidget.rowCount()
             self.tableWidget.insertRow(row)
-            
+
             # 属性列
             key_item = QTableWidgetItem(key)
             key_item.setFlags(Qt.ItemIsEnabled)
             self.tableWidget.setItem(row, 0, key_item)
-            
+
             # 值列
             value_item = QTableWidgetItem(str(value))
             value_item.setFlags(Qt.ItemIsEnabled)
             self.tableWidget.setItem(row, 1, value_item)
-        
+
         # 调整列宽
         self.tableWidget.resizeColumnsToContents()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

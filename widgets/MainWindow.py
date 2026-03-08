@@ -1,8 +1,9 @@
+import os
 import shutil
 import sys
 import warnings
 from pathlib import Path
-import os
+
 if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -33,9 +34,9 @@ from ui.MainWindow_ui import Ui_MainWindow
 from widgets.FileDocker import FileDocker
 from widgets.ImageDocker import ImageDocker
 from widgets.ImageViewer import ImageViewer
+from widgets.InfoDocker import InfoDocker
 from widgets.LoadDialog import LoadDialog
 from widgets.SegmentDocker import SegmentDocker
-from widgets.InfoDocker import InfoDocker
 from widgets.WorkerThread import (
     BuiltThread,
     DicomWorker,
@@ -77,10 +78,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 初始化标签配置
         if self._config.label is None or len(self._config.label) == 0:
             self._config.label = {
-                '1': {'name': 'Label 1', 'color': '#0000FF'},
-                '2': {'name': 'Label 2', 'color': '#00FF00'},
-                '3': {'name': 'Label 3', 'color': '#FF00FF'}
+                "1": {"name": "Label 1", "color": "#0000FF"},
+                "2": {"name": "Label 2", "color": "#00FF00"},
+                "3": {"name": "Label 3", "color": "#FF00FF"},
             }
+        else:
+            # 重新排序标签序号，确保连续
+            sorted_labels = sorted(self._config.label.items(), key=lambda x: int(x[0]))
+            new_labels = {}
+            for i, (old_id, label_info) in enumerate(sorted_labels, 1):
+                new_labels[str(i)] = label_info
+            # 替换为新的标签配置
+            self._config.label = new_labels
 
         self.patient_id: str = ""
 
@@ -150,7 +159,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.theme_button_group.setExclusive(True)
         self.theme_button_group.addAction(self.dark_action)
         self.theme_button_group.addAction(self.light_action)
-        
+
         # 根据配置设置初始状态
         if theme == "dark":
             self.dark_action.setChecked(True)
@@ -171,8 +180,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data_atn.setIcon(QIcon(str(ICONS_PATH / theme / "database.png")))
         self.setting_atn.setIcon(QIcon(str(ICONS_PATH / theme / "setting.png")))
 
-        self.segment_setting.pushButton_3.setIcon(QIcon(str(ICONS_PATH / theme / "frame.png")))
-        self.segment_setting.pushButton_4.setIcon(QIcon(str(ICONS_PATH / theme / "point.png")))
+        self.segment_setting.pushButton_3.setIcon(
+            QIcon(str(ICONS_PATH / theme / "frame.png"))
+        )
+        self.segment_setting.pushButton_4.setIcon(
+            QIcon(str(ICONS_PATH / theme / "point.png"))
+        )
 
     def init_ui(self):
         self.file_Setting = FileDocker(self, self)
@@ -272,12 +285,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.file_action.triggered.connect(self.toggle_toolBar_file)
         self.paint_action.triggered.connect(self.toggle_toolBar_draw)
-        
+
         # 绑定 dockWidget 显示/隐藏到 action
-        self.filesetting_action.triggered.connect(lambda: self.dockWidget_2.setVisible(self.filesetting_action.isChecked()))
-        self.imageseting_action.triggered.connect(lambda: self.dockWidget.setVisible(self.imageseting_action.isChecked()))
-        self.segmentsetting_action.triggered.connect(lambda: self.dockWidget_3.setVisible(self.segmentsetting_action.isChecked()))
-        self.info_action.triggered.connect(lambda: self.dockWidget_4.setVisible(self.info_action.isChecked()))
+        self.filesetting_action.triggered.connect(
+            lambda: self.dockWidget_2.setVisible(self.filesetting_action.isChecked())
+        )
+        self.imageseting_action.triggered.connect(
+            lambda: self.dockWidget.setVisible(self.imageseting_action.isChecked())
+        )
+        self.segmentsetting_action.triggered.connect(
+            lambda: self.dockWidget_3.setVisible(self.segmentsetting_action.isChecked())
+        )
+        self.info_action.triggered.connect(
+            lambda: self.dockWidget_4.setVisible(self.info_action.isChecked())
+        )
 
         self.boxLayer.valueChanged.connect(
             lambda v: self.update_property_and_refresh("layer", v)
@@ -297,7 +318,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.viewer.Sam_Signal.connect(self.operation)
         self.viewer.Mode_Signal.connect(self._update_mode_from_buttons)
-        
+
         # 主题切换信号槽
         self.dark_action.triggered.connect(lambda: self.change_theme("dark"))
         self.light_action.triggered.connect(lambda: self.change_theme("light"))
@@ -386,21 +407,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """复位处理"""
         if self.load_mode != LOADMode.UNLOAD:
             self.viewer.fitInView(self.viewer.pixmap_item, Qt.KeepAspectRatio)
-    
+
     def change_theme(self, theme):
         """切换主题"""
         # 更新配置
         self._config.theme = theme
-        
+
         # 保存配置
         from app.configs import ConfigManager
+
         config_manager = ConfigManager()
         config_manager.save(self._config)
-        
+
         # 更新样式
         with open(str(STYLESHEET_PATH / f"{theme}.qss"), "r", encoding="utf-8") as f:
             self.setStyleSheet(f.read())
-        
+
         # 重新加载图标
         self.load_atn.setIcon(QIcon(str(ICONS_PATH / theme / "load.png")))
         self.add_atn.setIcon(QIcon(str(ICONS_PATH / theme / "add.png")))
@@ -416,9 +438,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data_atn.setIcon(QIcon(str(ICONS_PATH / theme / "database.png")))
         self.setting_atn.setIcon(QIcon(str(ICONS_PATH / theme / "setting.png")))
 
-        self.segment_setting.pushButton_3.setIcon(QIcon(str(ICONS_PATH / theme / "frame.png")))
-        self.segment_setting.pushButton_4.setIcon(QIcon(str(ICONS_PATH / theme / "point.png")))
-        
+        self.segment_setting.pushButton_3.setIcon(
+            QIcon(str(ICONS_PATH / theme / "frame.png"))
+        )
+        self.segment_setting.pushButton_4.setIcon(
+            QIcon(str(ICONS_PATH / theme / "point.png"))
+        )
+
         # 刷新界面
         self.update_all()
 
@@ -459,14 +485,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 seg_data = np.transpose(seg_data, axes=trans)
                 if seg_data.shape == self.pet.shape:
                     self.seg = seg_data
-                    
+
                     # 检查 seg 最大值是否大于当前 label 数目
                     max_label = int(np.max(seg_data))
                     current_label_count = len(self._config.label)
-                    
+
+                    log_info(f"当前 label 数量: {current_label_count}")
+                    log_info(f"seg 最大值: {max_label}")
+
+                    # 重新排序标签序号，确保连续
+                    sorted_labels = sorted(
+                        self._config.label.items(), key=lambda x: int(x[0])
+                    )
+                    new_labels = {}
+                    for i, (old_id, label_info) in enumerate(sorted_labels, 1):
+                        new_labels[str(i)] = label_info
+                        # 更新seg数组中的标签ID
+                        if seg_data.size > 0:
+                            seg_data[seg_data == int(old_id)] = i
+                    # 替换为新的标签配置
+                    self._config.label = new_labels
+                    current_label_count = len(self._config.label)
+
                     if max_label > current_label_count:
+                        log_info(f"需要添加 {max_label - current_label_count} 个 label")
                         # 自动添加缺失的 label
                         import random
+
                         for i in range(current_label_count + 1, max_label + 1):
                             # 生成随机颜色
                             r = random.randint(0, 255)
@@ -474,17 +519,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             b = random.randint(0, 255)
                             color = f"#{r:02x}{g:02x}{b:02x}"
                             # 添加到配置中
-                            self._config.label[str(i)] = {'name': f'Label {i}', 'color': color}
-                        
+                            self._config.label[str(i)] = {
+                                "name": f"Label {i}",
+                                "color": color,
+                            }
+                            log_info(f"添加 label {i}: {color}")
+
                         # 保存配置
                         config_manager = ConfigManager()
                         config_manager.save(self._config)
-                        log_info(f"自动添加了 {max_label - current_label_count} 个 label")
-                        
+                        log_info(
+                            f"自动添加了 {max_label - current_label_count} 个 label"
+                        )
+
                         # 更新 SegmentDocker 的表格
-                        if hasattr(self, 'segment_setting'):
+                        if hasattr(self, "segment_setting"):
+                            log_info("更新 SegmentDocker 表格")
                             self.segment_setting.init_labels()
-                    
+                        else:
+                            log_error("segment_setting 不存在")
+
                     self.update_image()
                     log_info(f"分割文件加载成功: {seg_file}")
                 else:
@@ -544,43 +598,55 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._load_nifti_files(pet_file, ct_file)
         else:
             self._load_dicom_files(pet_file, ct_file, data_folder)
-    
+
     def reload_data(self, data_id):
         """重新导入指定ID的数据"""
         if data_id in self._config.data:
             data_info = self._config.data[data_id]
-            pet_file = data_info.get('pet')
-            ct_file = data_info.get('ct')
-            file_type = data_info.get('type')
-            
+            pet_file = data_info.get("pet")
+            ct_file = data_info.get("ct")
+            file_type = data_info.get("type")
+
             path_exists = True
             if pet_file and not os.path.exists(pet_file):
                 path_exists = False
             if ct_file and not os.path.exists(ct_file):
                 path_exists = False
-            
+
             if pet_file and ct_file:
                 if path_exists:
-                    log_info(f"重新导入数据 - ID: {data_id}, PET: {pet_file}, CT: {ct_file}, 类型: {file_type}")
+                    log_info(
+                        f"重新导入数据 - ID: {data_id}, PET: {pet_file}, CT: {ct_file}, 类型: {file_type}"
+                    )
                     self.on_files_selected(pet_file, ct_file, file_type)
                 else:
                     reply = QMessageBox.warning(
-                        self, "路径不存在", "路径不存在，请重新导入",
-                        QMessageBox.Ok, QMessageBox.Ok
+                        self,
+                        "路径不存在",
+                        "路径不存在，请重新导入",
+                        QMessageBox.Ok,
+                        QMessageBox.Ok,
                     )
                     if reply == QMessageBox.Ok:
                         del self._config.data[data_id]
                         from app.configs import ConfigManager
+
                         config_manager = ConfigManager()
                         config_manager.save(self._config)
-                        if hasattr(self, 'file_Setting'):
+                        if hasattr(self, "file_Setting"):
                             self.file_Setting.load_file_list()
             else:
                 log_error(f"数据ID {data_id} 的文件路径不完整")
         else:
             log_error(f"未找到数据ID {data_id}")
-    
-    def on_data_loaded(self, ct_data: np.ndarray, pet_data: np.ndarray, spacing: tuple, patient_info=None):
+
+    def on_data_loaded(
+        self,
+        ct_data: np.ndarray,
+        pet_data: np.ndarray,
+        spacing: tuple,
+        patient_info=None,
+    ):
         """数据加载完成后的处理"""
         self.load_mode = LOADMode.RELOAD
 
@@ -593,12 +659,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.undo_stack.clear()
 
         self.setting()
-        
+
         # 更新信息显示
         self.update_info_docker(patient_info)
-        
+
         # 更新FileDocker的文件列表
-        if hasattr(self, 'file_Setting'):
+        if hasattr(self, "file_Setting"):
             self.file_Setting.load_file_list()
 
     def _load_dicom_files(self, pet_file: str, ct_file: str, data_folder: Path):
@@ -614,23 +680,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker_thread.finished.connect(self.dialog.close)
         self.worker_thread.finished.connect(self.on_data_loaded)
         self.worker_thread.start()
-
-    def on_data_loaded(self, ct_data: np.ndarray, pet_data: np.ndarray, spacing: tuple, patient_info=None):
-        """数据加载完成后的处理"""
-        self.load_mode = LOADMode.RELOAD
-
-        trans = self.transpose("trans")
-        self.ct = np.transpose(ct_data, axes=trans)
-        self.pet = np.transpose(pet_data, axes=trans)
-        self.seg = np.zeros_like(self.pet)
-        self.viewer.spacing = spacing
-
-        self.undo_stack.clear()
-
-        self.setting()
-        
-        # 更新信息显示
-        self.update_info_docker(patient_info)
 
     def setting(self):
         """导入数据后初始化层数"""
@@ -678,7 +727,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # 设置默认保存名字
             default_name = self.patient_id if self.patient_id else "segmentation"
             default_file = str(Path(current_path) / f"{default_name}.nii.gz")
-            
+
             file_, ok = QFileDialog.getSaveFileName(
                 self, "文件保存", default_file, "NFiTI(*.nii.gz)"
             )
@@ -739,7 +788,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def operation(self, input_data):
         log_debug(f"SAM操作开始, 输入数据: {input_data}")
-        try:       
+        try:
             ct_slice = self.ct[:, :, self.layer]
             ct_slice = self.normalize(ct_slice, self.ct_ww, self.ct_wl)
             ct_slice = np.stack([ct_slice] * 3, axis=-1)
@@ -757,15 +806,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.num = self.layer
 
             # 获取当前SAM模式
-            current_mode = 'BOX'  # 默认BOX模式
+            current_mode = "BOX"  # 默认BOX模式
             is_positive = True  # 默认是正点
-            if hasattr(self, 'segment_setting') and hasattr(self.segment_setting, 'current_mode'):
+            if hasattr(self, "segment_setting") and hasattr(
+                self.segment_setting, "current_mode"
+            ):
                 from app.mode import SAMMode
+
                 sam_mode = self.segment_setting.current_mode
                 if sam_mode == SAMMode.BOX:
-                    current_mode = 'BOX'
+                    current_mode = "BOX"
                 elif sam_mode == SAMMode.ADD:
-                    current_mode = 'ADD'
+                    current_mode = "ADD"
                     is_positive = True
 
             # 在 SAM 修改前先缓存当前层的切片，供撤销使用
@@ -787,7 +839,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self._update_mode_from_buttons()
 
             # 启动SAM线程
-            self.SamThread = SamThread(self.SamPredictor, input_data, current_mode, is_positive)
+            self.SamThread = SamThread(
+                self.SamPredictor, input_data, current_mode, is_positive
+            )
             self.SamThread.finished.connect(on_sam_finished)
             self.SamThread.start()
         except Exception as e:
@@ -825,43 +879,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._seg_before_edit = None
         if self.load_mode != LOADMode.UNLOAD:
             self.update_image()
-    
+
     def update_color_label(self, label_id):
         """更新颜色标签"""
         self.color_label = label_id
-    
+
     def update_info_docker(self, patient_info=None):
         """更新信息显示"""
         if self.load_mode != LOADMode.UNLOAD:
             # 收集信息
             info = {}
-            
+
             # 维度信息
-            if hasattr(self, 'ct') and self.ct.size > 0:
-                info['维度'] = f"{self.ct.shape[0]}*{self.ct.shape[1]}*{self.ct.shape[2]}"
-            
+            if hasattr(self, "ct") and self.ct.size > 0:
+                info["维度"] = (
+                    f"{self.ct.shape[0]}*{self.ct.shape[1]}*{self.ct.shape[2]}"
+                )
+
             # Spacing信息
-            if hasattr(self.viewer, 'spacing') and self.viewer.spacing:
-                info['Spacing'] = f"{self.viewer.spacing[0]:.3f}, {self.viewer.spacing[1]:.3f}, {self.viewer.spacing[2]:.3f}"
-            
+            if hasattr(self.viewer, "spacing") and self.viewer.spacing:
+                info["Spacing"] = (
+                    f"{self.viewer.spacing[0]:.3f}, {self.viewer.spacing[1]:.3f}, {self.viewer.spacing[2]:.3f}"
+                )
+
             # 坐标系方向
-            info['坐标系方向'] = 'LAS'  # 假设默认是LAS
-            
+            info["坐标系方向"] = "LAS"  # 假设默认是LAS
+
             # CT和PET的最小值和最大值
-            if hasattr(self, 'ct') and self.ct.size > 0:
-                info['CT最小值'] = f"{np.min(self.ct):.2f}"
-                info['CT最大值'] = f"{np.max(self.ct):.2f}"
-            if hasattr(self, 'pet') and self.pet.size > 0:
-                info['PET最小值'] = f"{np.min(self.pet):.2f}"
-                info['PET最大值'] = f"{np.max(self.pet):.2f}"
-            
+            if hasattr(self, "ct") and self.ct.size > 0:
+                info["CT最小值"] = f"{np.min(self.ct):.2f}"
+                info["CT最大值"] = f"{np.max(self.ct):.2f}"
+            if hasattr(self, "pet") and self.pet.size > 0:
+                info["PET最小值"] = f"{np.min(self.pet):.2f}"
+                info["PET最大值"] = f"{np.max(self.pet):.2f}"
+
             # 患者信息
             if patient_info:
                 # 按照固定顺序添加患者信息
-                patient_keys = ['患者名', '性别', '出生日期', '体重']
+                patient_keys = ["患者名", "性别", "出生日期", "体重"]
                 # 仅在DICOM模式下显示患者ID
                 if self.file_type != "NIfTI":
-                    patient_keys.insert(1, '患者ID')
+                    patient_keys.insert(1, "患者ID")
                 for key in patient_keys:
                     if key in patient_info:
                         info[key] = patient_info[key]
@@ -869,11 +927,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for key, value in patient_info.items():
                     if key not in patient_keys:
                         info[key] = value
-            elif hasattr(self, 'patient_id') and self.patient_id and self.file_type != "NIfTI":
-                info['患者ID'] = self.patient_id
-            
+            elif (
+                hasattr(self, "patient_id")
+                and self.patient_id
+                and self.file_type != "NIfTI"
+            ):
+                info["患者ID"] = self.patient_id
+
             # 更新InfoDocker
-            if hasattr(self, 'info_setting'):
+            if hasattr(self, "info_setting"):
                 self.info_setting.update_info(info)
 
     def closeEvent(self, event):
@@ -890,6 +952,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # 保存配置
             from app.configs import ConfigManager
+
             config_manager = ConfigManager()
             config_manager.save(self._config)
 
@@ -1037,16 +1100,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         label_colors = []
         for label_id, label_info in self._config.label.items():
             # 解析颜色值
-            color = label_info['color']
+            color = label_info["color"]
             # 将十六进制颜色转换为RGB
             r = int(color[1:3], 16)
             g = int(color[3:5], 16)
             b = int(color[5:7], 16)
             label_colors.append((int(label_id), (b, g, r)))
-        
+
         # 按标签序号排序
         label_colors.sort(key=lambda x: x[0])
-        
+
         overlay = np.zeros_like(new_ct)
         # 为每个标签设置颜色
         for label_id, color in label_colors:
@@ -1107,7 +1170,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self._seg_cache_hash = current_hash
                 self.view_3d.GetRenderWindow().Render()
 
-            self.Built_Thread = BuiltThread(data, self.viewer.spacing)
+            self.Built_Thread = BuiltThread(
+                data, self.viewer.spacing, self._config.label
+            )
             self.Built_Thread.actor_ready.connect(add_vtk_actor)
             self.Built_Thread.start()
         else:

@@ -54,7 +54,7 @@ class ImageDocker(QWidget, Ui_Form):
         self.boxPET_wl.valueChanged.connect(
             lambda v: self.main_window.update_property_and_refresh("pet_wl", v)
         )
-    
+
     def set_alpha(self, state):
         if state == "CT":
             self.ct_alpha = self.boxAlphaCt.value()

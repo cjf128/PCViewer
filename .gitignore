@@ -5,6 +5,7 @@ __pycache__/
 example/
 checkpoints/Net/
 data/
+config.yaml
 
 # 日志文件
 logs/

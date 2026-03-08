@@ -16,7 +16,8 @@ from PySide6.QtWidgets import (
     QGraphicsView,
 )
 
-from app.mode import VIEWERMode, VIEWMode, SAMMode
+from app.mode import SAMMode, VIEWERMode, VIEWMode
+
 
 class ImageViewer(QGraphicsView):
     Sam_Signal = Signal(np.ndarray)
@@ -131,11 +132,13 @@ class ImageViewer(QGraphicsView):
                 if self.mode == VIEWERMode.SAM:
                     # 获取当前SAM模式
                     current_mode = SAMMode.BOX  # 默认BOX模式
-                    if hasattr(self.main_window, 'segment_setting') and hasattr(self.main_window.segment_setting, 'current_mode'):
+                    if hasattr(self.main_window, "segment_setting") and hasattr(
+                        self.main_window.segment_setting, "current_mode"
+                    ):
                         current_mode = self.main_window.segment_setting.current_mode
-                    
+
                     self.setCursor(Qt.CrossCursor)
-                    
+
                     if current_mode == SAMMode.BOX:
                         # BOX模式：画框
                         self.start_point = self.pixmap_item.mapFromScene(
@@ -162,7 +165,7 @@ class ImageViewer(QGraphicsView):
                                 self.point.x() - 5,  # 点的半径为5
                                 self.point.y() - 5,
                                 10,
-                                10
+                                10,
                             )
                         )
                         # ADD模式用绿色点
@@ -220,12 +223,16 @@ class ImageViewer(QGraphicsView):
             if self.mode == VIEWERMode.SAM and event.buttons() & Qt.LeftButton:
                 # 获取当前SAM模式
                 current_mode = SAMMode.BOX  # 默认BOX模式
-                if hasattr(self.main_window, 'sam_Setting') and hasattr(self.main_window.sam_Setting, 'current_mode'):
+                if hasattr(self.main_window, "sam_Setting") and hasattr(
+                    self.main_window.sam_Setting, "current_mode"
+                ):
                     current_mode = self.main_window.sam_Setting.current_mode
-                
+
                 if current_mode == SAMMode.BOX:
                     # BOX模式：继续画框
-                    self.end_point = self.pixmap_item.mapFromScene(self.scene_pos).toPoint()
+                    self.end_point = self.pixmap_item.mapFromScene(
+                        self.scene_pos
+                    ).toPoint()
                     if self.rect_item:
                         self.rect_item.setRect(
                             QRect(self.start_point, self.end_point).normalized()
@@ -267,11 +274,13 @@ class ImageViewer(QGraphicsView):
                 if self.mode == VIEWERMode.SAM:
                     # 获取当前SAM模式
                     current_mode = SAMMode.BOX  # 默认BOX模式
-                    if hasattr(self.main_window, 'segment_setting') and hasattr(self.main_window.segment_setting, 'current_mode'):
+                    if hasattr(self.main_window, "segment_setting") and hasattr(
+                        self.main_window.segment_setting, "current_mode"
+                    ):
                         current_mode = self.main_window.segment_setting.current_mode
-                    
+
                     self.setCursor(Qt.ArrowCursor)
-                    
+
                     if current_mode == SAMMode.BOX and np.any(self.input_box):
                         # BOX模式：发送输入框
                         self.Sam_Signal.emit(self.input_box)
@@ -279,11 +288,11 @@ class ImageViewer(QGraphicsView):
                         # ADD模式：发送点坐标
                         point_coords = (self.point.x(), self.point.y())
                         self.Sam_Signal.emit(np.array(point_coords))
-                    
+
                     self.mode = VIEWERMode.NORMAL
             else:
                 self.Mode_Signal.emit()
-            
+
             if event.button() == Qt.MiddleButton:
                 self.cross_show = True
 

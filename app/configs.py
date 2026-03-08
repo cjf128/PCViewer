@@ -6,8 +6,8 @@ from path import BASE_PATH
 
 @dataclass
 class AppConfig:
-    width: int = 1500
-    height: int = 1200
+    width: int = 1200
+    height: int = 800
     theme: str = "dark"
     data: dict = None
     label: dict = None

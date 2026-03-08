@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import Tuple
 
 import numpy as np
-import vtk
 import SimpleITK as sitk
+import vtk
 from PySide6.QtCore import QThread, Signal
 from vtkmodules.util import numpy_support
 
@@ -54,21 +54,21 @@ class DicomWorker(QThread):
             # 从DICOM文件中提取患者信息
             try:
                 # 获取CT文件夹中的第一个DICOM文件
-                ct_files = list(ct_folder.glob('*.dcm'))
+                ct_files = list(ct_folder.glob("*.dcm"))
                 if ct_files:
                     ct_file = str(ct_files[0])
                     img = sitk.ReadImage(ct_file)
                     # 提取DICOM标签
-                    if '0010|0010' in img.GetMetaDataKeys():
-                        patient_info['患者名'] = img.GetMetaData('0010|0010')
-                    if '0010|0020' in img.GetMetaDataKeys():
-                        patient_info['患者ID'] = img.GetMetaData('0010|0020')
-                    if '0010|0030' in img.GetMetaDataKeys():
-                        patient_info['出生日期'] = img.GetMetaData('0010|0030')
-                    if '0010|0040' in img.GetMetaDataKeys():
-                        patient_info['性别'] = img.GetMetaData('0010|0040')
-                    if '0010|1030' in img.GetMetaDataKeys():
-                        patient_info['体重'] = img.GetMetaData('0010|1030')
+                    if "0010|0010" in img.GetMetaDataKeys():
+                        patient_info["患者名"] = img.GetMetaData("0010|0010")
+                    if "0010|0020" in img.GetMetaDataKeys():
+                        patient_info["患者ID"] = img.GetMetaData("0010|0020")
+                    if "0010|0030" in img.GetMetaDataKeys():
+                        patient_info["出生日期"] = img.GetMetaData("0010|0030")
+                    if "0010|0040" in img.GetMetaDataKeys():
+                        patient_info["性别"] = img.GetMetaData("0010|0040")
+                    if "0010|1030" in img.GetMetaDataKeys():
+                        patient_info["体重"] = img.GetMetaData("0010|1030")
             except Exception as e:
                 log_error(f"提取DICOM患者信息时发生错误: {e}")
 
@@ -105,16 +105,16 @@ class NiftiWorker(QThread):
                 # 读取CT文件获取元数据
                 ct_img = sitk.ReadImage(self.ct_path)
                 # 提取NIfTI头信息
-                if ct_img.HasMetaDataKey('PatientName'):
-                    patient_info['患者名'] = ct_img.GetMetaData('PatientName')
-                if ct_img.HasMetaDataKey('PatientID'):
-                    patient_info['患者ID'] = ct_img.GetMetaData('PatientID')
-                if ct_img.HasMetaDataKey('PatientBirthDate'):
-                    patient_info['出生日期'] = ct_img.GetMetaData('PatientBirthDate')
-                if ct_img.HasMetaDataKey('PatientSex'):
-                    patient_info['性别'] = ct_img.GetMetaData('PatientSex')
-                if ct_img.HasMetaDataKey('PatientWeight'):
-                    patient_info['体重'] = ct_img.GetMetaData('PatientWeight')
+                if ct_img.HasMetaDataKey("PatientName"):
+                    patient_info["患者名"] = ct_img.GetMetaData("PatientName")
+                if ct_img.HasMetaDataKey("PatientID"):
+                    patient_info["患者ID"] = ct_img.GetMetaData("PatientID")
+                if ct_img.HasMetaDataKey("PatientBirthDate"):
+                    patient_info["出生日期"] = ct_img.GetMetaData("PatientBirthDate")
+                if ct_img.HasMetaDataKey("PatientSex"):
+                    patient_info["性别"] = ct_img.GetMetaData("PatientSex")
+                if ct_img.HasMetaDataKey("PatientWeight"):
+                    patient_info["体重"] = ct_img.GetMetaData("PatientWeight")
             except Exception as e:
                 log_error(f"提取NIfTI患者信息时发生错误: {e}")
 
@@ -147,15 +147,17 @@ class SamThread(QThread):
     def run(self):
         log_debug(f"开始SAM预测, 模式: {self.mode}, 输入数据: {self.input_data}")
         try:
-            if self.mode == 'BOX':
+            if self.mode == "BOX":
                 # BOX模式
                 x1, y1, x2, y2 = self._normalize_box()
                 masks = self.predictor.set_box(((x1, y1), (x2, y2)), label_id=0)
                 mask = masks[0].astype(np.uint8)
-            elif self.mode in ['ADD', 'SUB']:
+            elif self.mode in ["ADD", "SUB"]:
                 # ADD或SUB模式
                 point_coords = self.input_data
-                masks = self.predictor.add_point(point_coords, self.is_positive, label_id=0)
+                masks = self.predictor.add_point(
+                    point_coords, self.is_positive, label_id=0
+                )
                 mask = masks[0].astype(np.uint8)
             else:
                 log_error(f"未知的SAM模式: {self.mode}")
@@ -166,6 +168,7 @@ class SamThread(QThread):
         except Exception as e:
             log_error(f"SAM预测时发生错误: {e}")
             import traceback
+
             traceback.print_exc()
 
 
@@ -196,20 +199,89 @@ class ModelLoader(QThread):
 class BuiltThread(QThread):
     actor_ready = Signal(object)
 
-    def __init__(self, data: np.ndarray, spacing: Tuple[float, float, float]):
+    def __init__(
+        self,
+        data: np.ndarray,
+        spacing: Tuple[float, float, float],
+        label_config: dict = None,
+    ):
         super().__init__()
         self.data = data
         self.spacing = spacing
+        self.label_config = label_config or {}
 
     def _create_lookup_table(self) -> vtk.vtkLookupTable:
+        # 计算需要的颜色表大小
+        max_label = 0
+        if self.label_config:
+            max_label = max(int(label_id) for label_id in self.label_config.keys())
+        # 确保至少有3个颜色值
+        num_values = max(max_label + 1, 3)
+
         lut = vtk.vtkLookupTable()
-        lut.SetNumberOfTableValues(3)
-        lut.Build()
+        lut.SetNumberOfTableValues(num_values)
+
+        # 设置背景颜色（标签0）
         lut.SetTableValue(0, 0.0, 0.0, 0.0, 0.0)
-        lut.SetTableValue(1, 0.0, 0.0, 1.0, 1.0)
-        lut.SetTableValue(2, 0.0, 1.0, 0.0, 1.0)
-        lut.SetRange(0, 2)
+
+        # 根据标签配置设置颜色
+        for label_id, label_info in self.label_config.items():
+            try:
+                label_idx = int(label_id)
+                if label_idx > 0 and label_idx < num_values:
+                    # 解析颜色值
+                    color_hex = label_info.get("color", "#0000FF")
+                    # 移除 # 号
+                    if color_hex.startswith("#"):
+                        color_hex = color_hex[1:]
+                    # 解析 RGB 值
+                    r = int(color_hex[0:2], 16) / 255.0
+                    g = int(color_hex[2:4], 16) / 255.0
+                    b = int(color_hex[4:6], 16) / 255.0
+                    # 设置颜色
+                    lut.SetTableValue(label_idx, r, g, b, 1.0)
+            except (ValueError, IndexError):
+                pass
+
+        # 设置默认颜色（如果标签配置中没有）
+        for i in range(1, num_values):
+            # 检查是否已经设置了颜色
+            has_color = False
+            for label_id in self.label_config:
+                if int(label_id) == i:
+                    has_color = True
+                    break
+            if not has_color:
+                # 设置默认颜色
+                if i == 1:
+                    lut.SetTableValue(i, 0.0, 0.0, 1.0, 1.0)  # 蓝色
+                elif i == 2:
+                    lut.SetTableValue(i, 0.0, 1.0, 0.0, 1.0)  # 绿色
+                else:
+                    # 生成其他默认颜色
+                    hue = (i - 3) / 6.0
+                    r, g, b = self._hue_to_rgb(hue)
+                    lut.SetTableValue(i, r, g, b, 1.0)
+
+        lut.SetRange(0, num_values - 1)
+        lut.Build()
         return lut
+
+    def _hue_to_rgb(self, hue):
+        """将色相转换为RGB颜色"""
+        hue = hue % 1.0
+        if hue < 1 / 6:
+            return 1.0, hue * 6.0, 0.0
+        elif hue < 1 / 3:
+            return (1 / 3 - hue) * 6.0, 1.0, 0.0
+        elif hue < 1 / 2:
+            return 0.0, 1.0, (hue - 1 / 3) * 6.0
+        elif hue < 2 / 3:
+            return 0.0, (2 / 3 - hue) * 6.0, 1.0
+        elif hue < 5 / 6:
+            return (hue - 2 / 3) * 6.0, 0.0, 1.0
+        else:
+            return 1.0, 0.0, (1.0 - hue) * 6.0
 
     def run(self):
         log_debug(f"开始3D重建, 数据形状: {self.data.shape}")
@@ -226,9 +298,16 @@ class BuiltThread(QThread):
             )
             vtk_data.GetPointData().SetScalars(vtk_arr)
 
+            # 计算需要生成的值范围
+            max_label = 0
+            if self.label_config:
+                max_label = max(int(label_id) for label_id in self.label_config.keys())
+            # 确保至少生成1和2
+            max_value = max(max_label, 2)
+
             dmc = vtk.vtkDiscreteMarchingCubes()
             dmc.SetInputData(vtk_data)
-            dmc.GenerateValues(2, 1, 2)
+            dmc.GenerateValues(max_value, 1, max_value)
             dmc.Update()
 
             smoother = vtk.vtkWindowedSincPolyDataFilter()
