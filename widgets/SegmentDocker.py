@@ -109,7 +109,7 @@ class SegmentDocker(QWidget, Ui_Form):
         # 禁用整行选择
         self.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
         # 设置列宽，固定列宽
-        self.tableWidget.setColumnWidth(0, 60)   # Select列固定宽度60
+        self.tableWidget.setColumnWidth(0, 35)   # Select列固定宽度35
         self.tableWidget.setColumnWidth(1, 100)  # Name列固定宽度100
         self.tableWidget.setColumnWidth(2, 100)  # Color列固定宽度100
 

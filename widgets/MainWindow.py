@@ -2,7 +2,7 @@ import shutil
 import sys
 import warnings
 from pathlib import Path
-
+import os
 if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (
 )
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-from app.configs import AppConfig
+from app.configs import AppConfig, ConfigManager
 from app.mode import LOADMode, VIEWERMode, VIEWMode
 from path import CACHE_PATH, ICONS_PATH, SEGMENTATION_PATH, STYLESHEET_PATH
 from scripts.logger import log_debug, log_error, log_info, log_warning
@@ -135,7 +135,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.model_loader.finished.connect(self.on_model_loaded)
         self.model_loader.start()
 
-        self.setWindowTitle("PET/CT图像全身病灶检测软件")
+        self.setWindowTitle("PC Viewer")
 
         self.init_ui()
         self.config()
@@ -242,6 +242,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.dockWidget_2.raise_()
         self.dockWidget.raise_()
+
+        self.statusbar = self.statusBar()
+        self.statusbar.setStyleSheet("background-color: #1273ff;")
 
     def init_connectAction(self):
         """初始化信号与槽连接"""
@@ -409,6 +412,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 seg_data = np.transpose(seg_data, axes=trans)
                 if seg_data.shape == self.pet.shape:
                     self.seg = seg_data
+                    
+                    # 检查 seg 最大值是否大于当前 label 数目
+                    max_label = int(np.max(seg_data))
+                    current_label_count = len(self._config.label)
+                    
+                    if max_label > current_label_count:
+                        # 自动添加缺失的 label
+                        import random
+                        for i in range(current_label_count + 1, max_label + 1):
+                            # 生成随机颜色
+                            r = random.randint(0, 255)
+                            g = random.randint(0, 255)
+                            b = random.randint(0, 255)
+                            color = f"#{r:02x}{g:02x}{b:02x}"
+                            # 添加到配置中
+                            self._config.label[str(i)] = {'name': f'Label {i}', 'color': color}
+                        
+                        # 保存配置
+                        config_manager = ConfigManager()
+                        config_manager.save(self._config)
+                        log_info(f"自动添加了 {max_label - current_label_count} 个 label")
+                        
+                        # 更新 SegmentDocker 的表格
+                        if hasattr(self, 'segment_setting'):
+                            self.segment_setting.init_labels()
+                    
                     self.update_image()
                     log_info(f"分割文件加载成功: {seg_file}")
                 else:
@@ -477,9 +506,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ct_file = data_info.get('ct')
             file_type = data_info.get('type')
             
+            path_exists = True
+            if pet_file and not os.path.exists(pet_file):
+                path_exists = False
+            if ct_file and not os.path.exists(ct_file):
+                path_exists = False
+            
             if pet_file and ct_file:
-                log_info(f"重新导入数据 - ID: {data_id}, PET: {pet_file}, CT: {ct_file}, 类型: {file_type}")
-                self.on_files_selected(pet_file, ct_file, file_type)
+                if path_exists:
+                    log_info(f"重新导入数据 - ID: {data_id}, PET: {pet_file}, CT: {ct_file}, 类型: {file_type}")
+                    self.on_files_selected(pet_file, ct_file, file_type)
+                else:
+                    reply = QMessageBox.warning(
+                        self, "路径不存在", "路径不存在，请重新导入",
+                        QMessageBox.Ok, QMessageBox.Ok
+                    )
+                    if reply == QMessageBox.Ok:
+                        del self._config.data[data_id]
+                        from app.configs import ConfigManager
+                        config_manager = ConfigManager()
+                        config_manager.save(self._config)
+                        if hasattr(self, 'file_Setting'):
+                            self.file_Setting.load_file_list()
             else:
                 log_error(f"数据ID {data_id} 的文件路径不完整")
         else:
@@ -579,8 +627,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def save_slot(self):
         """保存设置"""
         if np.any(self.seg):
+            current_path = os.getcwd()
+            # 设置默认保存名字
+            default_name = self.patient_id if self.patient_id else "segmentation"
+            default_file = str(Path(current_path) / f"{default_name}.nii.gz")
+            
             file_, ok = QFileDialog.getSaveFileName(
-                self, "文件保存", "C:\\Users\\", "NFiTI(*.nii.gz)"
+                self, "文件保存", default_file, "NFiTI(*.nii.gz)"
             )
 
             if file_ != "":
@@ -605,6 +658,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def crossline_slot(self):
         self.viewer.cross_show = not self.viewer.cross_show
+        self.viewer.viewport().update()
 
     def _set_mode(self, mode: VIEWERMode):
         if self.load_mode != LOADMode.UNLOAD:

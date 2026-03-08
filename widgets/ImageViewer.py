@@ -181,6 +181,7 @@ class ImageViewer(QGraphicsView):
 
             if event.button() == Qt.MiddleButton:
                 self.mode = VIEWERMode.MOVE
+                self.cross_show = False
 
             if event.button() == Qt.RightButton:
                 self.mode = VIEWERMode.ZOOM
@@ -285,6 +286,9 @@ class ImageViewer(QGraphicsView):
                     self.mode = VIEWERMode.NORMAL
             else:
                 self.Mode_Signal.emit()
+            
+            if event.button() == Qt.MiddleButton:
+                self.cross_show = True
 
         event.ignore()
 
