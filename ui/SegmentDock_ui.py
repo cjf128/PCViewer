@@ -25,7 +25,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(220, 303)
+        Form.resize(263, 435)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -35,7 +35,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 216, 299))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 259, 431))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setSpacing(2)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
@@ -149,6 +149,32 @@ class Ui_Form(object):
 
         self.verticalLayout_2.addWidget(self.groupBox_2)
 
+        self.frame_2 = QFrame(self.scrollAreaWidgetContents)
+        self.frame_2.setObjectName(u"frame_2")
+        self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_3 = QHBoxLayout(self.frame_2)
+        self.horizontalLayout_3.setSpacing(2)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.pushButton_4 = QPushButton(self.frame_2)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+        self.pushButton_4.setCheckable(True)
+
+        self.horizontalLayout_3.addWidget(self.pushButton_4)
+
+        self.pushButton_3 = QPushButton(self.frame_2)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+        self.pushButton_3.setCheckable(True)
+        self.pushButton_3.setChecked(True)
+        self.pushButton_3.setAutoDefault(False)
+        self.pushButton_3.setFlat(False)
+
+        self.horizontalLayout_3.addWidget(self.pushButton_3)
+
+
+        self.verticalLayout_2.addWidget(self.frame_2)
+
         self.verticalSpacer = QSpacerItem(20, 150, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_2.addItem(self.verticalSpacer)
@@ -177,5 +203,7 @@ class Ui_Form(object):
         self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"\u8bbe\u7f6e", None))
         self.label.setText(QCoreApplication.translate("Form", u"\u7b14\u5237\u5927\u5c0f", None))
         self.label_9.setText(QCoreApplication.translate("Form", u"\u900f\u660e\u5ea6\uff1a  ", None))
+        self.pushButton_4.setText("")
+        self.pushButton_3.setText("")
     # retranslateUi
 

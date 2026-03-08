@@ -131,8 +131,8 @@ class ImageViewer(QGraphicsView):
                 if self.mode == VIEWERMode.SAM:
                     # 获取当前SAM模式
                     current_mode = SAMMode.BOX  # 默认BOX模式
-                    if hasattr(self.main_window, 'sam_Setting') and hasattr(self.main_window.sam_Setting, 'current_mode'):
-                        current_mode = self.main_window.sam_Setting.current_mode
+                    if hasattr(self.main_window, 'segment_setting') and hasattr(self.main_window.segment_setting, 'current_mode'):
+                        current_mode = self.main_window.segment_setting.current_mode
                     
                     self.setCursor(Qt.CrossCursor)
                     
@@ -156,7 +156,7 @@ class ImageViewer(QGraphicsView):
                         self.rect_item.setTransform(self.pixmap_item.transform())
                         self.scene.addItem(self.rect_item)
                     else:
-                        # ADD或SUB模式：准备画点
+                        # ADD模式：准备画点
                         self.point_item = QGraphicsEllipseItem(
                             QRect(
                                 self.point.x() - 5,  # 点的半径为5
@@ -165,11 +165,8 @@ class ImageViewer(QGraphicsView):
                                 10
                             )
                         )
-                        # 根据模式设置点的颜色
-                        if current_mode == SAMMode.ADD:
-                            self.point_item.setBrush(QColor("green"))  # ADD模式用绿色点
-                        else:  # SUB模式
-                            self.point_item.setBrush(QColor("red"))  # SUB模式用红色点
+                        # ADD模式用绿色点
+                        self.point_item.setBrush(QColor("green"))
                         self.point_item.setTransform(self.pixmap_item.transform())
                         self.scene.addItem(self.point_item)
 
@@ -270,16 +267,16 @@ class ImageViewer(QGraphicsView):
                 if self.mode == VIEWERMode.SAM:
                     # 获取当前SAM模式
                     current_mode = SAMMode.BOX  # 默认BOX模式
-                    if hasattr(self.main_window, 'sam_Setting') and hasattr(self.main_window.sam_Setting, 'current_mode'):
-                        current_mode = self.main_window.sam_Setting.current_mode
+                    if hasattr(self.main_window, 'segment_setting') and hasattr(self.main_window.segment_setting, 'current_mode'):
+                        current_mode = self.main_window.segment_setting.current_mode
                     
                     self.setCursor(Qt.ArrowCursor)
                     
                     if current_mode == SAMMode.BOX and np.any(self.input_box):
                         # BOX模式：发送输入框
                         self.Sam_Signal.emit(self.input_box)
-                    elif current_mode in [SAMMode.ADD, SAMMode.SUB]:
-                        # ADD或SUB模式：发送点坐标
+                    elif current_mode == SAMMode.ADD:
+                        # ADD模式：发送点坐标
                         point_coords = (self.point.x(), self.point.y())
                         self.Sam_Signal.emit(np.array(point_coords))
                     

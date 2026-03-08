@@ -30,6 +30,9 @@ class ImageDocker(QWidget, Ui_Form):
         self.boxAlphaPet.valueChanged.connect(
             lambda v: self.sldAlphaPet.setValue(int(v * 100))
         )
+        self.boxAlphaCt.valueChanged.connect(lambda: self.set_alpha("CT"))
+        self.boxAlphaPet.valueChanged.connect(lambda: self.set_alpha("PET"))
+
         self.sldPET_ww.valueChanged.connect(lambda v: self.boxPET_ww.setValue(v / 100))
         self.boxPET_ww.valueChanged.connect(
             lambda v: self.sldPET_ww.setValue(int(v * 100))
@@ -38,8 +41,6 @@ class ImageDocker(QWidget, Ui_Form):
         self.boxPET_wl.valueChanged.connect(
             lambda v: self.sldPET_wl.setValue(int(v * 100))
         )
-        self.boxAlphaCt.valueChanged.connect(lambda: self.set_alpha("CT"))
-        self.boxAlphaPet.valueChanged.connect(lambda: self.set_alpha("PET"))
 
         self.boxCT_ww.valueChanged.connect(
             lambda v: self.main_window.update_property_and_refresh("ct_ww", v)

@@ -1,13 +1,16 @@
 import sys
 import yaml
 from pathlib import Path
-from PySide6.QtWidgets import QApplication, QWidget, QTableWidgetItem, QColorDialog, QAbstractItemView
+from PySide6.QtWidgets import QApplication, QWidget, QTableWidgetItem, QColorDialog, QAbstractItemView, QButtonGroup
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Signal, Qt
+
+from app.configs import ConfigManager
 
 if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from app.mode import SAMMode
 from ui.SegmentDock_ui import Ui_Form
 
 
@@ -21,6 +24,33 @@ class SegmentDocker(QWidget, Ui_Form):
         self.setupUi(self)
         self.init_connectAction()
         self.init_labels()
+        self.init_sam_mode_buttons()
+    
+    def init_sam_mode_buttons(self):
+        """初始化SAM模式按钮"""
+        # 创建互斥按钮组
+        self.sam_button_group = QButtonGroup(self)
+        self.sam_button_group.setExclusive(True)
+        
+        # 连接按钮点击事件
+        self.pushButton_3.clicked.connect(self.on_box_button_clicked)
+        self.pushButton_4.clicked.connect(self.on_add_button_clicked)
+        
+        # 添加按钮到组
+        self.sam_button_group.addButton(self.pushButton_3)
+        self.sam_button_group.addButton(self.pushButton_4)
+        
+        # 默认选中BOX模式
+        self.pushButton_3.setChecked(True)
+        self.current_mode = SAMMode.BOX
+    
+    def on_box_button_clicked(self):
+        """Box模式"""
+        self.current_mode = SAMMode.BOX
+    
+    def on_add_button_clicked(self):
+        """Add模式"""
+        self.current_mode = SAMMode.ADD
 
     def init_connectAction(self):
         """初始化信号与槽连接"""
@@ -63,8 +93,6 @@ class SegmentDocker(QWidget, Ui_Form):
         # 按标签ID排序
         sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
         
-        # 创建按钮组，实现互斥
-        from PySide6.QtWidgets import QButtonGroup
         self.radio_group = QButtonGroup()
         self.radio_group.setExclusive(True)
         
@@ -159,6 +187,11 @@ class SegmentDocker(QWidget, Ui_Form):
                                 # 删除标签
                                 del labels[str(label_id)]
                                 
+                                # 保存配置
+                                from app.configs import ConfigManager
+                                config_manager = ConfigManager()
+                                config_manager.save(self.main_window._config)
+                                
                                 # 更新MainWindow的seg数组，将所有使用该标签ID的体素设置为0
                                 if hasattr(self.main_window, 'seg') and self.main_window.seg.size > 0:
                                     self.main_window.seg[self.main_window.seg == int(label_id)] = 0
@@ -174,6 +207,10 @@ class SegmentDocker(QWidget, Ui_Form):
             if sorted_labels:
                 label_id = sorted_labels[0][0]
                 del labels[label_id]
+                
+                # 保存配置
+                config_manager = ConfigManager()
+                config_manager.save(self.main_window._config)
                 
                 # 更新MainWindow的seg数组，将所有使用该标签ID的体素设置为0
                 if hasattr(self.main_window, 'seg') and self.main_window.seg.size > 0:
@@ -197,6 +234,10 @@ class SegmentDocker(QWidget, Ui_Form):
                 label_id = sorted_labels[row][0]
                 # 更新名称
                 labels[label_id]['name'] = self.tableWidget.item(row, 1).text()
+                
+                # 保存配置
+                config_manager = ConfigManager()
+                config_manager.save(self.main_window._config)
 
     def change_color(self, row, column):
         """修改标签颜色"""
@@ -223,6 +264,10 @@ class SegmentDocker(QWidget, Ui_Form):
                     
                     # 更新配置
                     labels[label_id]['color'] = new_color
+                    
+                    # 保存配置
+                    config_manager = ConfigManager()
+                    config_manager.save(self.main_window._config)
                     
                     # 刷新图像
                     if hasattr(self.main_window, 'update_image'):

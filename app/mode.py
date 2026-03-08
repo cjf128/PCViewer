@@ -25,4 +25,3 @@ class VIEWMode(Enum):
 class SAMMode(Enum):
     BOX = 0
     ADD = 1
-    SUB = 2

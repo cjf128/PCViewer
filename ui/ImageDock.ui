@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>244</width>
-        <height>556</height>
+        <width>242</width>
+        <height>554</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -521,5 +521,70 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>boxCT_ww</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sldCT_ww</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>193</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>125</x>
+     <y>287</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sldCT_ww</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>boxCT_ww</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>45</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>209</x>
+     <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>boxCT_wl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>sldCT_wl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>340</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>153</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sldCT_wl</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>boxCT_wl</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>344</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>216</x>
+     <y>348</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

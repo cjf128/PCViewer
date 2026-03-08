@@ -34,7 +34,6 @@ from widgets.FileDocker import FileDocker
 from widgets.ImageDocker import ImageDocker
 from widgets.ImageViewer import ImageViewer
 from widgets.LoadDialog import LoadDialog
-from widgets.DLDocker import DLDocker
 from widgets.SegmentDocker import SegmentDocker
 from widgets.InfoDocker import InfoDocker
 from widgets.WorkerThread import (
@@ -161,6 +160,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.data_atn.setIcon(QIcon(str(ICONS_PATH / theme / "database.png")))
         self.setting_atn.setIcon(QIcon(str(ICONS_PATH / theme / "setting.png")))
 
+        self.segment_setting.pushButton_3.setIcon(QIcon(str(ICONS_PATH / theme / "frame.png")))
+        self.segment_setting.pushButton_4.setIcon(QIcon(str(ICONS_PATH / theme / "point.png")))
+
     def init_ui(self):
         self.file_Setting = FileDocker(self, self)
         self.file_Setting_layout = QVBoxLayout(self.FileSetting)
@@ -183,11 +185,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.image_viewer_layout = QVBoxLayout(self.image_frame)
         self.image_viewer_layout.addWidget(self.viewer)
         self.image_viewer_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.sam_Setting = DLDocker(self, self)
-        self.sam_Setting_layout = QVBoxLayout(self.SAMSetting)
-        self.sam_Setting_layout.addWidget(self.sam_Setting)
-        self.sam_Setting_layout.setContentsMargins(0, 0, 0, 0)
 
         self.info_setting = InfoDocker(self, self)
         info_layout = self.InfoSetting.layout()
@@ -236,12 +233,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         progress_bar.setAlignment(Qt.AlignCenter)
         layout.addWidget(progress_bar)
         self.dialog.setLayout(layout)
-
-        self.tabifyDockWidget(self.dockWidget, self.dockWidget_3)
-        self.tabifyDockWidget(self.dockWidget_3, self.dockWidget_4)
-
-        self.dockWidget_2.raise_()
-        self.dockWidget.raise_()
 
         self.statusbar = self.statusBar()
         self.statusbar.setStyleSheet("background-color: #1273ff;")
@@ -712,17 +703,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # 获取当前SAM模式
             current_mode = 'BOX'  # 默认BOX模式
             is_positive = True  # 默认是正点
-            if hasattr(self, 'sam_Setting') and hasattr(self.sam_Setting, 'current_mode'):
+            if hasattr(self, 'segment_setting') and hasattr(self.segment_setting, 'current_mode'):
                 from app.mode import SAMMode
-                sam_mode = self.sam_Setting.current_mode
+                sam_mode = self.segment_setting.current_mode
                 if sam_mode == SAMMode.BOX:
                     current_mode = 'BOX'
                 elif sam_mode == SAMMode.ADD:
                     current_mode = 'ADD'
                     is_positive = True
-                elif sam_mode == SAMMode.SUB:
-                    current_mode = 'SUB'
-                    is_positive = False
 
             # 在 SAM 修改前先缓存当前层的切片，供撤销使用
             old_slice = self.seg[:, :, self.layer].copy()
