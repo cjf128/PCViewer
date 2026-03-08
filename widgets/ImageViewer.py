@@ -201,7 +201,7 @@ class ImageViewer(QGraphicsView):
                 self.point.y() - self.radius / 2,
             ]
 
-            if self.mode == VIEWERMode.AIM and event.buttons() & Qt.LeftButton:
+            if self.mode == VIEWERMode.AIM and (event.buttons() & Qt.LeftButton):
                 self.position[0] = pos.x()
                 self.position[1] = pos.y()
                 self.update()
