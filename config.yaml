@@ -5,18 +5,12 @@ data:
     type: NIfTI
 label:
   '1':
-    color: '#e70004'
+    color: '#0800e7'
     name: Label 1
   '2':
-    color: '#34f5ff'
+    color: '#11ff00'
     name: Label 2
-  '3':
-    color: '#fc48bc'
-    name: Label 3
-  '4':
-    color: '#70aee0'
-    name: Label 4
 window:
-  height: 905
+  height: 826
   theme: dark
-  width: 1244
+  width: 1160

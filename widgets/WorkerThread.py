@@ -317,8 +317,10 @@ class BuiltThread(QThread):
 
             mapper = vtk.vtkPolyDataMapper()
             mapper.SetInputConnection(smoother.GetOutputPort())
-            mapper.SetLookupTable(self._create_lookup_table())
-            mapper.SetScalarRange(0, 2)
+            lut = self._create_lookup_table()
+            mapper.SetLookupTable(lut)
+            # 使用颜色表的实际范围
+            mapper.SetScalarRange(lut.GetRange())
             mapper.ScalarVisibilityOn()
 
             actor = vtk.vtkActor()
