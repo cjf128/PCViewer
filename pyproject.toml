@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "viewer"
+name = "app"
 version = "0.1.0"
-description = "鼻咽癌PET/CT图像全身病灶检测软件"
+description = "PET/CT图像全身病灶检测软件"
 authors = ["Jinfr <2998747137@qq.com>"]
 readme = "README.md"
 
