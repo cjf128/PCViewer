@@ -231,8 +231,6 @@ class SegmentDocker(QWidget, Ui_Form):
                                 self.main_window._config.label = new_labels
 
                                 # 保存配置
-                                from app.configs import ConfigManager
-
                                 config_manager = ConfigManager()
                                 config_manager.save(self.main_window._config)
 

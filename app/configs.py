@@ -6,8 +6,6 @@ from path import BASE_PATH
 
 @dataclass
 class AppConfig:
-    width: int = 1200
-    height: int = 800
     theme: str = "dark"
     data: dict = None
     label: dict = None
@@ -34,8 +32,6 @@ class ConfigManager:
                     app_data = data.get('data', {})
                     app_label = data.get('label', {})
                     return AppConfig(
-                        width=int(window_data.get('width', 1500)),
-                        height=int(window_data.get('height', 1200)),
                         theme=window_data.get('theme', 'dark'),
                         data=app_data,
                         label=app_label
@@ -47,8 +43,6 @@ class ConfigManager:
     def save(self, config: AppConfig):
         data = {
             'window': {
-                'width': config.width,
-                'height': config.height,
                 'theme': config.theme
             },
             'data': config.data,

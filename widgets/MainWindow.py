@@ -151,7 +151,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def config(self) -> None:
         theme = self._config.theme
-        self.resize(self._config.width, self._config.height)
+        self.showMaximized()
         with open(str(STYLESHEET_PATH / f"{theme}.qss"), "r", encoding="utf-8") as f:
             self.setStyleSheet(f.read())
 
@@ -413,9 +413,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 更新配置
         self._config.theme = theme
 
-        # 保存配置
-        from app.configs import ConfigManager
-
         config_manager = ConfigManager()
         config_manager.save(self._config)
 
@@ -525,7 +522,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             }
                             log_info(f"添加 label {i}: {color}")
 
-                        # 保存配置
                         config_manager = ConfigManager()
                         config_manager.save(self._config)
                         log_info(
@@ -947,11 +943,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
-            self._config.width = self.width()
-            self._config.height = self.height()
-
-            # 保存配置
-            from app.configs import ConfigManager
 
             config_manager = ConfigManager()
             config_manager.save(self._config)

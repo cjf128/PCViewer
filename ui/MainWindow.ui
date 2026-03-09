@@ -469,6 +469,7 @@
     <addaction name="separator"/>
     <addaction name="menutheme"/>
     <addaction name="separator"/>
+    <addaction name="shortcut_action"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -476,6 +477,7 @@
     </property>
     <addaction name="about_action"/>
     <addaction name="github_action"/>
+    <addaction name="actionhelp"/>
    </widget>
    <addaction name="muFile"/>
    <addaction name="menu"/>
@@ -993,12 +995,22 @@
   </action>
   <action name="about_action">
    <property name="text">
-    <string>about</string>
+    <string>关于</string>
    </property>
   </action>
   <action name="github_action">
    <property name="text">
     <string>github</string>
+   </property>
+  </action>
+  <action name="actionhelp">
+   <property name="text">
+    <string>帮助</string>
+   </property>
+  </action>
+  <action name="shortcut_action">
+   <property name="text">
+    <string>shortcut</string>
    </property>
   </action>
   <zorder>dockWidget_4</zorder>

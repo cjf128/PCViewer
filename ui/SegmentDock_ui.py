@@ -146,10 +146,12 @@ class Ui_Form(object):
 
         self.verticalLayout_14.addLayout(self.horizontalLayout_12)
 
+        self.label_2 = QLabel(self.groupBox_2)
+        self.label_2.setObjectName(u"label_2")
 
-        self.verticalLayout_2.addWidget(self.groupBox_2)
+        self.verticalLayout_14.addWidget(self.label_2)
 
-        self.frame_2 = QFrame(self.scrollAreaWidgetContents)
+        self.frame_2 = QFrame(self.groupBox_2)
         self.frame_2.setObjectName(u"frame_2")
         self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
@@ -173,7 +175,10 @@ class Ui_Form(object):
         self.horizontalLayout_3.addWidget(self.pushButton_3)
 
 
-        self.verticalLayout_2.addWidget(self.frame_2)
+        self.verticalLayout_14.addWidget(self.frame_2)
+
+
+        self.verticalLayout_2.addWidget(self.groupBox_2)
 
         self.verticalSpacer = QSpacerItem(20, 150, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
@@ -198,11 +203,12 @@ class Ui_Form(object):
         ___qtablewidgetitem.setText(QCoreApplication.translate("Form", u"Name", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
         ___qtablewidgetitem1.setText(QCoreApplication.translate("Form", u"Label", None));
-        self.pushButton.setText(QCoreApplication.translate("Form", u"add", None))
-        self.pushButton_2.setText(QCoreApplication.translate("Form", u"delete", None))
+        self.pushButton.setText(QCoreApplication.translate("Form", u"\u589e\u52a0", None))
+        self.pushButton_2.setText(QCoreApplication.translate("Form", u"\u5220\u9664", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("Form", u"\u8bbe\u7f6e", None))
         self.label.setText(QCoreApplication.translate("Form", u"\u7b14\u5237\u5927\u5c0f", None))
         self.label_9.setText(QCoreApplication.translate("Form", u"\u900f\u660e\u5ea6\uff1a  ", None))
+        self.label_2.setText(QCoreApplication.translate("Form", u"SAM\u63d0\u793a", None))
         self.pushButton_4.setText("")
         self.pushButton_3.setText("")
     # retranslateUi

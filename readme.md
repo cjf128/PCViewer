@@ -55,6 +55,15 @@ python main.py
 
 ---
 
+## TODO
+- [ ] infoDocker增加label区域的肿瘤负荷计算，MTV和TLG
+- [ ] infoDocker增加xy坐标显示
+- [ ] 添加快捷键设置
+- [ ] 添加帮助信息
+- [ ] 改为medsam2
+
+---
+
 ## 使用说明
 
 1. **导入数据**：点击"导入"按钮，选择PET和CT文件
@@ -79,3 +88,5 @@ python main.py
 
 本软件仅用于科研与教学目的，
 不作为临床诊断或治疗决策的直接依据。
+
+---

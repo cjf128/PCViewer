@@ -8,7 +8,7 @@ from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox
 
 from ui.LoadDialog_ui import Ui_LoadDialog
-
+from app.configs import ConfigManager
 
 class LoadDialog(QDialog, Ui_LoadDialog):
     FilesSelected = Signal(str, str, str)
@@ -76,9 +76,6 @@ class LoadDialog(QDialog, Ui_LoadDialog):
                 "ct": ct_file,
                 "type": self.load_state,
             }
-
-            # 保存配置
-            from app.configs import ConfigManager
 
             config_manager = ConfigManager()
             config_manager.save(self.main_window._config)

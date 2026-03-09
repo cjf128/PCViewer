@@ -9,6 +9,7 @@ from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QApplication, QInputDialog, QMenu, QMessageBox, QWidget
 
 from ui.FileDock_ui import Ui_Form
+from app.configs import ConfigManager
 
 
 class FileDocker(QWidget, Ui_Form):
@@ -113,9 +114,6 @@ class FileDocker(QWidget, Ui_Form):
                 # 更新配置中的数据名称
                 if data_id in self.main_window._config.data:
                     self.main_window._config.data[data_id]["name"] = new_name
-
-                    # 保存配置
-                    from app.configs import ConfigManager
 
                     config_manager = ConfigManager()
                     config_manager.save(self.main_window._config)
