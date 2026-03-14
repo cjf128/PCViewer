@@ -56,11 +56,15 @@ python main.py
 ---
 
 ## TODO
+
 - [ ] infoDocker增加label区域的肿瘤负荷计算，MTV和TLG
 - [ ] infoDocker增加xy坐标显示
 - [ ] 添加快捷键设置
 - [ ] 添加帮助信息
 - [ ] 改为medsam2
+- [ ] 窗宽窗位预设
+- [ ] 样式表设置
+- [ ] 运行分割时的弹窗
 
 ---
 
