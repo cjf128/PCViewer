@@ -31,7 +31,7 @@ class FileDocker(QWidget, Ui_Form):
         # 连接双击信号
         self.treeView.doubleClicked.connect(self.on_item_double_clicked)
         # 连接右键菜单信号
-        self.treeView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeView.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.treeView.customContextMenuRequested.connect(self.on_context_menu)
 
         # 加载文件列表
@@ -44,24 +44,41 @@ class FileDocker(QWidget, Ui_Form):
 
         if self.main_window and hasattr(self.main_window, "_config"):
             data = self.main_window._config.data
-            for data_id, info in data.items():
-                # 优先使用配置中存储的名称
-                data_name = info.get("name")
 
-                # 如果没有存储名称，则从PET文件路径中提取
-                if not data_name:
+            # 记录本轮已添加的名称，用于排重
+            used_names = set()
+
+            for data_id, info in data.items():
+                # 1. 确定基础 data_name
+                # 优先使用配置中存储的名称
+                raw_name = info.get("name")
+
+                # 如果没有存储名称，则从 PET 文件路径中提取
+                if not raw_name:
                     pet_path = info.get("pet", "")
                     if pet_path:
-                        data_name = Path(pet_path).name
-                        # 移除文件扩展名
-                        data_name = ".".join(data_name.split(".")[:-1])
+                        raw_name = Path(pet_path).name
                     else:
-                        data_name = f"数据 {data_id}"
+                        raw_name = f"数据_{data_id}"
 
-                # 只添加数据名称列
-                row = [QStandardItem(data_name)]
-                # 存储数据ID作为item的data，方便双击时获取
-                row[0].setData(data_id, Qt.UserRole)
+                # 2. 取以 "." 分隔的第一个字符串
+                # 例如 "case_001.nii.gz" -> "case_001"
+                base_name = raw_name.split(".")[0]
+
+                # 3. 检查重名并自动添加后缀 (_1, _2, ...)
+                final_name = base_name
+                counter = 1
+                while final_name in used_names:
+                    final_name = f"{base_name}_{counter}"
+                    counter += 1
+
+                # 将确定不重复的名称加入集合
+                used_names.add(final_name)
+
+                # 4. 添加到模型
+                row = [QStandardItem(final_name)]
+                # 存储数据 ID，注意此处使用 Qt.ItemDataRole.UserRole 以符合 Qt 6 规范
+                row[0].setData(data_id, Qt.ItemDataRole.UserRole)
                 self.model.appendRow(row)
 
         # 调整列宽以适应内容

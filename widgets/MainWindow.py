@@ -151,7 +151,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def config(self) -> None:
         theme = self._config.theme
-        self.showMaximized()
         with open(str(STYLESHEET_PATH / f"{theme}.qss"), "r", encoding="utf-8") as f:
             self.setStyleSheet(f.read())
 
@@ -625,7 +624,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     )
                     if reply == QMessageBox.Ok:
                         del self._config.data[data_id]
-                        from app.configs import ConfigManager
 
                         config_manager = ConfigManager()
                         config_manager.save(self._config)

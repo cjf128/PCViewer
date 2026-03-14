@@ -75,6 +75,7 @@ class LoadDialog(QDialog, Ui_LoadDialog):
                 "pet": pet_file,
                 "ct": ct_file,
                 "type": self.load_state,
+                "name": Path(pet_file).name,
             }
 
             config_manager = ConfigManager()
