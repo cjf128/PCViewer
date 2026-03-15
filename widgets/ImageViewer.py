@@ -294,7 +294,9 @@ class ImageViewer(QGraphicsView):
                 self.Mode_Signal.emit()
 
             if event.button() == Qt.MiddleButton:
-                self.cross_show = True
+                if hasattr(self.main_window, "crossline_action"):
+                    if self.main_window.crossline_action.isChecked():
+                        self.cross_show = True
 
         event.ignore()
 
