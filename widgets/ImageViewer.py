@@ -35,8 +35,9 @@ class ImageViewer(QGraphicsView):
         self.view_mode = VIEWMode.CROSS
 
         self.wheel = False
-        self.show_crosshair = False
+        self.information_show = True
         self.cross_show = False
+        self.direction_show = True
 
         self.spacing = (1, 1, 1)
 
@@ -56,9 +57,9 @@ class ImageViewer(QGraphicsView):
 
     def config(self):
         self.setMouseTracking(True)
-        self.scene = QGraphicsScene()
-        self.scene.setBackgroundBrush(QColor(Qt.black))
-        self.setScene(self.scene)
+        self._scene = QGraphicsScene()
+        self._scene.setBackgroundBrush(QColor(Qt.black))
+        self.setScene(self._scene)
 
         self.setTransformationAnchor(QGraphicsView.AnchorViewCenter)
         self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
@@ -67,7 +68,7 @@ class ImageViewer(QGraphicsView):
 
     def load_image(self, pixmap, radius):
         global scale_x, scale_y
-        self.scene.clear()
+        self._scene.clear()
         self.pixmap_item = QGraphicsPixmapItem(pixmap)
         self.radius = 2 * radius
         self.ellipse_item = QGraphicsEllipseItem(
@@ -105,8 +106,8 @@ class ImageViewer(QGraphicsView):
         self.pixmap_item.setTransform(transform)
         self.ellipse_item.setTransform(transform)
 
-        self.scene.addItem(self.pixmap_item)
-        self.scene.addItem(self.ellipse_item)
+        self._scene.addItem(self.pixmap_item)
+        self._scene.addItem(self.ellipse_item)
 
         self.rect_item = None
 
@@ -157,7 +158,7 @@ class ImageViewer(QGraphicsView):
                             pen_size = 0.5
                         self.rect_item.setPen(QPen(QColor("blue"), pen_size))
                         self.rect_item.setTransform(self.pixmap_item.transform())
-                        self.scene.addItem(self.rect_item)
+                        self._scene.addItem(self.rect_item)
                     else:
                         # ADD模式：准备画点
                         self.point_item = QGraphicsEllipseItem(
@@ -171,7 +172,7 @@ class ImageViewer(QGraphicsView):
                         # ADD模式用绿色点
                         self.point_item.setBrush(QColor("green"))
                         self.point_item.setTransform(self.pixmap_item.transform())
-                        self.scene.addItem(self.point_item)
+                        self._scene.addItem(self.point_item)
 
                 if self.mode == VIEWERMode.PAINT:
                     self.draw_state = 1
@@ -324,8 +325,6 @@ class ImageViewer(QGraphicsView):
 
     def drawForeground(self, painter, rect):
         super().drawForeground(painter, rect)
-        if not self.show_crosshair:
-            return
 
         painter.save()
         painter.resetTransform()
@@ -343,6 +342,30 @@ class ImageViewer(QGraphicsView):
             axe = ["R", "L", "S", "I"]
             color = ["green", "blue"]
 
+        if self.direction_show:
+            font = QFont("Arial", 10)
+            painter.setFont(font)
+            painter.setPen(Qt.yellow)
+            margin = 10
+            painter.drawText(margin, self.viewport().height() // 2 - 5, axe[0])
+            painter.drawText(
+                self.viewport().width() - margin - 10,
+                self.viewport().height() // 2 - 5,
+                axe[1],
+            )
+            painter.drawText(self.viewport().width() // 2 - 5, margin + 10, axe[2])
+            painter.drawText(
+                self.viewport().width() // 2 - 5, self.viewport().height() - margin, axe[3]
+            )
+
+        if self.information_show:
+            patient_id = getattr(self.main_window, "patient_id", "")
+            if patient_id:
+                font = QFont("Arial", 10, QFont.Bold)
+                painter.setFont(font)
+                painter.setPen(Qt.green)
+                painter.drawText(10, 20, patient_id)
+
         if self.cross_show:
             penx = QPen(QColor(color[0]), 1, Qt.DashLine)
             peny = QPen(QColor(color[1]), 1, Qt.DashLine)
@@ -350,21 +373,6 @@ class ImageViewer(QGraphicsView):
             painter.drawLine(center_x, 20, center_x, self.viewport().height() - 20)
             painter.setPen(peny)
             painter.drawLine(20, center_y, self.viewport().width() - 20, center_y)
-
-        font = QFont("Arial", 10)
-        painter.setFont(font)
-        painter.setPen(Qt.yellow)
-        margin = 10
-        painter.drawText(margin, self.viewport().height() // 2 - 5, axe[0])
-        painter.drawText(
-            self.viewport().width() - margin - 10,
-            self.viewport().height() // 2 - 5,
-            axe[1],
-        )
-        painter.drawText(self.viewport().width() // 2 - 5, margin + 10, axe[2])
-        painter.drawText(
-            self.viewport().width() // 2 - 5, self.viewport().height() - margin, axe[3]
-        )
 
         painter.restore()
 

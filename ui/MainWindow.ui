@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1255</width>
-    <height>789</height>
+    <height>833</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -447,9 +447,17 @@
     <property name="title">
      <string>视图</string>
     </property>
+    <widget class="QMenu" name="menu_3">
+     <property name="title">
+      <string>图像信息</string>
+     </property>
+     <addaction name="information_action"/>
+     <addaction name="direction_action"/>
+     <addaction name="crossline_action"/>
+    </widget>
     <addaction name="file_action"/>
     <addaction name="paint_action"/>
-    <addaction name="crossline_action"/>
+    <addaction name="menu_3"/>
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
@@ -1014,6 +1022,28 @@
   <action name="shortcut_action">
    <property name="text">
     <string>shortcut</string>
+   </property>
+  </action>
+  <action name="direction_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>direction</string>
+   </property>
+  </action>
+  <action name="information_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>patient_name</string>
    </property>
   </action>
   <zorder>dockWidget_4</zorder>

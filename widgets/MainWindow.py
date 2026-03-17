@@ -281,6 +281,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.save_action.triggered.connect(self.save_slot)
         self.exit_action.triggered.connect(self.close)
         self.crossline_action.triggered.connect(self.crossline_slot)
+        self.direction_action.triggered.connect(self.direction_slot)
+        self.information_action.triggered.connect(self.information_slot)
 
         self.file_action.triggered.connect(self.toggle_toolBar_file)
         self.paint_action.triggered.connect(self.toggle_toolBar_draw)
@@ -678,7 +680,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setting(self):
         """导入数据后初始化层数"""
         self.seg_file = ""
-        self.viewer.show_crosshair = True
+        self.viewer.show_information = True
         self.viewer.position[0] = self.viewer.width() // 2
         self.viewer.position[1] = self.viewer.height() // 2
 
@@ -748,6 +750,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def crossline_slot(self):
         self.viewer.cross_show = not self.viewer.cross_show
+        self.viewer.viewport().update()
+    
+    def information_slot(self):
+        self.viewer.information_show = not self.viewer.information_show
+        self.viewer.viewport().update()
+    
+    def direction_slot(self):
+        self.viewer.direction_show = not self.viewer.direction_show
         self.viewer.viewport().update()
 
     def _set_mode(self, mode: VIEWERMode):
@@ -864,7 +874,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.load_mode == LOADMode.CHANGE or self.load_mode == LOADMode.RELOAD:
             self.viewer.fitInView(self.viewer.pixmap_item, Qt.KeepAspectRatio)
-            self.viewer.scene.setSceneRect(self.viewer.pixmap_item.sceneBoundingRect())
+            self.viewer._scene.setSceneRect(self.viewer.pixmap_item.sceneBoundingRect())
             self.load_mode = LOADMode.LOADED
 
     def update_property_and_refresh(self, attr_name, value):

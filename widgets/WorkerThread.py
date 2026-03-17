@@ -162,7 +162,7 @@ class SamThread(QThread):
                 # ADD或SUB模式
                 point_coords = self.input_data
                 masks = self.predictor.add_point(
-                    point_coords, self.is_positive, label_id=0
+                    point_coords, True, label_id=0
                 )
                 mask = masks[0].astype(np.uint8)
             else:
