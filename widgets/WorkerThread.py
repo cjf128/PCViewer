@@ -129,12 +129,15 @@ class NiftiWorker(QThread):
 class SamThread(QThread):
     finished = Signal(np.ndarray)
 
-    def __init__(self, predictor, input_data, mode, is_positive=False):
+    def __init__(
+        self, predictor, current_slice, input_data, mode, change_image_mode=True
+    ):
         super().__init__()
         self.predictor = predictor
+        self.current_slice = current_slice
         self.input_data = input_data
         self.mode = mode
-        self.is_positive = is_positive
+        self.change_image_mode = change_image_mode
 
     def _normalize_box(self) -> Tuple[int, int, int, int]:
         box = self.input_data.copy()
@@ -147,6 +150,9 @@ class SamThread(QThread):
     def run(self):
         log_debug(f"开始SAM预测, 模式: {self.mode}, 输入数据: {self.input_data}")
         try:
+            if self.change_image_mode:
+                self.predictor.set_image(self.current_slice)
+
             if self.mode == "BOX":
                 # BOX模式
                 x1, y1, x2, y2 = self._normalize_box()

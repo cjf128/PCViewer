@@ -27,7 +27,7 @@ from PySide6.QtWidgets import (
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from app.configs import AppConfig, ConfigManager
-from app.mode import LOADMode, VIEWERMode, VIEWMode
+from app.mode import LOADMode, VIEWERMode, VIEWMode, SAMMode
 from path import CACHE_PATH, ICONS_PATH, SEGMENTATION_PATH, STYLESHEET_PATH
 from scripts.logger import log_debug, log_error, log_info, log_warning
 from ui.MainWindow_ui import Ui_MainWindow
@@ -782,6 +782,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def operation(self, input_data):
         log_debug(f"SAM操作开始, 输入数据: {input_data}")
+        self.dialog.setWindowTitle("运行中...")
+        self.dialog.show()
+
         try:
             ct_slice = self.ct[:, :, self.layer]
             ct_slice = self.normalize(ct_slice, self.ct_ww, self.ct_wl)
@@ -795,24 +798,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 ct_slice, self.ct_alpha, pet_slice, self.pet_alpha, 0
             )
 
+            change_image_mode = False
             if self.layer != self.num:
-                self.SamPredictor.set_image(current_slice)
+                change_image_mode = True
                 self.num = self.layer
 
             # 获取当前SAM模式
-            current_mode = "BOX"  # 默认BOX模式
-            is_positive = True  # 默认是正点
+            current_mode = "BOX"  # 默认BOX模式点
             if hasattr(self, "segment_setting") and hasattr(
                 self.segment_setting, "current_mode"
             ):
-                from app.mode import SAMMode
 
                 sam_mode = self.segment_setting.current_mode
                 if sam_mode == SAMMode.BOX:
                     current_mode = "BOX"
                 elif sam_mode == SAMMode.ADD:
                     current_mode = "ADD"
-                    is_positive = True
 
             # 在 SAM 修改前先缓存当前层的切片，供撤销使用
             old_slice = self.seg[:, :, self.layer].copy()
@@ -820,6 +821,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # 使用闭包正确捕获old_slice和layer值
             def on_sam_finished(mask):
+                self.dialog.close()
                 self.seg[:, :, current_layer] = np.where(
                     mask > 0, self.color_label, self.seg[:, :, current_layer]
                 )
@@ -834,7 +836,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # 启动SAM线程
             self.SamThread = SamThread(
-                self.SamPredictor, input_data, current_mode, is_positive
+                self.SamPredictor, current_slice, input_data, current_mode, change_image_mode
             )
             self.SamThread.finished.connect(on_sam_finished)
             self.SamThread.start()
