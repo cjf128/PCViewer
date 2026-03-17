@@ -413,10 +413,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addWidget(self.SegmentSetting)
 
         self.dockWidget_3.setWidget(self.dockWidgetContents_3)
-        MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget_3)
+        MainWindow.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dockWidget_3)
         self.dockWidget_4 = QDockWidget(MainWindow)
         self.dockWidget_4.setObjectName(u"dockWidget_4")
         self.dockWidget_4.setFloating(False)
+        self.dockWidget_4.setDockLocation(Qt.DockWidgetArea.LeftDockWidgetArea)
         self.dockWidgetContents_4 = QWidget()
         self.dockWidgetContents_4.setObjectName(u"dockWidgetContents_4")
         self.verticalLayout_7 = QVBoxLayout(self.dockWidgetContents_4)
@@ -433,7 +434,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.addWidget(self.InfoSetting)
 
         self.dockWidget_4.setWidget(self.dockWidgetContents_4)
-        MainWindow.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dockWidget_4)
+        MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget_4)
         self.dockWidget_4.raise_()
         self.dockWidget_2.raise_()
 

@@ -17,4 +17,5 @@ dependencies = [
     "SimpleITK>=2.3.0",
     "vtk>=9.2.6",
     "pyyaml>=6.0.1",
+    "nuitka==2.7.12",
 ]

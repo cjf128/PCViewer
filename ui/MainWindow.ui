@@ -669,7 +669,7 @@
     <string>标注设置</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -701,8 +701,11 @@
    <property name="windowTitle">
     <string>信息显示</string>
    </property>
+   <property name="dockLocation">
+    <enum>Qt::DockWidgetArea::LeftDockWidgetArea</enum>
+   </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_4">
     <layout class="QVBoxLayout" name="verticalLayout_7">

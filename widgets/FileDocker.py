@@ -8,8 +8,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QApplication, QInputDialog, QMenu, QMessageBox, QWidget
 
-from ui.FileDock_ui import Ui_Form
 from app.configs import ConfigManager
+from ui.FileDock_ui import Ui_Form
 
 
 class FileDocker(QWidget, Ui_Form):

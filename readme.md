@@ -33,13 +33,19 @@ pip install -r requirements.txt
 ## TODO
 
 - [ ] infoDocker增加label区域的肿瘤负荷计算，MTV和TLG
-- [ ] infoDocker增加xy坐标显示
+- [ ] infoDocker增加xy坐标显示，label显示，数值显示
 - [ ] 添加快捷键设置
 - [ ] 添加帮助信息
-- [ ] 改为medsam2
+- [ ] 添加SAM Med3D的单点提示
 - [ ] 窗宽窗位预设
 - [ ] 样式表设置
 - [ ] 运行分割时的弹窗
+- [ ] 版本更新拉取
+- [ ] 图像左上角加文件名
+- [ ] 图像单PT和单CT模式
+- [ ] imageDocker添加colorbar选择
+- [ ] 3D建模与透明度同步
+- [ ] 拖动文件进入软件
 
 ---
 

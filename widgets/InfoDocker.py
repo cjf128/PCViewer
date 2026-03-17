@@ -7,6 +7,7 @@ if __name__ == "__main__":
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QApplication,
+    QHeaderView,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
@@ -55,8 +56,13 @@ class InfoDocker(QWidget):
             value_item.setFlags(Qt.ItemIsEnabled)
             self.tableWidget.setItem(row, 1, value_item)
 
-        # 调整列宽
-        self.tableWidget.resizeColumnsToContents()
+        # 设置列宽模式，让两列都填满表格
+        self.tableWidget.horizontalHeader().setSectionResizeMode(
+            0, QHeaderView.ResizeMode.ResizeToContents
+        )
+        self.tableWidget.horizontalHeader().setSectionResizeMode(
+            1, QHeaderView.ResizeMode.Stretch
+        )
 
 
 if __name__ == "__main__":

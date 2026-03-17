@@ -42,7 +42,7 @@ class Ui_Form(object):
         self.groupBox = QGroupBox(self.scrollAreaWidgetContents)
         self.groupBox.setObjectName(u"groupBox")
         self.verticalLayout = QVBoxLayout(self.groupBox)
-        self.verticalLayout.setSpacing(2)
+        self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(2, 2, 2, 2)
         self.verticalLayout_6 = QVBoxLayout()
@@ -160,7 +160,7 @@ class Ui_Form(object):
         self.groupBox_3 = QGroupBox(self.scrollAreaWidgetContents)
         self.groupBox_3.setObjectName(u"groupBox_3")
         self.verticalLayout_16 = QVBoxLayout(self.groupBox_3)
-        self.verticalLayout_16.setSpacing(2)
+        self.verticalLayout_16.setSpacing(0)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.verticalLayout_16.setContentsMargins(2, 2, 2, 2)
         self.verticalLayout_7 = QVBoxLayout()
@@ -264,12 +264,12 @@ class Ui_Form(object):
 
         self.verticalLayout_16.addLayout(self.verticalLayout_11)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout_16.addItem(self.verticalSpacer)
-
 
         self.verticalLayout_2.addWidget(self.groupBox_3)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_2.addItem(self.verticalSpacer)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
