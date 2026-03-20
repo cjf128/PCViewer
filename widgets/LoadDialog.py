@@ -7,8 +7,9 @@ if __name__ == "__main__":
 from PySide6.QtCore import Signal, Slot
 from PySide6.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox
 
-from ui.LoadDialog_ui import Ui_LoadDialog
 from app.configs import ConfigManager
+from ui.LoadDialog_ui import Ui_LoadDialog
+
 
 class LoadDialog(QDialog, Ui_LoadDialog):
     FilesSelected = Signal(str, str, str)

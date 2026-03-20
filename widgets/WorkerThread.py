@@ -161,9 +161,7 @@ class SamThread(QThread):
             elif self.mode in ["ADD", "SUB"]:
                 # ADD或SUB模式
                 point_coords = self.input_data
-                masks = self.predictor.add_point(
-                    point_coords, True, label_id=0
-                )
+                masks = self.predictor.add_point(point_coords, True, label_id=0)
                 mask = masks[0].astype(np.uint8)
             else:
                 log_error(f"未知的SAM模式: {self.mode}")

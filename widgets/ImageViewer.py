@@ -355,7 +355,9 @@ class ImageViewer(QGraphicsView):
             )
             painter.drawText(self.viewport().width() // 2 - 5, margin + 10, axe[2])
             painter.drawText(
-                self.viewport().width() // 2 - 5, self.viewport().height() - margin, axe[3]
+                self.viewport().width() // 2 - 5,
+                self.viewport().height() - margin,
+                axe[3],
             )
 
         if self.information_show:

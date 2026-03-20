@@ -46,6 +46,8 @@ pip install -r requirements.txt
 - [ ] imageDocker添加colorbar选择
 - [ ] 3D建模与透明度同步
 - [ ] 拖动文件进入软件
+- [ ] 标注导入线性重采样
+- [ ] CT与PET的不同种维度
 
 ---
 

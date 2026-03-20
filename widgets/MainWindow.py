@@ -27,7 +27,7 @@ from PySide6.QtWidgets import (
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from app.configs import AppConfig, ConfigManager
-from app.mode import LOADMode, VIEWERMode, VIEWMode, SAMMode
+from app.mode import LOADMode, SAMMode, VIEWERMode, VIEWMode
 from path import CACHE_PATH, ICONS_PATH, SEGMENTATION_PATH, STYLESHEET_PATH
 from scripts.logger import log_debug, log_error, log_info, log_warning
 from ui.MainWindow_ui import Ui_MainWindow
@@ -751,11 +751,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def crossline_slot(self):
         self.viewer.cross_show = not self.viewer.cross_show
         self.viewer.viewport().update()
-    
+
     def information_slot(self):
         self.viewer.information_show = not self.viewer.information_show
         self.viewer.viewport().update()
-    
+
     def direction_slot(self):
         self.viewer.direction_show = not self.viewer.direction_show
         self.viewer.viewport().update()
@@ -818,7 +818,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if hasattr(self, "segment_setting") and hasattr(
                 self.segment_setting, "current_mode"
             ):
-
                 sam_mode = self.segment_setting.current_mode
                 if sam_mode == SAMMode.BOX:
                     current_mode = "BOX"
@@ -846,7 +845,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # 启动SAM线程
             self.SamThread = SamThread(
-                self.SamPredictor, current_slice, input_data, current_mode, change_image_mode
+                self.SamPredictor,
+                current_slice,
+                input_data,
+                current_mode,
+                change_image_mode,
             )
             self.SamThread.finished.connect(on_sam_finished)
             self.SamThread.start()
@@ -953,7 +956,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.No,
         )
         if reply == QMessageBox.Yes:
-
             config_manager = ConfigManager()
             config_manager.save(self._config)
 
