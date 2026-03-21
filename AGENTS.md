@@ -47,18 +47,19 @@ Note: Currently, there are no test files in this repository. Tests should be add
 ### Dependencies
 
 Core dependencies (from pyproject.toml/setup.py):
+
 - PySide6 >= 6.9.1
 - numpy >= 1.26.0
 - opencv-python >= 4.8.0
 - onnxruntime >= 1.16.0
 - pydicom >= 2.4.3
-- pandas >= 2.1.0
 - pypinyin >= 0.49.0
 - SimpleITK >= 2.3.0
 - vtk >= 9.2.6
 - pyyaml >= 6.0.1
 
 Dev dependencies:
+
 - pytest >= 7.4.0
 
 ---
@@ -68,26 +69,27 @@ Dev dependencies:
 ### Import Conventions
 
 1. **Standard library imports first**, then third-party, then local:
+
    ```python
    import os
    import sys
    from pathlib import Path
-   
+
    import cv2
    import numpy as np
    from PySide6.QtCore import Qt
    from PySide6.QtWidgets import QApplication
-   
+
    from app.configs import AppConfig
    from widgets.MainWindow import MainWindow
    ```
-
 2. **Local imports should use relative imports** based on the project structure:
+
    - `from app.configs import ...`
    - `from widgets.MainWindow import ...`
    - `from scripts.logger import ...`
-
 3. **Group Qt imports** for readability:
+
    ```python
    from PySide6.QtCore import Qt, Signal
    from PySide6.QtGui import QIcon, QImage, QPixmap
@@ -125,16 +127,16 @@ def log_info(message: str) -> None:
 ### Code Organization
 
 1. **Class structure**: Follow the order within classes:
+
    - Class docstring
    - `__init__` method
    - Properties (`@property`)
    - Public methods
    - Private methods (prefixed with `_`)
    - Event handlers
-
 2. **Keep methods focused**: Each method should do one thing well
-
 3. **Use dataclasses** for configuration and data structures:
+
    ```python
    @dataclass
    class AppConfig:
@@ -146,6 +148,7 @@ def log_info(message: str) -> None:
 ### Error Handling
 
 1. **Use try/except with specific exceptions**:
+
    ```python
    try:
        with open(self._config_path, 'r', encoding='utf-8') as f:
@@ -153,16 +156,16 @@ def log_info(message: str) -> None:
    except (FileNotFoundError, yaml.YAMLError):
        pass
    ```
-
 2. **Use logging for error reporting** instead of print statements:
+
    ```python
    from scripts.logger import log_error, log_warning, log_info
-   
+
    log_error(f"Failed to load file: {e}")
    log_warning("Please input original data first")
    ```
-
 3. **Show user-friendly error dialogs** for GUI errors:
+
    ```python
    QMessageBox.warning(self, "警告！", "请先输入原始数据！", QMessageBox.Ok)
    ```
@@ -204,7 +207,7 @@ Use `QThread` for background tasks to keep UI responsive:
 ```python
 class WorkerThread(QThread):
     finished = Signal(...)  # Define signals for results
-    
+  
     def run(self):
         # Background work here
         self.finished.emit(result)
@@ -254,17 +257,20 @@ Viewer/
 ## Common Development Tasks
 
 ### Running the app in development
+
 ```bash
 python main.py
 ```
 
 ### Adding a new widget
+
 1. Create widget class in `widgets/` directory
 2. Create corresponding UI in Qt Designer, save to `ui/`
 3. Generate Python UI with: `pyside6-uci input.ui -o output.py`
 4. Import and integrate in `MainWindow`
 
 ### Adding a new feature
+
 1. Import necessary modules at the top
 2. Add UI elements in Qt Designer if needed
 3. Connect signals/slots in `init_connectAction()`

@@ -48,6 +48,7 @@ pip install -r requirements.txt
 - [ ] 拖动文件进入软件
 - [ ] 标注导入线性重采样
 - [ ] CT与PET的不同种维度
+- [ ] 标注框跟随变色
 
 ---
 

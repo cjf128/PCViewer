@@ -23,7 +23,6 @@ logs/
 
 # IDE配置
 .idea/
-.view/
 .vscode/
 
 # Python
