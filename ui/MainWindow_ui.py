@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.2
+## Created by: Qt User Interface Compiler version 6.9.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -150,6 +150,7 @@ class Ui_MainWindow(object):
         self.actionhelp.setObjectName("actionhelp")
         self.shortcut_action = QAction(MainWindow)
         self.shortcut_action.setObjectName("shortcut_action")
+        self.shortcut_action.setShortcutContext(Qt.ShortcutContext.WidgetShortcut)
         self.direction_action = QAction(MainWindow)
         self.direction_action.setObjectName("direction_action")
         self.direction_action.setCheckable(True)
@@ -383,59 +384,28 @@ class Ui_MainWindow(object):
         self.toolBar_run.setObjectName("toolBar_run")
         self.toolBar_run.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
         MainWindow.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.toolBar_run)
-        self.dockWidget_2 = QDockWidget(MainWindow)
-        self.dockWidget_2.setObjectName("dockWidget_2")
+        self.dockWidget = QDockWidget(MainWindow)
+        self.dockWidget.setObjectName("dockWidget")
+        self.dockWidget.setMinimumSize(QSize(230, 39))
+        self.dockWidget.setFloating(False)
+        self.dockWidget.setFeatures(
+            QDockWidget.DockWidgetFeature.DockWidgetFloatable
+            | QDockWidget.DockWidgetFeature.DockWidgetMovable
+        )
+        self.dockWidget.setAllowedAreas(
+            Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
+        )
+        self.dockWidgetContents = QWidget()
+        self.dockWidgetContents.setObjectName("dockWidgetContents")
         sizePolicy2 = QSizePolicy(
-            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred
         )
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(
-            self.dockWidget_2.sizePolicy().hasHeightForWidth()
-        )
-        self.dockWidget_2.setSizePolicy(sizePolicy2)
-        self.dockWidget_2.setMinimumSize(QSize(230, 39))
-        self.dockWidget_2.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.dockWidget_2.setFloating(False)
-        self.dockWidgetContents_2 = QWidget()
-        self.dockWidgetContents_2.setObjectName("dockWidgetContents_2")
-        sizePolicy3 = QSizePolicy(
-            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed
-        )
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(
-            self.dockWidgetContents_2.sizePolicy().hasHeightForWidth()
-        )
-        self.dockWidgetContents_2.setSizePolicy(sizePolicy3)
-        self.verticalLayout_3 = QVBoxLayout(self.dockWidgetContents_2)
-        self.verticalLayout_3.setSpacing(0)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.FileSetting = QWidget(self.dockWidgetContents_2)
-        self.FileSetting.setObjectName("FileSetting")
-        sizePolicy4 = QSizePolicy(
-            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred
-        )
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.FileSetting.sizePolicy().hasHeightForWidth())
-        self.FileSetting.setSizePolicy(sizePolicy4)
-
-        self.verticalLayout_3.addWidget(self.FileSetting)
-
-        self.dockWidget_2.setWidget(self.dockWidgetContents_2)
-        MainWindow.addDockWidget(
-            Qt.DockWidgetArea.RightDockWidgetArea, self.dockWidget_2
-        )
-        self.dockWidget = QDockWidget(MainWindow)
-        self.dockWidget.setObjectName("dockWidget")
-        self.dockWidgetContents = QWidget()
-        self.dockWidgetContents.setObjectName("dockWidgetContents")
-        sizePolicy4.setHeightForWidth(
             self.dockWidgetContents.sizePolicy().hasHeightForWidth()
         )
-        self.dockWidgetContents.setSizePolicy(sizePolicy4)
+        self.dockWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout_4 = QVBoxLayout(self.dockWidgetContents)
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -449,6 +419,16 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget)
         self.dockWidget_3 = QDockWidget(MainWindow)
         self.dockWidget_3.setObjectName("dockWidget_3")
+        self.dockWidget_3.setMinimumSize(QSize(230, 39))
+        self.dockWidget_3.setFloating(False)
+        self.dockWidget_3.setFeatures(
+            QDockWidget.DockWidgetFeature.DockWidgetFloatable
+            | QDockWidget.DockWidgetFeature.DockWidgetMovable
+        )
+        self.dockWidget_3.setAllowedAreas(
+            Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
+        )
+        self.dockWidget_3.setDockLocation(Qt.DockWidgetArea.RightDockWidgetArea)
         self.dockWidgetContents_3 = QWidget()
         self.dockWidgetContents_3.setObjectName("dockWidgetContents_3")
         self.verticalLayout_6 = QVBoxLayout(self.dockWidgetContents_3)
@@ -466,7 +446,15 @@ class Ui_MainWindow(object):
         )
         self.dockWidget_4 = QDockWidget(MainWindow)
         self.dockWidget_4.setObjectName("dockWidget_4")
+        self.dockWidget_4.setMinimumSize(QSize(230, 39))
         self.dockWidget_4.setFloating(False)
+        self.dockWidget_4.setFeatures(
+            QDockWidget.DockWidgetFeature.DockWidgetFloatable
+            | QDockWidget.DockWidgetFeature.DockWidgetMovable
+        )
+        self.dockWidget_4.setAllowedAreas(
+            Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
+        )
         self.dockWidget_4.setDockLocation(Qt.DockWidgetArea.LeftDockWidgetArea)
         self.dockWidgetContents_4 = QWidget()
         self.dockWidgetContents_4.setObjectName("dockWidgetContents_4")
@@ -476,6 +464,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
         self.InfoSetting = QWidget(self.dockWidgetContents_4)
         self.InfoSetting.setObjectName("InfoSetting")
+        self.InfoSetting.setMinimumSize(QSize(0, 0))
         self.verticalLayout_9 = QVBoxLayout(self.InfoSetting)
         self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setObjectName("verticalLayout_9")
@@ -487,8 +476,32 @@ class Ui_MainWindow(object):
         MainWindow.addDockWidget(
             Qt.DockWidgetArea.LeftDockWidgetArea, self.dockWidget_4
         )
+        self.dockWidget_2 = QDockWidget(MainWindow)
+        self.dockWidget_2.setObjectName("dockWidget_2")
+        self.dockWidget_2.setMinimumSize(QSize(230, 51))
+        self.dockWidget_2.setFeatures(
+            QDockWidget.DockWidgetFeature.DockWidgetFloatable
+            | QDockWidget.DockWidgetFeature.DockWidgetMovable
+        )
+        self.dockWidget_2.setAllowedAreas(
+            Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea
+        )
+        self.dockWidgetContents_2 = QWidget()
+        self.dockWidgetContents_2.setObjectName("dockWidgetContents_2")
+        self.verticalLayout_8 = QVBoxLayout(self.dockWidgetContents_2)
+        self.verticalLayout_8.setSpacing(0)
+        self.verticalLayout_8.setObjectName("verticalLayout_8")
+        self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.FileSetting_2 = QWidget(self.dockWidgetContents_2)
+        self.FileSetting_2.setObjectName("FileSetting_2")
+
+        self.verticalLayout_8.addWidget(self.FileSetting_2)
+
+        self.dockWidget_2.setWidget(self.dockWidgetContents_2)
+        MainWindow.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, self.dockWidget_2
+        )
         self.dockWidget_4.raise_()
-        self.dockWidget_2.raise_()
 
         self.menuBar.addAction(self.muFile.menuAction())
         self.menuBar.addAction(self.menu.menuAction())
@@ -627,13 +640,25 @@ class Ui_MainWindow(object):
             QCoreApplication.translate("MainWindow", "\u4fe1\u606f\u8bbe\u7f6e", None)
         )
         self.dark_action.setText(QCoreApplication.translate("MainWindow", "dark", None))
+        # if QT_CONFIG(tooltip)
+        self.dark_action.setToolTip(
+            QCoreApplication.translate("MainWindow", "\u6697", None)
+        )
+        # endif // QT_CONFIG(tooltip)
         self.light_action.setText(
             QCoreApplication.translate("MainWindow", "light", None)
         )
+        # if QT_CONFIG(tooltip)
+        self.light_action.setToolTip(
+            QCoreApplication.translate("MainWindow", "\u4eae", None)
+        )
+        # endif // QT_CONFIG(tooltip)
         self.filesetting_action.setText(
             QCoreApplication.translate("MainWindow", "\u6587\u4ef6\u7ba1\u7406", None)
         )
-        self.data_atn.setText(QCoreApplication.translate("MainWindow", "data", None))
+        self.data_atn.setText(
+            QCoreApplication.translate("MainWindow", "\u6570\u636e", None)
+        )
         # if QT_CONFIG(tooltip)
         self.data_atn.setToolTip(
             QCoreApplication.translate("MainWindow", "\u5bfc\u5165\u6570\u636e", None)
@@ -649,13 +674,13 @@ class Ui_MainWindow(object):
             QCoreApplication.translate("MainWindow", "\u5e2e\u52a9", None)
         )
         self.shortcut_action.setText(
-            QCoreApplication.translate("MainWindow", "shortcut", None)
+            QCoreApplication.translate("MainWindow", "\u5feb\u6377\u952e", None)
         )
         self.direction_action.setText(
-            QCoreApplication.translate("MainWindow", "direction", None)
+            QCoreApplication.translate("MainWindow", "\u65b9\u4f4d", None)
         )
         self.information_action.setText(
-            QCoreApplication.translate("MainWindow", "patient_name", None)
+            QCoreApplication.translate("MainWindow", "\u60a3\u8005\u540d", None)
         )
         self.boxPET.setText(QCoreApplication.translate("MainWindow", "PET", None))
         self.boxCT.setText(QCoreApplication.translate("MainWindow", "CT", None))
@@ -682,7 +707,9 @@ class Ui_MainWindow(object):
         self.menu.setTitle(
             QCoreApplication.translate("MainWindow", "\u7f16\u8f91", None)
         )
-        self.menutheme.setTitle(QCoreApplication.translate("MainWindow", "theme", None))
+        self.menutheme.setTitle(
+            QCoreApplication.translate("MainWindow", "\u4e3b\u9898", None)
+        )
         self.menu_2.setTitle(
             QCoreApplication.translate("MainWindow", "\u5e2e\u52a9", None)
         )
@@ -698,9 +725,6 @@ class Ui_MainWindow(object):
         self.toolBar_run.setWindowTitle(
             QCoreApplication.translate("MainWindow", "\u7a0b\u5e8f", None)
         )
-        self.dockWidget_2.setWindowTitle(
-            QCoreApplication.translate("MainWindow", "\u6587\u4ef6\u7ba1\u7406", None)
-        )
         self.dockWidget.setWindowTitle(
             QCoreApplication.translate("MainWindow", "\u56fe\u50cf\u8bbe\u7f6e", None)
         )
@@ -709,6 +733,9 @@ class Ui_MainWindow(object):
         )
         self.dockWidget_4.setWindowTitle(
             QCoreApplication.translate("MainWindow", "\u4fe1\u606f\u663e\u793a", None)
+        )
+        self.dockWidget_2.setWindowTitle(
+            QCoreApplication.translate("MainWindow", "\u6587\u4ef6\u7ba1\u7406", None)
         )
 
     # retranslateUi

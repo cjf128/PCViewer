@@ -188,7 +188,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def init_ui(self):
         self.file_Setting = FileDocker(self, self)
-        self.file_Setting_layout = QVBoxLayout(self.FileSetting)
+        self.file_Setting_layout = QVBoxLayout(self.FileSetting_2)
         self.file_Setting_layout.addWidget(self.file_Setting)
         self.file_Setting_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -702,8 +702,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.segment_setting.boxAlphaSeg.setValue(self.seg_alpha)
 
-            self.aim_atn.setChecked(True)
-            self._set_mode(VIEWERMode.AIM)
+            self._update_mode_from_buttons()
 
         self.sldLayer.setMaximum(self.ct.shape[2] - 1)
         self.boxLayer.setMaximum(self.ct.shape[2] - 1)

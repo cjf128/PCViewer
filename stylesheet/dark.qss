@@ -1,0 +1,49 @@
+/* Dark Theme - Deep Blue Accent */
+QWidget {
+    background-color: #1e1e1e;
+    color: #dcdcdc;
+    font-family: "Segoe UI", "Microsoft YaHei";
+    font-size: 10pt;
+}
+
+/* --- 按钮 (按下变亮) --- */
+QPushButton {
+    background-color: #333333;
+    border: 1px solid #444444;
+    border-radius: 4px;
+    padding: 2px 16px;
+    min-width: 36px;
+}
+
+QPushButton:hover {
+    background-color: #3d3d3d;
+    border: 1px solid #1a4d80;
+}
+
+QPushButton:checked {
+    background-color: #444444; 
+}
+
+QPushButton:pressed {
+    background-color: #1a4d80;
+}
+
+/* --- 滚动条 (QScrollBar) --- */
+QScrollBar:horizontal {
+    border: none;
+    background: #252525;
+    height: 20px;
+    margin: 0px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #444444;
+    border-radius: 2px;
+    min-width: 16px;
+}
+
+/* --- ScrollArea 彻底去黑线 --- */
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}

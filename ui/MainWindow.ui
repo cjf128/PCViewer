@@ -465,7 +465,7 @@
     </property>
     <widget class="QMenu" name="menutheme">
      <property name="title">
-      <string>theme</string>
+      <string>主题</string>
      </property>
      <addaction name="dark_action"/>
      <addaction name="light_action"/>
@@ -575,68 +575,22 @@
    <addaction name="sam_atn"/>
    <addaction name="redo_atn"/>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_2">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
+  <widget class="QDockWidget" name="dockWidget">
    <property name="minimumSize">
     <size>
      <width>230</width>
      <height>39</height>
     </size>
    </property>
-   <property name="layoutDirection">
-    <enum>Qt::LayoutDirection::LeftToRight</enum>
-   </property>
    <property name="floating">
     <bool>false</bool>
    </property>
-   <property name="windowTitle">
-    <string>文件管理</string>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
    </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QWidget" name="FileSetting" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dockWidget">
+   <property name="allowedAreas">
+    <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
+   </property>
    <property name="windowTitle">
     <string>图像设置</string>
    </property>
@@ -673,8 +627,26 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_3">
+   <property name="minimumSize">
+    <size>
+     <width>230</width>
+     <height>39</height>
+    </size>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
+   </property>
    <property name="windowTitle">
     <string>标注设置</string>
+   </property>
+   <property name="dockLocation">
+    <enum>Qt::DockWidgetArea::RightDockWidgetArea</enum>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -703,8 +675,20 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_4">
+   <property name="minimumSize">
+    <size>
+     <width>230</width>
+     <height>39</height>
+    </size>
+   </property>
    <property name="floating">
     <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
     <string>信息显示</string>
@@ -734,6 +718,12 @@
      </property>
      <item>
       <widget class="QWidget" name="InfoSetting" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
        <layout class="QVBoxLayout" name="verticalLayout_9">
         <property name="spacing">
          <number>0</number>
@@ -752,6 +742,48 @@
         </property>
        </layout>
       </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_2">
+   <property name="minimumSize">
+    <size>
+     <width>230</width>
+     <height>51</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>文件管理</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout" name="verticalLayout_8">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QWidget" name="FileSetting_2" native="true"/>
      </item>
     </layout>
    </widget>
@@ -967,6 +999,9 @@
    <property name="text">
     <string>dark</string>
    </property>
+   <property name="toolTip">
+    <string>暗</string>
+   </property>
   </action>
   <action name="light_action">
    <property name="checkable">
@@ -974,6 +1009,9 @@
    </property>
    <property name="text">
     <string>light</string>
+   </property>
+   <property name="toolTip">
+    <string>亮</string>
    </property>
   </action>
   <action name="filesetting_action">
@@ -995,7 +1033,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>data</string>
+    <string>数据</string>
    </property>
    <property name="toolTip">
     <string>导入数据</string>
@@ -1021,7 +1059,10 @@
   </action>
   <action name="shortcut_action">
    <property name="text">
-    <string>shortcut</string>
+    <string>快捷键</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ShortcutContext::WidgetShortcut</enum>
    </property>
   </action>
   <action name="direction_action">
@@ -1032,7 +1073,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>direction</string>
+    <string>方位</string>
    </property>
   </action>
   <action name="information_action">
@@ -1043,11 +1084,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>patient_name</string>
+    <string>患者名</string>
    </property>
   </action>
   <zorder>dockWidget_4</zorder>
-  <zorder>dockWidget_2</zorder>
  </widget>
  <resources/>
  <connections>
