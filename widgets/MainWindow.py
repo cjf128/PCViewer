@@ -28,8 +28,9 @@ from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from app.configs import AppConfig, ConfigManager
 from app.mode import LOADMode, SAMMode, VIEWERMode, VIEWMode
-from path import CACHE_PATH, ICONS_PATH, SEGMENTATION_PATH, STYLESHEET_PATH
+from path import CACHE_PATH, ICONS_PATH, SEGMENTATION_PATH
 from scripts.logger import log_debug, log_error, log_info, log_warning
+from scripts.theme import ThemeManager
 from ui.MainWindow_ui import Ui_MainWindow
 from widgets.FileDocker import FileDocker
 from widgets.ImageDocker import ImageDocker
@@ -151,15 +152,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def config(self) -> None:
         theme = self._config.theme
-        with open(str(STYLESHEET_PATH / f"{theme}.qss"), "r", encoding="utf-8") as f:
-            self.setStyleSheet(f.read())
 
         self.theme_button_group = QActionGroup(self)
         self.theme_button_group.setExclusive(True)
         self.theme_button_group.addAction(self.dark_action)
         self.theme_button_group.addAction(self.light_action)
 
-        # 根据配置设置初始状态
         if theme == "dark":
             self.dark_action.setChecked(True)
         else:
@@ -188,7 +186,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def init_ui(self):
         self.file_Setting = FileDocker(self, self)
-        self.file_Setting_layout = QVBoxLayout(self.FileSetting_2)
+        self.file_Setting_layout = QVBoxLayout(self.FileSetting)
         self.file_Setting_layout.addWidget(self.file_Setting)
         self.file_Setting_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -411,17 +409,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def change_theme(self, theme):
         """切换主题"""
-        # 更新配置
         self._config.theme = theme
 
         config_manager = ConfigManager()
         config_manager.save(self._config)
 
-        # 更新样式
-        with open(str(STYLESHEET_PATH / f"{theme}.qss"), "r", encoding="utf-8") as f:
-            self.setStyleSheet(f.read())
+        ThemeManager.set_theme(theme)
 
-        # 重新加载图标
         self.load_atn.setIcon(QIcon(str(ICONS_PATH / theme / "load.png")))
         self.add_atn.setIcon(QIcon(str(ICONS_PATH / theme / "add.png")))
         self.save_atn.setIcon(QIcon(str(ICONS_PATH / theme / "save.png")))
@@ -443,7 +437,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QIcon(str(ICONS_PATH / theme / "point.png"))
         )
 
-        # 刷新界面
         self.update_all()
 
     def redo_slot(self):

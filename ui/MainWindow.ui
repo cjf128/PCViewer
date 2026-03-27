@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1255</width>
+    <width>1276</width>
     <height>833</height>
    </rect>
   </property>
@@ -430,7 +430,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1255</width>
+     <width>1276</width>
      <height>33</height>
     </rect>
    </property>
@@ -479,18 +479,9 @@
     <addaction name="separator"/>
     <addaction name="shortcut_action"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
-    <property name="title">
-     <string>帮助</string>
-    </property>
-    <addaction name="about_action"/>
-    <addaction name="github_action"/>
-    <addaction name="actionhelp"/>
-   </widget>
    <addaction name="muFile"/>
    <addaction name="menu"/>
    <addaction name="muView"/>
-   <addaction name="menu_2"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="minimumSize">
@@ -626,54 +617,6 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_3">
-   <property name="minimumSize">
-    <size>
-     <width>230</width>
-     <height>39</height>
-    </size>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="features">
-    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
-   </property>
-   <property name="windowTitle">
-    <string>标注设置</string>
-   </property>
-   <property name="dockLocation">
-    <enum>Qt::DockWidgetArea::RightDockWidgetArea</enum>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
-    <layout class="QVBoxLayout" name="verticalLayout_6">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QWidget" name="SegmentSetting" native="true"/>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QDockWidget" name="dockWidget_4">
    <property name="minimumSize">
     <size>
@@ -783,7 +726,49 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QWidget" name="FileSetting_2" native="true"/>
+      <widget class="QWidget" name="FileSetting" native="true"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_5">
+   <property name="minimumSize">
+    <size>
+     <width>230</width>
+     <height>51</height>
+    </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>标注设置</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_5">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QWidget" name="SegmentSetting" native="true"/>
      </item>
     </layout>
    </widget>

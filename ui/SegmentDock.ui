@@ -265,20 +265,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox">
-            <item>
-             <property name="text">
-              <string>MedSAM2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>MedSAM3</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item>
            <widget class="QFrame" name="frame_2">
             <property name="frameShape">
              <enum>QFrame::Shape::StyledPanel</enum>

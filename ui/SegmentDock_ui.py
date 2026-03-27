@@ -15,11 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDoubleSpinBox, QFrame,
-    QGroupBox, QHBoxLayout, QHeaderView, QLabel,
-    QPushButton, QScrollArea, QSizePolicy, QSlider,
-    QSpacerItem, QSpinBox, QTableWidget, QTableWidgetItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QDoubleSpinBox, QFrame, QGroupBox,
+    QHBoxLayout, QHeaderView, QLabel, QPushButton,
+    QScrollArea, QSizePolicy, QSlider, QSpacerItem,
+    QSpinBox, QTableWidget, QTableWidgetItem, QVBoxLayout,
+    QWidget)
 
 class Ui_Form(object):
     def setupUi(self, Form):
@@ -151,13 +151,6 @@ class Ui_Form(object):
 
         self.verticalLayout_14.addWidget(self.label_2)
 
-        self.comboBox = QComboBox(self.groupBox_2)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
-
-        self.verticalLayout_14.addWidget(self.comboBox)
-
         self.frame_2 = QFrame(self.groupBox_2)
         self.frame_2.setObjectName(u"frame_2")
         self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
@@ -216,9 +209,6 @@ class Ui_Form(object):
         self.label.setText(QCoreApplication.translate("Form", u"\u7b14\u5237\u5927\u5c0f", None))
         self.label_9.setText(QCoreApplication.translate("Form", u"\u900f\u660e\u5ea6\uff1a  ", None))
         self.label_2.setText(QCoreApplication.translate("Form", u"SAM\u63d0\u793a", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("Form", u"MedSAM2", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("Form", u"MedSAM3", None))
-
         self.pushButton_4.setText("")
         self.pushButton_3.setText("")
     # retranslateUi

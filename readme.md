@@ -52,7 +52,43 @@ pip install -r requirements.txt
 
 ---
 
-## 开源协议
+## 打包命令
+
+```powershell
+nuitka --standalone `
+ --remove-output `
+ --enable-plugin=pyside6 `
+ --include-qt-plugins=sensible,styles `
+ --include-package-data=pypinyin `
+ --include-package-data=pydicom `
+ --include-package=pydicom.pixels `
+ --include-package=pylibjpeg `
+ --include-data-dir="D:/Python/Viewer/data=data" `
+ --include-data-dir="D:/Python/Viewer/stylesheet=stylesheet" `
+ --include-data-dir="D:/Python/Viewer/models=models" `
+ --include-data-dir="D:/Python/Viewer/icons=icons" `
+ --windows-icon-from-ico="D:/Python/Viewer/icons/logo_2.ico" `
+ --output-dir="D:/OutPut" `
+ --debug `
+ --debugger `
+ --no-debug-immortal-assumptions `
+ --show-progress `
+ --assume-yes `
+ --jobs=4 `
+ "D:/Python/Viewer/main.py"
+
+```
+
+> **注意**:
+>
+> - `--include-package-data=pypinyin` 和 `--include-package-data=pydicom`：包含数据文件
+> - `--include-package=pydicom.pixels`：pydicom 使用动态导入（`importlib.import_module()`），需要显式包含整个 pixels 包
+> - `--include-package=pylibjpeg`：包含 JPEG 解码库
+> - `--debug --no-debug-immortal-assumptions`：PySide6 兼容性要求
+
+---
+
+# 开源协议
 
 本项目采用 **Apache License 2.0** 开源协议。
 在遵守许可证条款的前提下，允许自由使用、修改和分发。
