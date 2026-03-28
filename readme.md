@@ -57,6 +57,7 @@ pip install -r requirements.txt
 ```powershell
 nuitka --standalone `
  --remove-output `
+ --windows-console-mode=disable `
  --enable-plugin=pyside6 `
  --include-qt-plugins=sensible,styles `
  --include-package-data=pypinyin `
@@ -69,9 +70,6 @@ nuitka --standalone `
  --include-data-dir="D:/Python/Viewer/icons=icons" `
  --windows-icon-from-ico="D:/Python/Viewer/icons/logo_2.ico" `
  --output-dir="D:/OutPut" `
- --debug `
- --debugger `
- --no-debug-immortal-assumptions `
  --show-progress `
  --assume-yes `
  --jobs=4 `
