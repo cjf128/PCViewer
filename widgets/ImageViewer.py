@@ -157,7 +157,7 @@ class ImageViewer(QGraphicsView):
                             pen_size = 1
                         else:
                             pen_size = 0.5
-                        self.rect_item.setPen(QPen(QColor("blue"), pen_size))
+                        self.rect_item.setPen(QPen(QColor("red"), pen_size))
                         self.rect_item.setTransform(self.pixmap_item.transform())
                         self._scene.addItem(self.rect_item)
                     else:

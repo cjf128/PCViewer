@@ -484,7 +484,6 @@
     <addaction name="separator"/>
     <addaction name="menutheme"/>
     <addaction name="separator"/>
-    <addaction name="shortcut_action"/>
    </widget>
    <addaction name="muFile"/>
    <addaction name="menu"/>
@@ -738,7 +737,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_5">
+  <widget class="QDockWidget" name="dockWidget_3">
    <property name="minimumSize">
     <size>
      <width>230</width>
@@ -1047,14 +1046,6 @@
   <action name="actionhelp">
    <property name="text">
     <string>帮助</string>
-   </property>
-  </action>
-  <action name="shortcut_action">
-   <property name="text">
-    <string>快捷键</string>
-   </property>
-   <property name="shortcutContext">
-    <enum>Qt::ShortcutContext::WidgetShortcut</enum>
    </property>
   </action>
   <action name="direction_action">
