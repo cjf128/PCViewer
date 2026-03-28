@@ -325,6 +325,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 主题切换信号槽
         self.dark_action.triggered.connect(lambda: self.change_theme("dark"))
         self.light_action.triggered.connect(lambda: self.change_theme("light"))
+
+        self.file_Setting.file_name.connect(self.viewer.patient_name_change)
     
     def transpose(self, mode):
         if mode == "trans":
@@ -946,12 +948,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 for key, value in patient_info.items():
                     if key not in patient_keys:
                         info[key] = value
-            elif (
-                hasattr(self, "patient_id")
-                and self.patient_id
-                and self.file_type != "NIfTI"
-            ):
-                info["患者ID"] = self.patient_id
 
             # 更新InfoDocker
             if hasattr(self, "info_setting"):

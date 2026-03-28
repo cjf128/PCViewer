@@ -4,7 +4,7 @@ from pathlib import Path
 if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QApplication, QInputDialog, QMenu, QMessageBox, QWidget
 
@@ -13,6 +13,8 @@ from ui.FileDock_ui import Ui_Form
 
 
 class FileDocker(QWidget, Ui_Form):
+    file_name = Signal(str)
+
     def __init__(self, parent, main_window):
         super().__init__(parent)
         self.main_window = main_window
@@ -80,6 +82,7 @@ class FileDocker(QWidget, Ui_Form):
                 # 存储数据 ID，注意此处使用 Qt.ItemDataRole.UserRole 以符合 Qt 6 规范
                 row[0].setData(data_id, Qt.ItemDataRole.UserRole)
                 self.model.appendRow(row)
+                self.file_name.emit(final_name)
 
         # 调整列宽以适应内容
         self.treeView.resizeColumnToContents(0)
@@ -90,10 +93,13 @@ class FileDocker(QWidget, Ui_Form):
         item = self.model.itemFromIndex(index)
         # 从item的data中获取数据ID
         data_id = item.data(Qt.UserRole)
+        name = item.text()
 
         if data_id and self.main_window and hasattr(self.main_window, "reload_data"):
             # 调用MainWindow的reload_data方法重新导入
             self.main_window.reload_data(data_id)
+        
+        self.file_name.emit(name)
 
     def on_context_menu(self, position):
         """右键菜单"""

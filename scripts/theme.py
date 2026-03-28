@@ -62,7 +62,6 @@ class ThemeManager:
 
         light_bg = QColor(250, 250, 248)
         mid_bg = QColor(242, 241, 238)
-        border_light = QColor(230, 228, 225)
 
         text_primary = QColor(35, 38, 42)
         text_secondary = QColor(120, 125, 135)

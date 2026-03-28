@@ -54,9 +54,9 @@ class ImageDocker(QWidget, Ui_Form):
             lambda v: self.main_window.update_property_and_refresh("pet_alpha", v)
         )
 
-        self.btn1.clicked.connect(lambda v: self.setwindow(400, 40))
-        self.btn2.clicked.connect(lambda v: self.setwindow(1500, -600))
-        self.btn3.clicked.connect(lambda v: self.setwindow(2000, 500))
+        self.btn1.clicked.connect(lambda : self.setwindow(400, 40))
+        self.btn2.clicked.connect(lambda : self.setwindow(1500, -600))
+        self.btn3.clicked.connect(lambda : self.setwindow(2000, 500))
 
     def setwindow(self, ww, wl):
         self.boxCT_ww.setValue(ww)

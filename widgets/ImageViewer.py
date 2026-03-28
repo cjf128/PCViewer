@@ -38,6 +38,7 @@ class ImageViewer(QGraphicsView):
         self.information_show = True
         self.cross_show = False
         self.direction_show = True
+        self.patient_name = None
 
         self.spacing = (1, 1, 1)
 
@@ -322,6 +323,9 @@ class ImageViewer(QGraphicsView):
         self.unsetCursor()
         self.wheel = False
         super().leaveEvent(event)
+    
+    def patient_name_change(self, file_name):
+        self.patient_name = file_name
 
     def drawForeground(self, painter, rect):
         super().drawForeground(painter, rect)
@@ -361,12 +365,11 @@ class ImageViewer(QGraphicsView):
             )
 
         if self.information_show:
-            patient_id = getattr(self.main_window, "patient_id", "")
-            if patient_id:
+            if self.patient_name:
                 font = QFont("Arial", 10, QFont.Bold)
                 painter.setFont(font)
                 painter.setPen(Qt.green)
-                painter.drawText(10, 20, patient_id)
+                painter.drawText(10, 20, self.patient_name)
 
         if self.cross_show:
             penx = QPen(QColor(color[0]), 1, Qt.DashLine)
