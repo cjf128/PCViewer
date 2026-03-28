@@ -115,7 +115,7 @@ class ImageViewer(QGraphicsView):
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         if self.pixmap_item is not None:
-            if event.button() == Qt.LeftButton:
+            if event.button() == Qt.MouseButton.LeftButton:
                 pos = event.position().toPoint()
                 self.last_mouse_position = pos
                 self.scene_pos = self.mapToScene(pos)
@@ -204,13 +204,16 @@ class ImageViewer(QGraphicsView):
                 self.point.y() - self.radius / 2,
             ]
 
-            if self.mode == VIEWERMode.AIM and (event.buttons() & Qt.LeftButton):
+            if self.mode == VIEWERMode.AIM and (
+                event.buttons() & Qt.MouseButton.LeftButton
+            ):
                 self.position[0] = pos.x()
                 self.position[1] = pos.y()
                 self.viewport().update()
 
             if self.mode == VIEWERMode.MOVE and (
-                event.buttons() & Qt.LeftButton or event.buttons() & Qt.MiddleButton
+                event.buttons() & Qt.MouseButton.LeftButton
+                or event.buttons() & Qt.MiddleButton
             ):
                 self.horizontalScrollBar().setValue(
                     self.horizontalScrollBar().value() - self.delta.x()
@@ -222,7 +225,10 @@ class ImageViewer(QGraphicsView):
                 self.position[1] = pos.y()
                 self.viewport().update()
 
-            if self.mode == VIEWERMode.SAM and event.buttons() & Qt.LeftButton:
+            if (
+                self.mode == VIEWERMode.SAM
+                and event.buttons() & Qt.MouseButton.LeftButton
+            ):
                 # 获取当前SAM模式
                 current_mode = SAMMode.BOX  # 默认BOX模式
                 if hasattr(self.main_window, "sam_Setting") and hasattr(
@@ -272,7 +278,7 @@ class ImageViewer(QGraphicsView):
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         if self.pixmap_item is not None:
-            if event.button() == Qt.LeftButton:
+            if event.button() == Qt.MouseButton.LeftButton:
                 if self.mode == VIEWERMode.SAM:
                     # 获取当前SAM模式
                     current_mode = SAMMode.BOX  # 默认BOX模式
@@ -323,7 +329,7 @@ class ImageViewer(QGraphicsView):
         self.unsetCursor()
         self.wheel = False
         super().leaveEvent(event)
-    
+
     def patient_name_change(self, file_name):
         self.patient_name = file_name
 

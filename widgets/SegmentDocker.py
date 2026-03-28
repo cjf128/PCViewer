@@ -119,7 +119,7 @@ class SegmentDocker(QWidget, Ui_Form):
 
             radio_widget = QWidget()
             radio_layout = QVBoxLayout(radio_widget)
-            radio_layout.setAlignment(Qt.AlignCenter)
+            radio_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
             radio_button = QRadioButton()
             radio_button.clicked.connect(
                 lambda checked, lid=int(label_id): self.on_select_button_clicked(lid)

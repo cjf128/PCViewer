@@ -62,27 +62,29 @@ class LoadDialog(QDialog, Ui_LoadDialog):
         ct_file = self.lineEdit_2.text()
 
         if not pet_file or not ct_file:
-            QMessageBox.warning(self, "提示", "请选择PET和CT文件", QMessageBox.Ok)
+            QMessageBox.warning(
+                self, "提示", "请选择PET和CT文件", QMessageBox.StandardButton.Ok
+            )
             return
 
         # 记录文件路径到配置中
         if self.main_window:
-            # 获取当前数据数量，确定新数据的序号
             data_count = len(self.main_window._config.data)
             new_data_id = data_count + 1
 
-            # 存储文件路径和导入方式
+            raw_name = Path(pet_file).name
+            base_name = raw_name.split(".")[0]
+
             self.main_window._config.data[str(new_data_id)] = {
                 "pet": pet_file,
                 "ct": ct_file,
                 "type": self.load_state,
-                "name": Path(pet_file).name,
+                "name": base_name,
             }
 
             config_manager = ConfigManager()
             config_manager.save(self.main_window._config)
 
-            # 立即更新FileDocker的文件列表
             if hasattr(self.main_window, "file_Setting"):
                 self.main_window.file_Setting.load_file_list()
 

@@ -248,7 +248,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.addAction(self.redo_action)
 
         self.dialog = QDialog(self)
-        self.dialog.setWindowModality(Qt.WindowModal)  # 设置为模态对话框
+        self.dialog.setWindowModality(Qt.WindowModality.WindowModal)  # 设置为模态对话框
         self.dialog.setFixedSize(300, 100)
 
         layout = QVBoxLayout()
@@ -327,7 +327,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.light_action.triggered.connect(lambda: self.change_theme("light"))
 
         self.file_Setting.file_name.connect(self.viewer.patient_name_change)
-    
+
     def transpose(self, mode):
         if mode == "trans":
             if self.view_mode == VIEWMode.CROSS:
@@ -460,10 +460,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self,
                 "确认",
                 "是否确认清空所有标注？",
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
             )
-            if reply == QMessageBox.Yes:
+            if reply == QMessageBox.StandardButton.Yes:
                 self.seg = np.zeros_like(self.ct)
                 self.viewer.input_box = []
                 self.update_image()
@@ -471,7 +471,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def load_Seg_slot(self):
         if self.load_mode == LOADMode.UNLOAD:
             log_warning("请先输入原始数据")
-            QMessageBox.warning(self, "警告！", "请先输入原始数据！", QMessageBox.Ok)
+            QMessageBox.warning(
+                self, "警告！", "请先输入原始数据！", QMessageBox.StandardButton.Ok
+            )
             return
         else:
             seg_file, _ = QFileDialog.getOpenFileName(
@@ -554,7 +556,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         self,
                         "警告！",
                         "输入标签与原始数据不符，请检查标注是否正确！",
-                        QMessageBox.Ok,
+                        QMessageBox.StandardButton.Ok,
                     )
                     return
             else:
@@ -629,16 +631,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         self,
                         "路径不存在",
                         "路径不存在，请重新导入",
-                        QMessageBox.Ok,
-                        QMessageBox.Ok,
+                        QMessageBox.StandardButton.Ok,
                     )
-                    if reply == QMessageBox.Ok:
+                    if reply == QMessageBox.StandardButton.Ok:
                         del self._config.data[data_id]
 
                         config_manager = ConfigManager()
                         config_manager.save(self._config)
-                        if hasattr(self, "file_Setting"):
-                            self.file_Setting.load_file_list()
+                        self.file_Setting.load_file_list()
             else:
                 log_error(f"数据ID {data_id} 的文件路径不完整")
         else:
@@ -755,7 +755,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             sitk.WriteImage(image, self.seg_file)
         else:
             log_warning("无可保存分割图像")
-            QMessageBox.warning(self, "警告", "无可保存分割图像！", QMessageBox.Ok)
+            QMessageBox.warning(
+                self, "警告", "无可保存分割图像！", QMessageBox.StandardButton.Ok
+            )
 
     def crossline_slot(self):
         self.viewer.cross_show = not self.viewer.cross_show
@@ -958,10 +960,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self,
             "退出提示",
             "确定退出?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
         )
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             config_manager = ConfigManager()
             config_manager.save(self._config)
 
@@ -985,7 +987,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if event.button() == Qt.RightButton:
                 self.update_all()
 
-            elif event.button() == Qt.LeftButton:
+            elif event.button() == Qt.MouseButton.LeftButton:
                 if self.paint_atn.isChecked() or self.eraser_atn.isChecked():
                     # 在开始绘制前，缓存当前层的切片，作为撤销的 old_slice
                     if self._seg_before_edit is None:
@@ -1016,7 +1018,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def mouseMoveEvent(self, event):
         """鼠标移动重写，用于移动和绘图"""
         super().mouseMoveEvent(event)
-        if self.load_mode != LOADMode.UNLOAD and event.buttons() & Qt.LeftButton:
+        if (
+            self.load_mode != LOADMode.UNLOAD
+            and event.buttons() & Qt.MouseButton.LeftButton
+        ):
             if self.win_atn.isChecked() and self.viewer.underMouse():
                 delta = self.viewer.delta
 
