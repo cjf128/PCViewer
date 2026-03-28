@@ -8,6 +8,7 @@ from PySide6.QtWidgets import (
     QApplication,
     QButtonGroup,
     QColorDialog,
+    QMessageBox,
     QRadioButton,
     QTableWidgetItem,
     QVBoxLayout,
@@ -24,7 +25,7 @@ from ui.SegmentDock_ui import Ui_Form
 
 
 class SegmentDocker(QWidget, Ui_Form):
-    # 定义一个信号，用于通知MainWindow更新color_label
+    # 定义一个信号，用于通知MainWindow更新当前color_label
     label_selected = Signal(int)
 
     def __init__(self, parent, main_window):
@@ -186,100 +187,54 @@ class SegmentDocker(QWidget, Ui_Form):
 
         # 确保至少有一个标签且不是最后一个标签
         if len(labels) > 1:
-            # 按标签ID排序
-            sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
+            target_id = None
+            sorted_items = sorted(labels.items(), key=lambda x: int(x[0]))
+            for idx, (label_id, _) in enumerate(sorted_items):
+                radio_widget = self.tableWidget.cellWidget(idx, 0)
+                radio = radio_widget.findChild(QRadioButton)
+                if radio and radio.isChecked():
+                    target_id = int(label_id)
+                    break
 
-            # 获取当前选中的radio button
-            checked_button = self.radio_group.checkedButton()
-            if checked_button:
-                # 找到选中按钮对应的标签ID
-                for idx, (label_id, label_info) in enumerate(sorted_labels):
-                    # 获取当前行的radio button
-                    radio_widget = self.tableWidget.cellWidget(idx, 0)
-                    if radio_widget:
-                        # 获取widget中的radio button
-                        for child in radio_widget.children():
-                            if hasattr(child, "isChecked") and child.isChecked():
-                                # 序号为1的标签不能删除
-                                if str(label_id) == "1":
-                                    from PySide6.QtWidgets import QMessageBox
+            if target_id is None:
+                return
 
-                                    QMessageBox.warning(
-                                        self, "警告", "序号为1的标签不能删除！"
-                                    )
-                                    return
-
-                                # 删除标签
-                                del labels[str(label_id)]
-
-                                # 重新排序标签序号
-                                sorted_labels = sorted(
-                                    labels.items(), key=lambda x: int(x[0])
-                                )
-                                new_labels = {}
-                                for i, (old_id, label_info) in enumerate(
-                                    sorted_labels, 1
-                                ):
-                                    new_labels[str(i)] = label_info
-                                    # 更新seg数组中的标签ID
-                                    if hasattr(self.main_window, "seg"):
-                                        seg = self.main_window.seg
-                                        # 检查seg是否是numpy数组
-                                        if hasattr(seg, "size") and seg.size > 0:
-                                            seg[seg == int(old_id)] = i
-                                # 替换为新的标签配置
-                                self.main_window._config.label = new_labels
-
-                                # 保存配置
-                                config_manager = ConfigManager()
-                                config_manager.save(self.main_window._config)
-
-                                # 更新表格
-                                self.init_labels()
-                                # 刷新图像
-                                if hasattr(self.main_window, "update_image"):
-                                    self.main_window.update_image()
-                                return
-
-            # 如果没有选中的按钮，默认删除第一个非1号标签
-            if sorted_labels:
-                # 找到第一个非1号标签
-                for label_id, label_info in sorted_labels:
-                    if str(label_id) != "1":
-                        del labels[label_id]
-
-                        # 重新排序标签序号
-                        sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
-                        new_labels = {}
-                        for i, (old_id, label_info) in enumerate(sorted_labels, 1):
-                            new_labels[str(i)] = label_info
-                            # 更新seg数组中的标签ID
-                            if hasattr(self.main_window, "seg"):
-                                seg = self.main_window.seg
-                                # 检查seg是否是numpy数组
-                                if hasattr(seg, "size") and seg.size > 0:
-                                    seg[seg == int(old_id)] = i
-                        # 替换为新的标签配置
-                        self.main_window._config.label = new_labels
-
-                        # 保存配置
-                        config_manager = ConfigManager()
-                        config_manager.save(self.main_window._config)
-
-                        # 更新表格
-                        self.init_labels()
-                        # 刷新图像
-                        if hasattr(self.main_window, "update_image"):
-                            self.main_window.update_image()
-                        return
-                # 如果所有标签都是1号，提示不能删除
-                from PySide6.QtWidgets import QMessageBox
-
+            # 2. 这里的逻辑约束：序号1通常不让删
+            if target_id == 1:
                 QMessageBox.warning(self, "警告", "序号为1的标签不能删除！")
+                return
+
+            # 3. 处理数组 seg (关键步骤)
+            if hasattr(self.main_window, "seg"):
+                seg = self.main_window.seg
+                
+                # 第一步：将要删除的 ID 区域置为 0
+                seg[seg == target_id] = 0
+                
+                # 第二步：将所有大于 target_id 的像素值减 1
+                # 这样 3 变 2, 4 变 3，以此类推，实现了重排映射
+                seg[seg > target_id] -= 1
+
+            # 4. 更新配置文件中的字典
+            # 先删除目标
+            if str(target_id) in labels:
+                del labels[str(target_id)]
+            
+            # 重新构建连续的字典 { "1": info, "2": info ... }
+            remaining_labels = sorted(labels.items(), key=lambda x: int(x[0]))
+            new_labels = {}
+            for i, (old_id, info) in enumerate(remaining_labels, 1):
+                new_labels[str(i)] = info
+            
+            self.main_window._config.label = new_labels
+
+            # 5. 保存并刷新 UI
+            ConfigManager().save(self.main_window._config)
+            self.init_labels()
+            if hasattr(self.main_window, "update_image"):
+                self.main_window.update_image()
         else:
             # 只有一个标签时，提示不能删除
-            from PySide6.QtWidgets import QMessageBox
-
             QMessageBox.warning(self, "警告", "至少需要保留一个标签！")
 
     def update_label(self, row, column):
