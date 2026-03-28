@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import sys
@@ -103,7 +104,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ct_ww: float = 400.0
         self.ct_wl: float = 50.0
         self.pet_ww: float = 2.5
-        self.pet_wl: float = 5.0
 
         # 标注与图层参数
         self.color_label: int = 1
@@ -117,6 +117,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.x_end: int = 0
 
         self.radius: int = 5
+
+        self.pet_spacing = (0, 0, 0)
+        self.pet_shape = (0, 0, 0)
 
         # 图像数据
         self.ct = []
@@ -313,6 +316,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn3D.clicked.connect(self.view_3d_built)
 
         self.btnCa.clicked.connect(self.screen_shot)
+        self.btnRefresh.clicked.connect(self.refresh_slot)
         self.btnReset.clicked.connect(self.reset_slot)
 
         self.viewer.Sam_Signal.connect(self.operation)
@@ -321,7 +325,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 主题切换信号槽
         self.dark_action.triggered.connect(lambda: self.change_theme("dark"))
         self.light_action.triggered.connect(lambda: self.change_theme("light"))
-
+    
     def transpose(self, mode):
         if mode == "trans":
             if self.view_mode == VIEWMode.CROSS:
@@ -407,6 +411,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.load_mode != LOADMode.UNLOAD:
             self.viewer.fitInView(self.viewer.pixmap_item, Qt.KeepAspectRatio)
 
+    def refresh_slot(self):
+        """刷新视图"""
+        if self.btn3D.isChecked():
+            self.view_3d_built()
+            log_info("刷新3D视图")
+        else:
+            pass
+
     def change_theme(self, theme):
         """切换主题"""
         self._config.theme = theme
@@ -471,10 +483,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.seg_file = seg_file
 
                 seg = sitk.ReadImage(str(new_path))
+                seg = sitk.DICOMOrient(seg, "LPS")
                 seg_data = sitk.GetArrayFromImage(seg)
                 trans = self.transpose("trans")
                 seg_data = np.transpose(seg_data, axes=trans)
-                if seg_data.shape == self.pet.shape:
+                if seg_data.shape == self.ct.shape:
                     self.seg = seg_data
 
                     # 检查 seg 最大值是否大于当前 label 数目
@@ -633,24 +646,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self,
         ct_data: np.ndarray,
         pet_data: np.ndarray,
-        spacing: tuple,
+        ct_spacing: tuple,
+        pet_spacing: tuple,
+        pet_shape: tuple,
         patient_info=None,
     ):
         """数据加载完成后的处理"""
         self.load_mode = LOADMode.RELOAD
 
+        log_info(f"{ct_spacing}, {pet_spacing}, {pet_shape}")
+        self.viewer.spacing = ct_spacing
+        self.pet_spacing = pet_spacing
+        self.pet_shape = pet_shape
+
         trans = self.transpose("trans")
         self.ct = np.transpose(ct_data, axes=trans)
         self.pet = np.transpose(pet_data, axes=trans)
         self.seg = np.zeros_like(self.pet)
-        self.viewer.spacing = spacing
 
         self.undo_stack.clear()
-
         self.setting()
 
         # 更新信息显示
         self.update_info_docker(patient_info)
+        log_info("信息更新显示")
 
         # 更新FileDocker的文件列表
         if hasattr(self, "file_Setting"):
@@ -689,13 +708,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             pet_max = np.max(self.pet)
             self.pet_ww = pet_max
-            self.pet_wl = pet_max / 2
-            self.image_setting.boxPET_wl.setValue(self.pet_wl)
             self.image_setting.boxPET_ww.setValue(self.pet_ww)
 
             self.segment_setting.boxAlphaSeg.setValue(self.seg_alpha)
-
-            self._update_mode_from_buttons()
 
         self.sldLayer.setMaximum(self.ct.shape[2] - 1)
         self.boxLayer.setMaximum(self.ct.shape[2] - 1)
@@ -793,7 +808,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ct_slice = np.stack([ct_slice] * 3, axis=-1)
 
             pet_slice = self.pet[:, :, self.layer]
-            pet_slice = self.normalize(pet_slice, self.pet_ww, self.pet_wl)
+            pet_slice = self.normalize(pet_slice, self.pet_ww, self.pet_ww / 2)
             pet_slice = cv2.applyColorMap(pet_slice, cv2.COLORMAP_HOT)
 
             current_slice = cv2.addWeighted(
@@ -893,26 +908,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # 维度信息
             if hasattr(self, "ct") and self.ct.size > 0:
-                info["维度"] = (
-                    f"{self.ct.shape[0]}*{self.ct.shape[1]}*{self.ct.shape[2]}"
+                info["CT尺寸"] = (
+                    f"{self.ct.shape[0]} {self.ct.shape[1]} {self.ct.shape[2]}"
+                )
+                info["PET尺寸"] = (
+                    f"{self.pet_shape[2]} {self.pet_shape[1]} {self.pet_shape[0]}"
                 )
 
             # Spacing信息
             if hasattr(self.viewer, "spacing") and self.viewer.spacing:
-                info["Spacing"] = (
+                info["CT层厚"] = (
                     f"{self.viewer.spacing[0]:.3f}, {self.viewer.spacing[1]:.3f}, {self.viewer.spacing[2]:.3f}"
                 )
-
-            # 坐标系方向
-            info["坐标系方向"] = "LAS"  # 假设默认是LAS
+                info["PET层厚"] = (
+                    f"{self.pet_spacing[0]:.3f}, {self.pet_spacing[1]:.3f}, {self.pet_spacing[2]:.3f}"
+                )
 
             # CT和PET的最小值和最大值
             if hasattr(self, "ct") and self.ct.size > 0:
                 info["CT最小值"] = f"{np.min(self.ct):.2f}"
                 info["CT最大值"] = f"{np.max(self.ct):.2f}"
             if hasattr(self, "pet") and self.pet.size > 0:
-                info["PET最小值"] = f"{np.min(self.pet):.2f}"
-                info["PET最大值"] = f"{np.max(self.pet):.2f}"
+                info["SUV最小值"] = f"{np.min(self.pet):.2f}"
+                info["SUV最大值"] = f"{np.max(self.pet):.2f}"
 
             # 患者信息
             if patient_info:
@@ -1085,7 +1103,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ct = self.normalize(ct, self.ct_ww, self.ct_wl)
 
         pet = np.array(self.pet[:, :, self.layer])
-        pet = self.normalize(pet, self.pet_ww, self.pet_wl)
+        pet = self.normalize(pet, self.pet_ww, self.pet_ww / 2)
 
         new_ct = np.stack([ct] * 3, axis=-1)
         new_pet = cv2.applyColorMap(pet, cv2.COLORMAP_HOT)
@@ -1145,7 +1163,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             seg = np.transpose(seg, axes=save)
             data = np.ascontiguousarray(seg)
 
-            current_hash = hash(data.tobytes())
+            data_hash = hash(data.tobytes())
+            label_hash = hash(json.dumps(self._config.label, sort_keys=True))
+            current_hash = hash((data_hash, label_hash))
+
             if (
                 current_hash == self._seg_cache_hash
                 and self._vtk_actor_cache is not None

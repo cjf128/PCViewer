@@ -37,10 +37,6 @@ class ImageDocker(QWidget, Ui_Form):
         self.boxPET_ww.valueChanged.connect(
             lambda v: self.sldPET_ww.setValue(int(v * 100))
         )
-        self.sldPET_wl.valueChanged.connect(lambda v: self.boxPET_wl.setValue(v / 100))
-        self.boxPET_wl.valueChanged.connect(
-            lambda v: self.sldPET_wl.setValue(int(v * 100))
-        )
 
         self.boxCT_ww.valueChanged.connect(
             lambda v: self.main_window.update_property_and_refresh("ct_ww", v)
@@ -51,9 +47,20 @@ class ImageDocker(QWidget, Ui_Form):
         self.boxPET_ww.valueChanged.connect(
             lambda v: self.main_window.update_property_and_refresh("pet_ww", v)
         )
-        self.boxPET_wl.valueChanged.connect(
-            lambda v: self.main_window.update_property_and_refresh("pet_wl", v)
+        self.boxAlphaCt.valueChanged.connect(
+            lambda v: self.main_window.update_property_and_refresh("ct_alpha", v)
         )
+        self.boxAlphaPet.valueChanged.connect(
+            lambda v: self.main_window.update_property_and_refresh("pet_alpha", v)
+        )
+
+        self.btn1.clicked.connect(lambda v: self.setwindow(400, 40))
+        self.btn2.clicked.connect(lambda v: self.setwindow(1500, -600))
+        self.btn3.clicked.connect(lambda v: self.setwindow(2000, 500))
+
+    def setwindow(self, ww, wl):
+        self.boxCT_ww.setValue(ww)
+        self.boxCT_wl.setValue(wl)
 
     def set_alpha(self, state):
         if state == "CT":

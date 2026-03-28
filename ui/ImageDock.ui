@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>246</width>
+    <width>253</width>
     <height>558</height>
    </rect>
   </property>
@@ -39,25 +39,25 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>244</width>
+        <width>251</width>
         <height>556</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
        <property name="spacing">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="QGroupBox" name="groupBox">
@@ -162,7 +162,7 @@
             <item>
              <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>窗宽：    </string>
+               <string>SUVmax：    </string>
               </property>
              </widget>
             </item>
@@ -207,74 +207,6 @@
             </item>
            </layout>
           </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_9">
-            <property name="spacing">
-             <number>4</number>
-            </property>
-            <property name="leftMargin">
-             <number>2</number>
-            </property>
-            <property name="topMargin">
-             <number>2</number>
-            </property>
-            <property name="rightMargin">
-             <number>2</number>
-            </property>
-            <property name="bottomMargin">
-             <number>2</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>窗位：    </string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QSlider" name="sldPET_wl">
-                <property name="maximum">
-                 <number>10000</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Orientation::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="boxPET_wl">
-                <property name="minimumSize">
-                 <size>
-                  <width>60</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>60</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="minimum">
-                 <double>0.010000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>100.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.010000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
          </layout>
         </widget>
        </item>
@@ -283,9 +215,9 @@
          <property name="title">
           <string>CT</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_16">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <property name="spacing">
-           <number>0</number>
+           <number>2</number>
           </property>
           <property name="leftMargin">
            <number>2</number>
@@ -488,6 +420,34 @@
                </widget>
               </item>
              </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="btn1">
+              <property name="text">
+               <string>软组织</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn2">
+              <property name="text">
+               <string>肺</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn3">
+              <property name="text">
+               <string>骨</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

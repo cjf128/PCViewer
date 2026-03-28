@@ -10,12 +10,12 @@ from vtkmodules.util import numpy_support
 
 from path import MODELS_PATH
 from scripts.logger import log_debug, log_error, log_info
-from scripts.preprocess import process_dicom_data, process_nifti_data, sitk_to_numpy
+from scripts.preprocess import process_dicom_data, process_nifti_data
 from scripts.sort_dicom import sort_dicom_series
 
 
 class DicomWorker(QThread):
-    finished = Signal(np.ndarray, np.ndarray, tuple, dict)
+    finished = Signal(np.ndarray, np.ndarray, tuple, tuple, tuple, dict)
 
     def __init__(self, pet_file: str, ct_file: str, cache_folder: Path):
         super().__init__()
@@ -45,9 +45,9 @@ class DicomWorker(QThread):
 
         log_info("开始处理DICOM数据")
         try:
-            ct_img, pet_img = process_dicom_data(str(ct_folder), str(pet_folder))
-            ct_data, spacing = sitk_to_numpy(ct_img)
-            pet_data, _ = sitk_to_numpy(pet_img)
+            ct_data, pet_data, ct_spacing, pet_spacing, pet_shape = process_dicom_data(
+                str(ct_folder), str(pet_folder)
+            )
 
             # 提取患者信息
             patient_info = {}
@@ -76,15 +76,17 @@ class DicomWorker(QThread):
             shutil.rmtree(str(pet_folder))
 
             log_info(
-                f"DICOM数据处理完成, CT形状: {ct_data.shape}, PET形状: {pet_data.shape}"
+                f"DICOM数据处理完成, CT形状: {ct_data.shape}, PET形状: {pet_shape}"
             )
-            self.finished.emit(ct_data, pet_data, spacing, patient_info)
+            self.finished.emit(
+                ct_data, pet_data, ct_spacing, pet_spacing, pet_shape, patient_info
+            )
         except Exception as e:
             log_error(f"处理DICOM数据时发生错误: {e}")
 
 
 class NiftiWorker(QThread):
-    finished = Signal(np.ndarray, np.ndarray, tuple, dict)
+    finished = Signal(np.ndarray, np.ndarray, tuple, tuple, tuple, dict)
 
     def __init__(self, pet_path: str, ct_path: str):
         super().__init__()
@@ -94,9 +96,9 @@ class NiftiWorker(QThread):
     def run(self):
         log_info("开始处理NIfTI数据")
         try:
-            ct_img, pet_img = process_nifti_data(self.pet_path, self.ct_path)
-            ct_data, spacing = sitk_to_numpy(ct_img)
-            pet_data, _ = sitk_to_numpy(pet_img)
+            ct_data, pet_data, ct_spacing, pet_spacing, pet_shape = process_nifti_data(
+                self.pet_path, self.ct_path
+            )
 
             # 提取患者信息
             patient_info = {}
@@ -119,9 +121,11 @@ class NiftiWorker(QThread):
                 log_error(f"提取NIfTI患者信息时发生错误: {e}")
 
             log_info(
-                f"NIfTI数据处理完成, CT形状: {ct_data.shape}, PET形状: {pet_data.shape}"
+                f"NIfTI数据处理完成, CT形状: {ct_data.shape}, PET形状: {pet_shape}"
             )
-            self.finished.emit(ct_data, pet_data, spacing, patient_info)
+            self.finished.emit(
+                ct_data, pet_data, ct_spacing, pet_spacing, pet_shape, patient_info
+            )
         except Exception as e:
             log_error(f"处理NIfTI数据时发生错误: {e}")
 
