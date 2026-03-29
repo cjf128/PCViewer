@@ -135,8 +135,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 路径参数
         self.cache_path: Path = CACHE_PATH
         self.seg_path: Path = SEGMENTATION_PATH
-        self.data_path: Path = ""
-        self.seg_file: Path = ""
+        self.data_path: Path = Path("")
+        self.seg_file: Path = Path("")
         self.file_type: str = ""
 
         self.SamPredictor = None
@@ -254,7 +254,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         layout = QVBoxLayout()
         progress_bar = QProgressBar()
         progress_bar.setRange(0, 0)  # 设置为循环进度条
-        progress_bar.setAlignment(Qt.AlignCenter)
+        progress_bar.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(progress_bar)
         self.dialog.setLayout(layout)
 
@@ -577,9 +577,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         load_dialog.FilesSelected.connect(self.on_files_selected)
         load_dialog.show()
 
-    def on_files_selected(self, pet_file: str, ct_file: str, file_type: str):
+    def on_files_selected(
+        self, pet_file: str, ct_file: str, file_type: str, data_id: str = ""
+    ):
         """处理文件选择"""
         log_info(f"选择文件 - PET: {pet_file}, CT: {ct_file}, 类型: {file_type}")
+        self.current_data_id = data_id
 
         self.dialog.setWindowTitle("导入中")
         self.dialog.show()
@@ -625,7 +628,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     log_info(
                         f"重新导入数据 - ID: {data_id}, PET: {pet_file}, CT: {ct_file}, 类型: {file_type}"
                     )
-                    self.on_files_selected(pet_file, ct_file, file_type)
+                    self.current_data_id = data_id
+                    self.on_files_selected(pet_file, ct_file, file_type, data_id)
                 else:
                     reply = QMessageBox.warning(
                         self,
@@ -676,6 +680,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 更新FileDocker的文件列表
         if hasattr(self, "file_Setting"):
             self.file_Setting.load_file_list()
+
+        # 获取当前数据的final_name并发出file_name信号，更新viewer显示
+        if hasattr(self, "current_data_id") and self.current_data_id:
+            data_id = self.current_data_id
+            if data_id in self._config.data:
+                raw_name = self._config.data[data_id].get("name", "")
+                final_name = raw_name.split(".")[0] if raw_name else ""
+                if hasattr(self, "file_Setting"):
+                    self.file_Setting.file_name.emit(final_name)
 
     def _load_dicom_files(self, pet_file: str, ct_file: str, data_folder: Path):
         """处理DICOM/IMA文件"""

@@ -12,7 +12,7 @@ from ui.LoadDialog_ui import Ui_LoadDialog
 
 
 class LoadDialog(QDialog, Ui_LoadDialog):
-    FilesSelected = Signal(str, str, str)
+    FilesSelected = Signal(str, str, str, str)
 
     def __init__(self, parent, main_window):
         super().__init__(parent)
@@ -68,6 +68,7 @@ class LoadDialog(QDialog, Ui_LoadDialog):
             return
 
         # 记录文件路径到配置中
+        new_data_id = None
         if self.main_window:
             data_count = len(self.main_window._config.data)
             new_data_id = data_count + 1
@@ -89,7 +90,7 @@ class LoadDialog(QDialog, Ui_LoadDialog):
                 self.main_window.file_Setting.load_file_list()
 
         self.close()
-        self.FilesSelected.emit(pet_file, ct_file, self.load_state)
+        self.FilesSelected.emit(pet_file, ct_file, self.load_state, str(new_data_id))
 
 
 if __name__ == "__main__":
