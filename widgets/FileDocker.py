@@ -315,6 +315,17 @@ class FileDocker(QWidget, Ui_Form):
 
         # 如果data_id有效且主窗口配置存在
         if data_id and self.main_window and hasattr(self.main_window, "_config"):
+            # 检查当前是否有选中的数据，如果有则不能删除
+            current_id = getattr(self.main_window, "current_data_id", "")
+            if current_id and str(current_id) == str(data_id):
+                QMessageBox.warning(
+                    self,
+                    "无法删除",
+                    "该数据正在使用中，无法删除",
+                    QMessageBox.StandardButton.Ok,
+                )
+                return
+
             # 弹出确认对话框，询问是否确定删除
             reply = QMessageBox.question(
                 self,
@@ -388,6 +399,30 @@ class FileDocker(QWidget, Ui_Form):
 
                     # 调整列宽
                     self.treeView.resizeColumnToContents(0)
+
+    def select_item_by_id(self, data_id):
+        """
+        根据data_id选中对应的列表项
+
+        用于在导入或加载数据后，选中FileDocker中当前正在使用的数据项
+
+        参数:
+            data_id: 要选中的数据的ID（字符串或整数）
+        """
+        # 遍历模型中的所有行，查找匹配的data_id
+        for row in range(self.model.rowCount()):
+            item = self.model.item(row, 0)
+            if item:
+                # 比较data_id，确保类型一致
+                item_id = str(item.data(Qt.ItemDataRole.UserRole))
+                if item_id == str(data_id):
+                    # 获取该行的模型索引
+                    index = self.model.indexFromItem(item)
+                    # 获取TreeView的选择模型
+                    selection_model = self.treeView.selectionModel()
+                    # 选中该行
+                    selection_model.select(index, selection_model.SelectionFlag.Select)
+                    break
 
 
 # 主程序入口，用于独立测试FileDocker组件

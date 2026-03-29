@@ -668,7 +668,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         trans = self.transpose("trans")
         self.ct = np.transpose(ct_data, axes=trans)
         self.pet = np.transpose(pet_data, axes=trans)
-        self.seg = np.zeros_like(self.pet)
+        self.seg = np.zeros_like(self.pet, dtype=np.uint8)
 
         self.undo_stack.clear()
         self.setting()
@@ -689,6 +689,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 final_name = raw_name.split(".")[0] if raw_name else ""
                 if hasattr(self, "file_Setting"):
                     self.file_Setting.file_name.emit(final_name)
+                    self.file_Setting.select_item_by_id(data_id)
 
     def _load_dicom_files(self, pet_file: str, ct_file: str, data_folder: Path):
         """处理DICOM/IMA文件"""
@@ -1113,15 +1114,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def prepare_image(self):
         """更新显示图像"""
-        ct = np.array(self.ct[:, :, self.layer])
+        ct = self.ct[:, :, self.layer]
         ct = self.normalize(ct, self.ct_ww, self.ct_wl)
 
-        pet = np.array(self.pet[:, :, self.layer])
+        pet = self.pet[:, :, self.layer]
         pet = self.normalize(pet, self.pet_ww, self.pet_ww / 2)
 
         new_ct = np.stack([ct] * 3, axis=-1)
         new_pet = cv2.applyColorMap(pet, cv2.COLORMAP_HOT)
-        seg = np.array(self.seg[:, :, self.layer], dtype=np.uint8)
+        seg = self.seg[:, :, self.layer]
 
         # 获取标签颜色配置
         label_colors = []
