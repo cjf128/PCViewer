@@ -32,22 +32,14 @@ pip install -r requirements.txt
 
 ## TODO
 
-- [ ] ~~infoDocker增加label区域的肿瘤负荷计算，MTV和TLG~~
-- ~~ infoDocker增加xy坐标显示，label显示，数值显示~~
 - [ ] 添加快捷键设置
 - [ ] 添加帮助信息
 - [ ] 添加MedSAM2的提示
 - [X] 窗宽窗位预设
 - [X] 样式表设置
 - [X] 运行分割时的弹窗
-- [ ] ~~版本更新拉取~~
 - [X] 图像左上角加文件名
-- [ ] ~~图像单PT和单CT模式~~
 - [X] 3D建模同步
-- [ ] ~~拖动文件进入软件~~
-- [ ] ~~标注导入线性重采样~~
-- [ ] ~~CT与PET的不同种维度~~
-- [ ] ~~标注框跟随变色~~
 
 ---
 
@@ -63,14 +55,13 @@ nuitka --standalone `
  --include-package-data=pydicom `
  --include-package=pydicom.pixels `
  --include-package=pylibjpeg `
- --include-data-dir="D:/Python/Viewer/data=data" `
- --include-data-dir="D:/Python/Viewer/stylesheet=stylesheet" `
  --include-data-dir="D:/Python/Viewer/models=models" `
  --include-data-dir="D:/Python/Viewer/icons=icons" `
  --windows-icon-from-ico="D:/Python/Viewer/icons/logo_2.ico" `
  --output-dir="D:/OutPut" `
  --show-progress `
  --assume-yes `
+ --lto=yes `
  --jobs=4 `
  "D:/Python/Viewer/main.py"
 

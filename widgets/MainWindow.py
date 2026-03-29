@@ -29,7 +29,7 @@ from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from app.configs import AppConfig, ConfigManager
 from app.mode import LOADMode, SAMMode, VIEWERMode, VIEWMode
-from path import CACHE_PATH, ICONS_PATH, SEGMENTATION_PATH
+from path import CACHE_PATH, ICONS_PATH
 from scripts.logger import log_debug, log_error, log_info, log_warning
 from scripts.theme import ThemeManager
 from ui.MainWindow_ui import Ui_MainWindow
@@ -82,7 +82,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._config.label = {
                 "1": {"name": "Label 1", "color": "#0000FF"},
                 "2": {"name": "Label 2", "color": "#00FF00"},
-                "3": {"name": "Label 3", "color": "#FF00FF"},
             }
         else:
             # 重新排序标签序号，确保连续
@@ -134,7 +133,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # 路径参数
         self.cache_path: Path = CACHE_PATH
-        self.seg_path: Path = SEGMENTATION_PATH
         self.data_path: Path = Path("")
         self.seg_file: Path = Path("")
         self.file_type: str = ""
@@ -386,7 +384,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             pixmap = viewport.grab()
             if save_path:
                 pixmap.save(save_path)
-                self.statusbar.showMessage("图片已保存：" + save_path)
 
     def change_slot(self, mode):
         if self.load_mode != LOADMode.UNLOAD:
@@ -481,12 +478,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             if seg_file:
                 log_info(f"加载分割文件: {seg_file}")
-                name = Path(seg_file).stem.split(".")[0]
-                new_path = Path(self.seg_path) / (name + ".nii.gz")
-                shutil.copy2(seg_file, str(new_path))
                 self.seg_file = seg_file
 
-                seg = sitk.ReadImage(str(new_path))
+                seg = sitk.ReadImage(str(self.seg_file))
                 seg = sitk.DICOMOrient(seg, "LPS")
                 seg_data = sitk.GetArrayFromImage(seg)
                 trans = self.transpose("trans")
@@ -707,7 +701,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def setting(self):
         """导入数据后初始化层数"""
-        self.seg_file = ""
+        self.seg_file = Path("")
         self.viewer.show_information = True
         self.viewer.position[0] = self.viewer.width() // 2
         self.viewer.position[1] = self.viewer.height() // 2
@@ -759,14 +753,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 image = sitk.GetImageFromArray(image)
                 self.statusBar().showMessage("已保存文件：" + file_)
                 sitk.WriteImage(image, file_)
-        elif self.seg_file:
-            log_info(f"保存分割文件: {self.seg_file}")
-            image = np.copy(self.seg)
-            save = self.transpose("save")
-            image = np.transpose(image, axes=save)
-            image = sitk.GetImageFromArray(image)
-            self.statusBar().showMessage("已保存文件：" + self.seg_file)
-            sitk.WriteImage(image, self.seg_file)
         else:
             log_warning("无可保存分割图像")
             QMessageBox.warning(
@@ -982,7 +968,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             config_manager.save(self._config)
 
             log_info("应用程序关闭，清理缓存")
-            clear_path = [Path(self.cache_path), Path(self.seg_path)]
+            clear_path = [Path(self.cache_path)]
             for directory_path in clear_path:
                 if directory_path.exists():
                     for file_path in directory_path.iterdir():
