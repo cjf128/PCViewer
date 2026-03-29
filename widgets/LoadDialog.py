@@ -73,8 +73,12 @@ class LoadDialog(QDialog, Ui_LoadDialog):
             data_count = len(self.main_window._config.data)
             new_data_id = data_count + 1
 
-            raw_name = Path(pet_file).name
-            base_name = raw_name.split(".")[0]
+            if self.load_state == "NIfTI":
+                raw_name = Path(pet_file).name
+                base_name = raw_name.split(".")[0] if "." in raw_name else raw_name
+            else:
+                raw_name = Path(pet_file).parent.name
+                base_name = raw_name.split(".")[0] if "." in raw_name else raw_name
 
             self.main_window._config.data[str(new_data_id)] = {
                 "pet": pet_file,

@@ -86,7 +86,7 @@ class DicomWorker(QThread):
 
 
 class NiftiWorker(QThread):
-    finished = Signal(np.ndarray, np.ndarray, tuple, tuple, tuple, dict)
+    finished = Signal(np.ndarray, np.ndarray, tuple, tuple, tuple)
 
     def __init__(self, pet_path: str, ct_path: str):
         super().__init__()
@@ -100,31 +100,11 @@ class NiftiWorker(QThread):
                 self.pet_path, self.ct_path
             )
 
-            # 提取患者信息
-            patient_info = {}
-            # 从NIfTI文件中提取患者信息
-            try:
-                # 读取CT文件获取元数据
-                ct_img = sitk.ReadImage(self.ct_path)
-                # 提取NIfTI头信息
-                if ct_img.HasMetaDataKey("PatientName"):
-                    patient_info["患者名"] = ct_img.GetMetaData("PatientName")
-                if ct_img.HasMetaDataKey("PatientID"):
-                    patient_info["患者ID"] = ct_img.GetMetaData("PatientID")
-                if ct_img.HasMetaDataKey("PatientBirthDate"):
-                    patient_info["出生日期"] = ct_img.GetMetaData("PatientBirthDate")
-                if ct_img.HasMetaDataKey("PatientSex"):
-                    patient_info["性别"] = ct_img.GetMetaData("PatientSex")
-                if ct_img.HasMetaDataKey("PatientWeight"):
-                    patient_info["体重"] = ct_img.GetMetaData("PatientWeight")
-            except Exception as e:
-                log_error(f"提取NIfTI患者信息时发生错误: {e}")
-
             log_info(
                 f"NIfTI数据处理完成, CT形状: {ct_data.shape}, PET形状: {pet_shape}"
             )
             self.finished.emit(
-                ct_data, pet_data, ct_spacing, pet_spacing, pet_shape, patient_info
+                ct_data, pet_data, ct_spacing, pet_spacing, pet_shape
             )
         except Exception as e:
             log_error(f"处理NIfTI数据时发生错误: {e}")

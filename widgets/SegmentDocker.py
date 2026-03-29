@@ -180,6 +180,12 @@ class SegmentDocker(QWidget, Ui_Form):
             # 更新表格
             self.init_labels()
 
+            # 选中刚添加的新标签（最后一个）
+            if self.radio_group.buttons():
+                last_button = self.radio_group.buttons()[-1]
+                last_button.setChecked(True)
+                self.on_select_button_clicked(int(new_id))
+
     def delete_label(self):
         """删除选中标签"""
         # 从MainWindow的配置中获取标签
@@ -207,10 +213,10 @@ class SegmentDocker(QWidget, Ui_Form):
             # 3. 处理数组 seg (关键步骤)
             if hasattr(self.main_window, "seg"):
                 seg = self.main_window.seg
-                
+
                 # 第一步：将要删除的 ID 区域置为 0
                 seg[seg == target_id] = 0
-                
+
                 # 第二步：将所有大于 target_id 的像素值减 1
                 # 这样 3 变 2, 4 变 3，以此类推，实现了重排映射
                 seg[seg > target_id] -= 1
@@ -219,13 +225,13 @@ class SegmentDocker(QWidget, Ui_Form):
             # 先删除目标
             if str(target_id) in labels:
                 del labels[str(target_id)]
-            
+
             # 重新构建连续的字典 { "1": info, "2": info ... }
             remaining_labels = sorted(labels.items(), key=lambda x: int(x[0]))
             new_labels = {}
             for i, (old_id, info) in enumerate(remaining_labels, 1):
                 new_labels[str(i)] = info
-            
+
             self.main_window._config.label = new_labels
 
             # 5. 保存并刷新 UI

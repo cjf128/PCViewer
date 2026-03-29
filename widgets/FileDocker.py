@@ -420,8 +420,13 @@ class FileDocker(QWidget, Ui_Form):
                     index = self.model.indexFromItem(item)
                     # 获取TreeView的选择模型
                     selection_model = self.treeView.selectionModel()
+                    # 先清除所有选中项，再选中当前项
+                    selection_model.clearSelection()
                     # 选中该行
                     selection_model.select(index, selection_model.SelectionFlag.Select)
+                    selection_model.setCurrentIndex(
+                        index, selection_model.SelectionFlag.NoUpdate
+                    )
                     break
 
 

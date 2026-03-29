@@ -85,7 +85,7 @@ class ImageViewer(QGraphicsView):
         else:
             self.ellipse_item.setVisible(False)
 
-        pen = QPen(Qt.blue)
+        pen = QPen(Qt.GlobalColor.red)
         pen.setWidth(0.5)
         self.ellipse_item.setPen(pen)
 
@@ -157,7 +157,7 @@ class ImageViewer(QGraphicsView):
                             pen_size = 1
                         else:
                             pen_size = 0.5
-                        self.rect_item.setPen(QPen(QColor("red"), pen_size))
+                        self.rect_item.setPen(QPen(Qt.GlobalColor.red, pen_size))
                         self.rect_item.setTransform(self.pixmap_item.transform())
                         self._scene.addItem(self.rect_item)
                     else:
