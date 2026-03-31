@@ -54,7 +54,6 @@ nuitka --standalone `
  --include-package-data=pypinyin `
  --include-package-data=pydicom `
  --include-package=pydicom.pixels `
- --include-package=pylibjpeg `
  --include-data-dir="D:/Python/Viewer/models=models" `
  --include-data-dir="D:/Python/Viewer/icons=icons" `
  --windows-icon-from-ico="D:/Python/Viewer/icons/logo_2.ico" `

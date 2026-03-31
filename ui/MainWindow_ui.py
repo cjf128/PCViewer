@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.11.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1276, 833)
+        MainWindow.resize(1276, 823)
         MainWindow.setMinimumSize(QSize(0, 0))
         MainWindow.setAnimated(True)
         self.setting_atn = QAction(MainWindow)
@@ -195,7 +195,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.sldLayer.sizePolicy().hasHeightForWidth())
         self.sldLayer.setSizePolicy(sizePolicy)
-        self.sldLayer.setMaximum(2000)
+        self.sldLayer.setMaximum(200)
         self.sldLayer.setValue(100)
         self.sldLayer.setOrientation(Qt.Orientation.Horizontal)
 
@@ -203,7 +203,7 @@ class Ui_MainWindow(object):
 
         self.boxLayer = QSpinBox(self.frame_3)
         self.boxLayer.setObjectName(u"boxLayer")
-        self.boxLayer.setMaximum(1000)
+        self.boxLayer.setMaximum(200)
 
         self.horizontalLayout_3.addWidget(self.boxLayer)
 
