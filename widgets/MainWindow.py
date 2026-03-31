@@ -632,11 +632,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         QMessageBox.StandardButton.Ok,
                     )
                     if reply == QMessageBox.StandardButton.Ok:
-                        del self._config.data[data_id]
-
-                        config_manager = ConfigManager()
-                        config_manager.save(self._config)
-                        self.file_Setting.load_file_list()
+                        self.file_Setting.delete_data(data_id=data_id)
             else:
                 log_error(f"数据ID {data_id} 的文件路径不完整")
         else:

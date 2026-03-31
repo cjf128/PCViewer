@@ -250,8 +250,8 @@ class FileDocker(QWidget, Ui_Form):
 
         # 连接菜单项的触发信号到对应处理函数
         # 注意：使用lambda传递index，确保点击时使用正确的索引
-        rename_action.triggered.connect(lambda: self.rename_data(index))
-        delete_action.triggered.connect(lambda: self.delete_data(index))
+        rename_action.triggered.connect(lambda: self.rename_data(index=index))
+        delete_action.triggered.connect(lambda: self.delete_data(index=index))
 
         # 在全局坐标位置显示菜单（需要将TreeView局部坐标转换为全局坐标）
         menu.exec(self.treeView.mapToGlobal(position))
@@ -296,7 +296,7 @@ class FileDocker(QWidget, Ui_Form):
             # 注意：即使重命名取消（ok为False），只要用户输入了内容也发出信号
             self.file_name.emit(new_name)
 
-    def delete_data(self, index):
+    def delete_data(self, *, index=None, data_id=None):
         """
         删除数据处理函数
 
@@ -306,12 +306,16 @@ class FileDocker(QWidget, Ui_Form):
         4. 保存配置并重新加载列表
 
         参数:
-            index: 要删除的项的模型索引
+            key: 要删除的项的模型索引或data_id
         """
-        # 获取对应的模型项
-        item = self.model.itemFromIndex(index)
-        # 获取存储的data_id
-        data_id = item.data(Qt.ItemDataRole.UserRole)
+        if index:
+            # 获取对应的模型项
+            item = self.model.itemFromIndex(index)
+            # 获取存储的data_id
+            data_id = item.data(Qt.ItemDataRole.UserRole)
+        elif data_id:
+            item = None
+            data_id = data_id
 
         # 如果data_id有效且主窗口配置存在
         if data_id and self.main_window and hasattr(self.main_window, "_config"):
@@ -326,8 +330,10 @@ class FileDocker(QWidget, Ui_Form):
                 )
                 return
 
+            reply = QMessageBox.StandardButton.Yes
             # 弹出确认对话框，询问是否确定删除
-            reply = QMessageBox.question(
+            if item:
+                reply = QMessageBox.question(
                 self,
                 "确认删除",
                 f"确定要删除数据 {item.text()} 吗？",
