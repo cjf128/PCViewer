@@ -988,7 +988,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>dark</string>
+    <string>暗</string>
    </property>
    <property name="toolTip">
     <string>暗</string>
@@ -999,7 +999,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>light</string>
+    <string>亮</string>
    </property>
    <property name="toolTip">
     <string>亮</string>

@@ -39,8 +39,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>261</width>
-        <height>433</height>
+        <width>259</width>
+        <height>431</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -84,12 +84,12 @@
            <widget class="QTableWidget" name="tableWidget">
             <column>
              <property name="text">
-              <string>Name</string>
+              <string>标签名</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>Label</string>
+              <string>颜色</string>
              </property>
             </column>
            </widget>

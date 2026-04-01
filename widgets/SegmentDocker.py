@@ -98,7 +98,7 @@ class SegmentDocker(QWidget, Ui_Form):
             self.tableWidget.setColumnCount(3)
 
         # 设置列标题
-        self.tableWidget.setHorizontalHeaderLabels(["", "Name", "Color"])
+        self.tableWidget.setHorizontalHeaderLabels(["", "标签名", "颜色"])
 
         # 按标签ID排序
         sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
@@ -237,6 +237,8 @@ class SegmentDocker(QWidget, Ui_Form):
             # 5. 保存并刷新 UI
             ConfigManager().save(self.main_window._config)
             self.init_labels()
+            if hasattr(self.main_window, "undo_stack"):
+                self.main_window.undo_stack.clear()
             if hasattr(self.main_window, "update_image"):
                 self.main_window.update_image()
         else:
