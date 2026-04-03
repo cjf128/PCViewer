@@ -3,6 +3,7 @@ import numpy as np
 import onnxruntime as ort
 from numpy import ndarray
 
+
 class SAM2Image:
     def __init__(self, encoder_path: str, decoder_path: str) -> None:
         # Initialize models
@@ -173,7 +174,7 @@ class SAM2ImageEncoder:
 
         return input_tensor
 
-    def infer(self, input_tensor: np.ndarray) -> list[np.ndarray]:
+    def infer(self, input_tensor: np.ndarray):
         outputs = self.session.run(
             self.output_names, {self.input_names[0]: input_tensor}
         )

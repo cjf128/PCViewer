@@ -129,7 +129,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # 状态标志
         self.load_mode = LOADMode.UNLOAD
-        self.view_mode = VIEWMode.CROSS
+        self.view_mode = VIEWMode.AXIAL
 
         # 路径参数
         self.cache_path: Path = CACHE_PATH
@@ -279,7 +279,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.add_action.triggered.connect(self.load_Seg_slot)
         self.save_action.triggered.connect(self.save_slot)
         self.exit_action.triggered.connect(self.close)
-        self.crossline_action.triggered.connect(self.crossline_slot)
+        self.AXIALline_action.triggered.connect(self.AXIALline_slot)
         self.direction_action.triggered.connect(self.direction_slot)
         self.information_action.triggered.connect(self.information_slot)
 
@@ -308,7 +308,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.boxPET.clicked.connect(self.update_all)
         self.boxSeg.clicked.connect(self.update_all)
 
-        self.btnH.clicked.connect(lambda: self.change_slot(VIEWMode.CROSS))
+        self.btnH.clicked.connect(lambda: self.change_slot(VIEWMode.AXIAL))
         self.btnS.clicked.connect(lambda: self.change_slot(VIEWMode.SAGITTAL))
         self.btnG.clicked.connect(lambda: self.change_slot(VIEWMode.CORONAL))
         self.btn3D.clicked.connect(self.view_3d_built)
@@ -328,14 +328,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def transpose(self, mode):
         if mode == "trans":
-            if self.view_mode == VIEWMode.CROSS:
+            if self.view_mode == VIEWMode.AXIAL:
                 return [1, 2, 0]
             if self.view_mode == VIEWMode.SAGITTAL:
                 return [0, 1, 2]
             if self.view_mode == VIEWMode.CORONAL:
                 return [0, 2, 1]
         elif mode == "save":
-            if self.view_mode == VIEWMode.CROSS:
+            if self.view_mode == VIEWMode.AXIAL:
                 return [2, 0, 1]
             if self.view_mode == VIEWMode.SAGITTAL:
                 return [0, 1, 2]
@@ -755,8 +755,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self, "警告", "无可保存分割图像！", QMessageBox.StandardButton.Ok
             )
 
-    def crossline_slot(self):
-        self.viewer.cross_show = not self.viewer.cross_show
+    def AXIALline_slot(self):
+        self.viewer.AXIAL_show = not self.viewer.AXIAL_show
         self.viewer.viewport().update()
 
     def information_slot(self):

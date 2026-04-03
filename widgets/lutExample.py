@@ -1,11 +1,18 @@
 import sys
 import numpy as np
 from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QGraphicsView, QGraphicsScene,
-    QGraphicsEllipseItem, QLabel, QVBoxLayout, QWidget
+    QApplication,
+    QMainWindow,
+    QGraphicsView,
+    QGraphicsScene,
+    QGraphicsEllipseItem,
+    QLabel,
+    QVBoxLayout,
+    QWidget,
 )
 from PySide6.QtGui import QPainterPath, QPixmap, QImage
 from PySide6.QtCore import Qt
+
 
 # ---------------- Transfer Function Logic ----------------
 class TransferFunction:
@@ -29,6 +36,7 @@ class TransferFunction:
 
         return lut
 
+
 # ---------------- Control Point ----------------
 class ControlPoint(QGraphicsEllipseItem):
     def __init__(self, x, y, parent):
@@ -46,6 +54,7 @@ class ControlPoint(QGraphicsEllipseItem):
             self.parent.update_curve()
             return super().itemChange(change, value)
         return super().itemChange(change, value)
+
 
 # ---------------- Curve Editor ----------------
 class TransferFunctionWidget(QGraphicsView):
@@ -88,6 +97,7 @@ class TransferFunctionWidget(QGraphicsView):
             coords = [(p.pos().x(), 255 - p.pos().y()) for p in pts]
             self.callback(coords)
 
+
 # ---------------- Image Display ----------------
 class ImageViewer(QLabel):
     def __init__(self, image):
@@ -101,6 +111,7 @@ class ImageViewer(QLabel):
         h, w = mapped.shape
         qimg = QImage(mapped.data, w, h, w, QImage.Format.Format_Grayscale8)
         self.setPixmap(QPixmap.fromImage(qimg))
+
 
 # ---------------- Main Window ----------------
 class MainWindow(QMainWindow):
@@ -128,8 +139,9 @@ class MainWindow(QMainWindow):
         lut = self.tf.build_lut()
         self.viewer.update_image(lut)
 
+
 # ---------------- Run ----------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = MainWindow()
     win.show()

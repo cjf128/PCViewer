@@ -32,11 +32,11 @@ class ImageViewer(QGraphicsView):
         self.parent = parent
 
         self.mode = VIEWERMode.NORMAL
-        self.view_mode = VIEWMode.CROSS
+        self.view_mode = VIEWMode.AXIAL
 
         self.wheel = False
         self.information_show = True
-        self.cross_show = False
+        self.AXIAL_show = False
         self.direction_show = True
         self.patient_name = None
 
@@ -93,7 +93,7 @@ class ImageViewer(QGraphicsView):
         transform.rotate(180)
 
         match self.view_mode:
-            case VIEWMode.CROSS:
+            case VIEWMode.AXIAL:
                 scale_x, scale_y = -self.spacing[0], -self.spacing[1]
             case VIEWMode.SAGITTAL:
                 scale_x, scale_y = -self.spacing[1], self.spacing[2]
@@ -139,7 +139,7 @@ class ImageViewer(QGraphicsView):
                     ):
                         current_mode = self.main_window.segment_setting.current_mode
 
-                    self.setCursor(Qt.CrossCursor)
+                    self.setCursor(Qt.AXIALCursor)
 
                     if current_mode == SAMMode.BOX:
                         # BOX模式：画框
@@ -183,7 +183,7 @@ class ImageViewer(QGraphicsView):
 
             if event.button() == Qt.MiddleButton:
                 self.mode = VIEWERMode.MOVE
-                self.cross_show = False
+                self.AXIAL_show = False
 
             if event.button() == Qt.RightButton:
                 self.mode = VIEWERMode.ZOOM
@@ -302,9 +302,9 @@ class ImageViewer(QGraphicsView):
                 self.Mode_Signal.emit()
 
             if event.button() == Qt.MiddleButton:
-                if hasattr(self.main_window, "crossline_action"):
-                    if self.main_window.crossline_action.isChecked():
-                        self.cross_show = True
+                if hasattr(self.main_window, "AXIALline_action"):
+                    if self.main_window.AXIALline_action.isChecked():
+                        self.AXIAL_show = True
 
         event.ignore()
 
@@ -342,7 +342,7 @@ class ImageViewer(QGraphicsView):
         center_x = self.position[0]
         center_y = self.position[1]
 
-        if self.view_mode == VIEWMode.CROSS:
+        if self.view_mode == VIEWMode.AXIAL:
             axe = ["R", "L", "A", "P"]
             color = ["red", "blue"]
         elif self.view_mode == VIEWMode.SAGITTAL:
@@ -377,7 +377,7 @@ class ImageViewer(QGraphicsView):
                 painter.setPen(Qt.green)
                 painter.drawText(10, 20, self.patient_name)
 
-        if self.cross_show:
+        if self.AXIAL_show:
             penx = QPen(QColor(color[0]), 1, Qt.DashLine)
             peny = QPen(QColor(color[1]), 1, Qt.DashLine)
             painter.setPen(penx)

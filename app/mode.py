@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class VIEWERMode(Enum):
     NORMAL = 0
     AIM = 1
@@ -10,17 +11,20 @@ class VIEWERMode(Enum):
     ERASER = 6
     ZOOM = 7
 
+
 class LOADMode(Enum):
     UNLOAD = 0
     LOADED = 1
     RELOAD = 2
     CHANGE = 3
 
+
 class VIEWMode(Enum):
-    CROSS = 0
+    AXIAL = 0
     SAGITTAL = 1
     CORONAL = 2
     VIEW_3D = 3
+
 
 class SAMMode(Enum):
     BOX = 0

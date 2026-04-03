@@ -3,8 +3,9 @@ from typing import Dict, Tuple
 import pydicom
 import SimpleITK as sitk
 
+
 def _parse_dicom_time(time_str: str) -> float:
-    time_str = str(time_str)
+    time_str = time_str
     if "." in time_str:
         time_str = time_str.split(".")[0]
     if len(time_str) == 5:
@@ -47,8 +48,8 @@ def _extract_dicom_metadata(dicom_dir: str) -> Tuple[Dict[str, float], sitk.Imag
 def pet_to_suv(dicom_dir: str, normalize: bool = False) -> sitk.Image:
     metadata, pet_img = _extract_dicom_metadata(dicom_dir)
 
-    study_time = metadata["study_time"]
-    radio_start_time = metadata["radio_start_time"]
+    study_time = str(metadata["study_time"])
+    radio_start_time = str(metadata["radio_start_time"])
     patient_weight = metadata["patient_weight"]
     total_dose = metadata["total_dose"]
     half_life = metadata["half_life"]

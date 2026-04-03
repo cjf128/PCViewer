@@ -334,12 +334,12 @@ class FileDocker(QWidget, Ui_Form):
             # 弹出确认对话框，询问是否确定删除
             if item:
                 reply = QMessageBox.question(
-                self,
-                "确认删除",
-                f"确定要删除数据 {item.text()} 吗？",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                QMessageBox.StandardButton.No,
-            )
+                    self,
+                    "确认删除",
+                    f"确定要删除数据 {item.text()} 吗？",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    QMessageBox.StandardButton.No,
+                )
 
             # 如果用户点击"是"
             if reply == QMessageBox.StandardButton.Yes:

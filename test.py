@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+
 class ThemeManager:
     @staticmethod
     def get_dark_palette():
@@ -105,6 +106,7 @@ class ThemeManager:
             app.setPalette(cls.get_dark_palette())
         else:
             app.setPalette(cls.get_light_palette())
+
 
 # 假设上面的类在 theme_manager.py 中
 # from theme_manager import ThemeManager

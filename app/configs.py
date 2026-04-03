@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 import yaml
 
 from path import BASE_PATH
@@ -7,13 +8,13 @@ from path import BASE_PATH
 @dataclass
 class AppConfig:
     theme: str = "dark"
-    data: dict = None
-    label: dict = None
-    
+    data: dict = {}
+    label: dict = {}
+
     def __post_init__(self):
-        if self.data is None:
+        if not self.data:
             self.data = {}
-        if self.label is None:
+        if not self.label:
             self.label = {}
 
 
@@ -25,16 +26,16 @@ class ConfigManager:
 
     def load(self) -> AppConfig:
         try:
-            with open(self._config_path, 'r', encoding='utf-8') as f:
+            with open(self._config_path, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
                 if data:
-                    window_data = data.get('window', {})
-                    app_data = data.get('data', {})
-                    app_label = data.get('label', {})
+                    window_data = data.get("window", {})
+                    app_data = data.get("data", {})
+                    app_label = data.get("label", {})
                     return AppConfig(
-                        theme=window_data.get('theme', 'dark'),
+                        theme=window_data.get("theme", "dark"),
                         data=app_data,
-                        label=app_label
+                        label=app_label,
                     )
         except (FileNotFoundError, yaml.YAMLError):
             pass
@@ -42,11 +43,9 @@ class ConfigManager:
 
     def save(self, config: AppConfig):
         data = {
-            'window': {
-                'theme': config.theme
-            },
-            'data': config.data,
-            'label': config.label
+            "window": {"theme": config.theme},
+            "data": config.data,
+            "label": config.label,
         }
-        with open(self._config_path, 'w', encoding='utf-8') as f:
+        with open(self._config_path, "w", encoding="utf-8") as f:
             yaml.dump(data, f, default_flow_style=False, allow_unicode=True)

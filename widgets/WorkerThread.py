@@ -103,9 +103,7 @@ class NiftiWorker(QThread):
             log_info(
                 f"NIfTI数据处理完成, CT形状: {ct_data.shape}, PET形状: {pet_shape}"
             )
-            self.finished.emit(
-                ct_data, pet_data, ct_spacing, pet_spacing, pet_shape
-            )
+            self.finished.emit(ct_data, pet_data, ct_spacing, pet_spacing, pet_shape)
         except Exception as e:
             log_error(f"处理NIfTI数据时发生错误: {e}")
 
