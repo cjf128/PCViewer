@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import yaml
 
@@ -8,14 +8,8 @@ from path import BASE_PATH
 @dataclass
 class AppConfig:
     theme: str = "dark"
-    data: dict = {}
-    label: dict = {}
-
-    def __post_init__(self):
-        if not self.data:
-            self.data = {}
-        if not self.label:
-            self.label = {}
+    data: dict = field(default_factory=dict)
+    label: dict = field(default_factory=dict)
 
 
 class ConfigManager:

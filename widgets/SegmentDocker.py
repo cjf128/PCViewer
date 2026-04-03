@@ -1,3 +1,4 @@
+import re
 import sys
 from pathlib import Path
 
@@ -7,6 +8,7 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
     QButtonGroup,
+    QCheckBox,
     QColorDialog,
     QMessageBox,
     QRadioButton,
@@ -15,10 +17,10 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from app.configs import ConfigManager
-
 if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from app.configs import ConfigManager
 
 from app.mode import SAMMode
 from ui.SegmentDock_ui import Ui_Form
@@ -88,7 +90,11 @@ class SegmentDocker(QWidget, Ui_Form):
     def init_labels(self):
         """初始化标签表格"""
         # 从MainWindow的配置中加载标签
-        labels = self.main_window._config.label
+        if not hasattr(self.main_window, "_config"):
+            # 如果没有配置或标签，初始化一个默认标签
+            labels = {"1": {"name": "Default", "color": "#FF0000"}}
+        else:
+            labels = self.main_window._config.label
 
         # 清空表格
         self.tableWidget.setRowCount(0)
@@ -152,7 +158,7 @@ class SegmentDocker(QWidget, Ui_Form):
                 self.on_select_button_clicked(first_label_id)
 
         # 禁用整行选择
-        self.tableWidget.setSelectionMode(QAbstractItemView.NoSelection)
+        self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         # 设置列宽，固定列宽
         self.tableWidget.setColumnWidth(0, 35)  # Select列固定宽度35
         self.tableWidget.setColumnWidth(1, 100)  # Name列固定宽度100
@@ -164,7 +170,7 @@ class SegmentDocker(QWidget, Ui_Form):
         color_dialog = QColorDialog()
         color_dialog.setWindowTitle("选择标签颜色")
 
-        if color_dialog.exec() == QColorDialog.Accepted:
+        if color_dialog.exec() == QColorDialog.DialogCode.Accepted:
             new_color = color_dialog.currentColor().name()
 
             # 从MainWindow的配置中获取标签
@@ -249,14 +255,19 @@ class SegmentDocker(QWidget, Ui_Form):
         """更新标签信息"""
         if column == 1:  # 只处理名称列的修改（现在名称列的索引是1）
             # 从MainWindow的配置中获取标签
-            labels = self.main_window._config.label
+            if not hasattr(self.main_window, "_config"):
+                return
+            else:
+                labels = self.main_window._config.label
 
             # 按标签ID排序
             sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
             if row < len(sorted_labels):
                 label_id = sorted_labels[row][0]
                 # 更新名称
-                labels[label_id]["name"] = self.tableWidget.item(row, 1).text()
+                name_item = self.tableWidget.item(row, 1)
+                assert name_item is not None
+                labels[label_id]["name"] = name_item.text()
 
                 # 保存配置
                 config_manager = ConfigManager()
@@ -276,11 +287,12 @@ class SegmentDocker(QWidget, Ui_Form):
                 current_color = labels[label_id]["color"]
                 color_dialog.setCurrentColor(QColor(current_color))
 
-                if color_dialog.exec() == QColorDialog.Accepted:
+                if color_dialog.exec() == QColorDialog.DialogCode.Accepted:
                     new_color = color_dialog.currentColor().name()
 
                     # 更新表格
                     color_item = self.tableWidget.item(row, 2)
+                    assert color_item is not None
                     color_item.setBackground(QColor(new_color))
                     # 不显示颜色文本
                     color_item.setText("")
@@ -324,6 +336,7 @@ class SegmentDocker(QWidget, Ui_Form):
             for child in radio_widget.children():
                 if hasattr(child, "setChecked"):
                     # 选中radio button
+                    assert isinstance(child, QCheckBox)
                     child.setChecked(True)
                     # 获取标签ID
                     labels = self.main_window._config.label

@@ -48,12 +48,12 @@ class InfoDocker(QWidget):
 
             # 属性列
             key_item = QTableWidgetItem(key)
-            key_item.setFlags(Qt.ItemIsEnabled)
+            key_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             self.tableWidget.setItem(row, 0, key_item)
 
             # 值列
             value_item = QTableWidgetItem(str(value))
-            value_item.setFlags(Qt.ItemIsEnabled)
+            value_item.setFlags(Qt.ItemFlag.ItemIsEnabled)
             self.tableWidget.setItem(row, 1, value_item)
 
         # 设置列宽模式，让两列都填满表格

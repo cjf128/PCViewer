@@ -36,7 +36,7 @@ class ImageViewer(QGraphicsView):
 
         self.wheel = False
         self.information_show = True
-        self.AXIAL_show = False
+        self.cross_show = False
         self.direction_show = True
         self.patient_name = None
 
@@ -59,13 +59,13 @@ class ImageViewer(QGraphicsView):
     def config(self):
         self.setMouseTracking(True)
         self._scene = QGraphicsScene()
-        self._scene.setBackgroundBrush(QColor(Qt.black))
+        self._scene.setBackgroundBrush(QColor(Qt.GlobalColor.black))
         self.setScene(self._scene)
 
-        self.setTransformationAnchor(QGraphicsView.AnchorViewCenter)
-        self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorViewCenter)
+        self.setResizeAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
     def load_image(self, pixmap, radius):
         global scale_x, scale_y
@@ -86,7 +86,7 @@ class ImageViewer(QGraphicsView):
             self.ellipse_item.setVisible(False)
 
         pen = QPen(Qt.GlobalColor.red)
-        pen.setWidth(0.5)
+        pen.setWidth(1)
         self.ellipse_item.setPen(pen)
 
         transform = QTransform()
@@ -139,7 +139,7 @@ class ImageViewer(QGraphicsView):
                     ):
                         current_mode = self.main_window.segment_setting.current_mode
 
-                    self.setCursor(Qt.AXIALCursor)
+                    self.setCursor(Qt.CursorShape.CrossCursor)
 
                     if current_mode == SAMMode.BOX:
                         # BOX模式：画框
@@ -181,11 +181,11 @@ class ImageViewer(QGraphicsView):
                 if self.mode == VIEWERMode.ERASER:
                     self.draw_state = 0
 
-            if event.button() == Qt.MiddleButton:
+            if event.button() == Qt.MouseButton.MiddleButton:
                 self.mode = VIEWERMode.MOVE
-                self.AXIAL_show = False
+                self.cross_show = False
 
-            if event.button() == Qt.RightButton:
+            if event.button() == Qt.MouseButton.RightButton:
                 self.mode = VIEWERMode.ZOOM
 
         event.ignore()
@@ -213,7 +213,7 @@ class ImageViewer(QGraphicsView):
 
             if self.mode == VIEWERMode.MOVE and (
                 event.buttons() & Qt.MouseButton.LeftButton
-                or event.buttons() & Qt.MiddleButton
+                or event.buttons() & Qt.MouseButton.MiddleButton
             ):
                 self.horizontalScrollBar().setValue(
                     self.horizontalScrollBar().value() - self.delta.x()
@@ -267,7 +267,10 @@ class ImageViewer(QGraphicsView):
                         )
                     )
 
-            if self.mode == VIEWERMode.ZOOM and event.buttons() & Qt.RightButton:
+            if (
+                self.mode == VIEWERMode.ZOOM
+                and event.buttons() & Qt.MouseButton.RightButton
+            ):
                 scale_factor = 1.0 + (self.delta.y() / 100.0)
                 scale_factor = max(0.2, min(2, scale_factor))
 
@@ -287,7 +290,7 @@ class ImageViewer(QGraphicsView):
                     ):
                         current_mode = self.main_window.segment_setting.current_mode
 
-                    self.setCursor(Qt.ArrowCursor)
+                    self.setCursor(Qt.CursorShape.ArrowCursor)
 
                     if current_mode == SAMMode.BOX and np.any(self.input_box):
                         # BOX模式：发送输入框
@@ -301,16 +304,16 @@ class ImageViewer(QGraphicsView):
             else:
                 self.Mode_Signal.emit()
 
-            if event.button() == Qt.MiddleButton:
-                if hasattr(self.main_window, "AXIALline_action"):
-                    if self.main_window.AXIALline_action.isChecked():
-                        self.AXIAL_show = True
+            if event.button() == Qt.MouseButton.MiddleButton:
+                if hasattr(self.main_window, "crossline_action"):
+                    if self.main_window.crossline_action.isChecked():
+                        self.cross_show = True
 
         event.ignore()
 
     def wheelEvent(self, event):
         angle = event.angleDelta()
-        if event.modifiers() == Qt.ControlModifier:
+        if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
             if self.mode == VIEWERMode.PAINT or self.mode == VIEWERMode.ERASER:
                 if angle.y() > 0 and self.radius < 15:
                     self.radius += 2
@@ -322,7 +325,7 @@ class ImageViewer(QGraphicsView):
     def enterEvent(self, event):
         self.wheel = True
         if self.mode == VIEWERMode.PAINT or self.mode == VIEWERMode.ERASER:
-            self.setCursor(Qt.BlankCursor)
+            self.setCursor(Qt.CursorShape.BlankCursor)
         super().enterEvent(event)
 
     def leaveEvent(self, event):
@@ -355,7 +358,7 @@ class ImageViewer(QGraphicsView):
         if self.direction_show:
             font = QFont("Arial", 10)
             painter.setFont(font)
-            painter.setPen(Qt.yellow)
+            painter.setPen(Qt.GlobalColor.yellow)
             margin = 10
             painter.drawText(margin, self.viewport().height() // 2 - 5, axe[0])
             painter.drawText(
@@ -372,14 +375,14 @@ class ImageViewer(QGraphicsView):
 
         if self.information_show:
             if self.patient_name:
-                font = QFont("Arial", 10, QFont.Bold)
+                font = QFont("Arial", 10, QFont.Weight.Bold)
                 painter.setFont(font)
-                painter.setPen(Qt.green)
+                painter.setPen(Qt.GlobalColor.green)
                 painter.drawText(10, 20, self.patient_name)
 
-        if self.AXIAL_show:
-            penx = QPen(QColor(color[0]), 1, Qt.DashLine)
-            peny = QPen(QColor(color[1]), 1, Qt.DashLine)
+        if self.cross_show:
+            penx = QPen(QColor(color[0]), 1, Qt.PenStyle.DashLine)
+            peny = QPen(QColor(color[1]), 1, Qt.PenStyle.DashLine)
             painter.setPen(penx)
             painter.drawLine(center_x, 20, center_x, self.viewport().height() - 20)
             painter.setPen(peny)

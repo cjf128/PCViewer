@@ -113,6 +113,8 @@ class ThemeManager:
         if not app:
             return
 
+        assert isinstance(app, QApplication)
+
         app.setStyle("Fusion")
 
         if theme == "dark":

@@ -103,10 +103,10 @@ class Ui_MainWindow(object):
         self.aim_atn.setObjectName("aim_atn")
         self.aim_atn.setCheckable(True)
         self.aim_atn.setChecked(False)
-        self.AXIALline_action = QAction(MainWindow)
-        self.AXIALline_action.setObjectName("AXIALline_action")
-        self.AXIALline_action.setCheckable(True)
-        self.AXIALline_action.setChecked(False)
+        self.crossline_action = QAction(MainWindow)
+        self.crossline_action.setObjectName("crossline_action")
+        self.crossline_action.setCheckable(True)
+        self.crossline_action.setChecked(False)
         self.redo_atn = QAction(MainWindow)
         self.redo_atn.setObjectName("redo_atn")
         self.add_action = QAction(MainWindow)
@@ -513,7 +513,7 @@ class Ui_MainWindow(object):
         self.muView.addAction(self.menu_3.menuAction())
         self.menu_3.addAction(self.information_action)
         self.menu_3.addAction(self.direction_action)
-        self.menu_3.addAction(self.AXIALline_action)
+        self.menu_3.addAction(self.crossline_action)
         self.menu.addAction(self.filesetting_action)
         self.menu.addAction(self.imageseting_action)
         self.menu.addAction(self.segmentsetting_action)
@@ -606,7 +606,7 @@ class Ui_MainWindow(object):
         self.aim_atn.setText(
             QCoreApplication.translate("MainWindow", "\u51c6\u5fc3", None)
         )
-        self.AXIALline_action.setText(
+        self.crossline_action.setText(
             QCoreApplication.translate("MainWindow", "\u5b9a\u4f4d\u7ebf", None)
         )
         self.redo_atn.setText(

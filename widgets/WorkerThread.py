@@ -17,7 +17,7 @@ from scripts.sort_dicom import sort_dicom_series
 class DicomWorker(QThread):
     finished = Signal(np.ndarray, np.ndarray, tuple, tuple, tuple, dict)
 
-    def __init__(self, pet_file: str, ct_file: str, cache_folder: Path):
+    def __init__(self, pet_file: Path, ct_file: Path, cache_folder: Path):
         super().__init__()
         self.pet_file = pet_file
         self.ct_file = ct_file
@@ -30,12 +30,12 @@ class DicomWorker(QThread):
         pet_folder.mkdir(exist_ok=True)
 
         success_ct, msg_ct = sort_dicom_series(
-            self.ct_file, str(ct_folder), str(pet_folder)
+            self.ct_file, ct_folder, pet_folder
         )
         log_info(f"CT处理结果: {msg_ct}")
 
         success_pet, msg_pet = sort_dicom_series(
-            self.pet_file, str(ct_folder), str(pet_folder)
+            self.pet_file, ct_folder, pet_folder
         )
         log_info(f"PET处理结果: {msg_pet}")
 
@@ -88,7 +88,7 @@ class DicomWorker(QThread):
 class NiftiWorker(QThread):
     finished = Signal(np.ndarray, np.ndarray, tuple, tuple, tuple)
 
-    def __init__(self, pet_path: str, ct_path: str):
+    def __init__(self, pet_path: Path, ct_path: Path):
         super().__init__()
         self.pet_path = pet_path
         self.ct_path = ct_path
@@ -189,7 +189,7 @@ class BuiltThread(QThread):
         self,
         data: np.ndarray,
         spacing: Tuple[float, float, float],
-        label_config: dict = None,
+        label_config: None | dict,
     ):
         super().__init__()
         self.data = data

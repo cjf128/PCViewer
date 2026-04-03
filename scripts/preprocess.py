@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import SimpleITK as sitk
 
 from scripts.basic import read_dicom_series, resize_image
@@ -21,7 +23,7 @@ def process_dicom_data(ct_folder: str, pet_folder: str):
     return ct_data, pet_data, ct_spacing, pet_spacing, pet_shape
 
 
-def process_nifti_data(pet_path: str, ct_path: str):
+def process_nifti_data(pet_path: Path, ct_path: Path):
     # 原始CT处理
     ct_img = sitk.ReadImage(ct_path)
     ct_img = sitk.DICOMOrient(ct_img, "LPS")

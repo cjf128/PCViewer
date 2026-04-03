@@ -1,17 +1,18 @@
 import sys
+
 import numpy as np
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QImage, QPainterPath, QPixmap
 from PySide6.QtWidgets import (
     QApplication,
-    QMainWindow,
-    QGraphicsView,
-    QGraphicsScene,
     QGraphicsEllipseItem,
+    QGraphicsScene,
+    QGraphicsView,
     QLabel,
+    QMainWindow,
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtGui import QPainterPath, QPixmap, QImage
-from PySide6.QtCore import Qt
 
 
 # ---------------- Transfer Function Logic ----------------
@@ -49,8 +50,6 @@ class ControlPoint(QGraphicsEllipseItem):
 
     def itemChange(self, change, value):
         if change == self.GraphicsItemChange.ItemPositionChange:
-            x = min(max(value.x(), 0), 255)
-            y = min(max(value.y(), 0), 255)
             self.parent.update_curve()
             return super().itemChange(change, value)
         return super().itemChange(change, value)
@@ -60,19 +59,19 @@ class ControlPoint(QGraphicsEllipseItem):
 class TransferFunctionWidget(QGraphicsView):
     def __init__(self, callback=None):
         super().__init__()
-        self.scene = QGraphicsScene(0, 0, 256, 256)
-        self.setScene(self.scene)
+        self._scene = QGraphicsScene()
+        self.setScene(self._scene)
         self.points = []
         self.callback = callback
 
-        self.curve_item = self.scene.addPath(QPainterPath())
+        self.curve_item = self._scene.addPath(QPainterPath())
 
         self.add_point(0, 255)
         self.add_point(255, 0)
 
     def add_point(self, x, y):
         p = ControlPoint(x, y, self)
-        self.scene.addItem(p)
+        self._scene.addItem(p)
         self.points.append(p)
         self.update_curve()
 

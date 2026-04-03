@@ -460,7 +460,7 @@
      </property>
      <addaction name="information_action"/>
      <addaction name="direction_action"/>
-     <addaction name="AXIALline_action"/>
+     <addaction name="crossline_action"/>
     </widget>
     <addaction name="file_action"/>
     <addaction name="paint_action"/>
@@ -915,7 +915,7 @@
     <string>准心</string>
    </property>
   </action>
-  <action name="AXIALline_action">
+  <action name="crossline_action">
    <property name="checkable">
     <bool>true</bool>
    </property>

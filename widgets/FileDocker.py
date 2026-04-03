@@ -308,13 +308,13 @@ class FileDocker(QWidget, Ui_Form):
         参数:
             key: 要删除的项的模型索引或data_id
         """
+        item = None
         if index:
             # 获取对应的模型项
             item = self.model.itemFromIndex(index)
             # 获取存储的data_id
             data_id = item.data(Qt.ItemDataRole.UserRole)
         elif data_id:
-            item = None
             data_id = data_id
 
         # 如果data_id有效且主窗口配置存在

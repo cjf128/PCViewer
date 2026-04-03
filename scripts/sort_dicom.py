@@ -82,13 +82,13 @@ def _copy_dicom_file(src: Path, dst_dir: Path) -> bool:
 
 
 def sort_dicom_series(
-    dicom_file: str,
-    ct_path: str,
-    pet_path: str,
+    dicom_file: Path,
+    ct_path: Path,
+    pet_path: Path,
 ) -> Tuple[bool, str]:
-    dicom_file = Path(dicom_file)
-    ct_dir = Path(ct_path)
-    pet_dir = Path(pet_path)
+    dicom_file = dicom_file
+    ct_dir = ct_path
+    pet_dir = pet_path
 
     ct_dir.mkdir(parents=True, exist_ok=True)
     pet_dir.mkdir(parents=True, exist_ok=True)

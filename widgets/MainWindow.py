@@ -121,11 +121,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.pet_shape = (0, 0, 0)
 
         # 图像数据
-        self.ct = []
-        self.pet = []
-        self.seg = []
+        self.ct: np.ndarray = np.array([])
+        self.pet: np.ndarray = np.array([])
+        self.seg: np.ndarray = np.array([])
         # 撤销前快照（当前层）
-        self._seg_before_edit = None
+        self._seg_before_edit: np.ndarray | None = None
 
         # 状态标志
         self.load_mode = LOADMode.UNLOAD
@@ -279,7 +279,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.add_action.triggered.connect(self.load_Seg_slot)
         self.save_action.triggered.connect(self.save_slot)
         self.exit_action.triggered.connect(self.close)
-        self.AXIALline_action.triggered.connect(self.AXIALline_slot)
+        self.crossline_action.triggered.connect(self.crossline_slot)
         self.direction_action.triggered.connect(self.direction_slot)
         self.information_action.triggered.connect(self.information_slot)
 
@@ -408,7 +408,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def reset_slot(self):
         """复位处理"""
         if self.load_mode != LOADMode.UNLOAD:
-            self.viewer.fitInView(self.viewer.pixmap_item, Qt.KeepAspectRatio)
+            self.viewer.fitInView(
+                self.viewer.pixmap_item, Qt.AspectRatioMode.KeepAspectRatio
+            )
 
     def refresh_slot(self):
         """刷新视图"""
@@ -478,7 +480,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             )
             if seg_file:
                 log_info(f"加载分割文件: {seg_file}")
-                self.seg_file = seg_file
+                self.seg_file = Path(seg_file)
 
                 seg = sitk.ReadImage(str(self.seg_file))
                 seg = sitk.DICOMOrient(seg, "LPS")
@@ -572,7 +574,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         load_dialog.show()
 
     def on_files_selected(
-        self, pet_file: str, ct_file: str, file_type: str, data_id: str = ""
+        self, pet_file: Path, ct_file: Path, file_type: str, data_id: str = ""
     ):
         """处理文件选择"""
         log_info(f"选择文件 - PET: {pet_file}, CT: {ct_file}, 类型: {file_type}")
@@ -596,7 +598,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         data_folder = Path(self.cache_path) / self.patient_id
         data_folder.mkdir(parents=True, exist_ok=True)
-        self.data_path = str(data_folder)
+        self.data_path = data_folder
 
         if file_type == "NIfTI":
             self._load_nifti_files(pet_file, ct_file)
@@ -681,14 +683,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.file_Setting.file_name.emit(final_name)
                     self.file_Setting.select_item_by_id(data_id)
 
-    def _load_dicom_files(self, pet_file: str, ct_file: str, data_folder: Path):
+    def _load_dicom_files(self, pet_file: Path, ct_file: Path, data_folder: Path):
         """处理DICOM/IMA文件"""
         self.worker_thread = DicomWorker(pet_file, ct_file, data_folder)
         self.worker_thread.finished.connect(self.dialog.close)
         self.worker_thread.finished.connect(self.on_data_loaded)
         self.worker_thread.start()
 
-    def _load_nifti_files(self, pet_file: str, ct_file: str):
+    def _load_nifti_files(self, pet_file: Path, ct_file: Path):
         """处理NIfTI文件"""
         self.worker_thread = NiftiWorker(pet_file, ct_file)
         self.worker_thread.finished.connect(self.dialog.close)
@@ -698,7 +700,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setting(self):
         """导入数据后初始化层数"""
         self.seg_file = Path("")
-        self.viewer.show_information = True
+        self.viewer.information_show = True
         self.viewer.position[0] = self.viewer.width() // 2
         self.viewer.position[1] = self.viewer.height() // 2
 
@@ -706,8 +708,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.load_mode != LOADMode.CHANGE:
             self.image_setting.boxAlphaCt.setValue(self.ct_alpha)
-            self.image_setting.boxCT_wl.setValue(self.ct_wl)
-            self.image_setting.boxCT_ww.setValue(self.ct_ww)
+            self.image_setting.boxCT_wl.setValue(int(self.ct_wl))
+            self.image_setting.boxCT_ww.setValue(int(self.ct_ww))
             self.image_setting.boxAlphaPet.setValue(self.pet_alpha)
 
             self.segment_setting.boxPaint.setValue(self.radius)
@@ -755,8 +757,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self, "警告", "无可保存分割图像！", QMessageBox.StandardButton.Ok
             )
 
-    def AXIALline_slot(self):
-        self.viewer.AXIAL_show = not self.viewer.AXIAL_show
+    def crossline_slot(self):
+        self.viewer.cross_show = not self.viewer.cross_show
         self.viewer.viewport().update()
 
     def information_slot(self):
@@ -792,7 +794,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_all(self):
         """更新-以防按键冲突后仍有残留项"""
         if self.load_mode != LOADMode.UNLOAD:
-            self.viewer.input_box = None
+            self.viewer.input_box = []
             self.update_image()
             if self.stackedWidget.currentIndex() == 1:
                 self.view_3d_built()
@@ -883,7 +885,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.viewer.load_image(img, self.radius)
 
         if self.load_mode == LOADMode.CHANGE or self.load_mode == LOADMode.RELOAD:
-            self.viewer.fitInView(self.viewer.pixmap_item, Qt.KeepAspectRatio)
+            self.viewer.fitInView(
+                self.viewer.pixmap_item, Qt.AspectRatioMode.KeepAspectRatio
+            )
             self.viewer._scene.setSceneRect(self.viewer.pixmap_item.sceneBoundingRect())
             self.load_mode = LOADMode.LOADED
 
@@ -980,7 +984,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """鼠标按下事件重写，用于拖拽和绘图"""
         super().mousePressEvent(event)
         if self.load_mode != LOADMode.UNLOAD:
-            if event.button() == Qt.RightButton:
+            if event.button() == Qt.MouseButton.RightButton:
                 self.update_all()
 
             elif event.button() == Qt.MouseButton.LeftButton:
@@ -1026,8 +1030,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 self.ct_ww += int(delta.x())
                 self.ct_wl += int(delta.y())
-                self.image_setting.boxCT_ww.setValue(self.ct_ww)
-                self.image_setting.boxCT_wl.setValue(self.ct_wl)
+                self.image_setting.boxCT_ww.setValue(int(self.ct_ww))
+                self.image_setting.boxCT_wl.setValue(int(self.ct_wl))
 
             elif self.paint_atn.isChecked() or self.eraser_atn.isChecked():
                 point = self.viewer.point  # 获取 QPoint 对象
@@ -1068,7 +1072,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """鼠标滚动重写，用于切换层数，放缩"""
         angle = event.angleDelta()
 
-        if event.modifiers() == Qt.ControlModifier:
+        if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
             if self.paint_atn.isChecked() or self.eraser_atn.isChecked():
                 if angle.y() > 0 and self.radius < 30:
                     self.radius += 1
@@ -1138,7 +1142,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         height, width, channels = new_im.shape
         bytes_per_line = channels * width
         pre_image = QImage(
-            new_im.data, width, height, bytes_per_line, QImage.Format_BGR888
+            new_im.data, width, height, bytes_per_line, QImage.Format.Format_BGR888
         )
         pre_image = QPixmap.fromImage(pre_image)
 
@@ -1210,6 +1214,6 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     config_manager = ConfigManager()
     config = config_manager.load()
-    MainWindow = MainWindow(config)
-    MainWindow.show()
+    window = MainWindow(config)
+    window.show()
     sys.exit(app.exec())

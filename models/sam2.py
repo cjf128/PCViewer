@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 from numpy import ndarray
+from typing import Any
 
 
 class SAM2Image:
@@ -174,11 +175,11 @@ class SAM2ImageEncoder:
 
         return input_tensor
 
-    def infer(self, input_tensor: np.ndarray):
+    def infer(self, input_tensor: np.ndarray) -> list[Any]:
         outputs = self.session.run(
             self.output_names, {self.input_names[0]: input_tensor}
         )
-        return outputs
+        return list(outputs)
 
     def process_output(
         self, outputs: list[np.ndarray]
@@ -203,7 +204,7 @@ class SAM2ImageDecoder:
         self,
         path: str,
         encoder_input_size: tuple[int, int],
-        orig_im_size: tuple[int, int] = None,
+        orig_im_size: None | tuple[int, int],
         mask_threshold: float = 0.0,
     ) -> None:
         # Initialize model
@@ -334,12 +335,12 @@ class SAM2ImageDecoder:
             np.ndarray,
             np.ndarray,
         ],
-    ) -> list[np.ndarray]:
+    ) -> list[Any]:
         outputs = self.session.run(
             self.output_names,
             {self.input_names[i]: inputs[i] for i in range(len(self.input_names))},
         )
-        return outputs
+        return list(outputs)
 
     def process_output(
         self, outputs: list[np.ndarray]
