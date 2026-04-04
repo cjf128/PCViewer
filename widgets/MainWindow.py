@@ -813,8 +813,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             pet_slice = self.normalize(pet_slice, self.pet_ww, self.pet_ww / 2)
             pet_slice = cv2.applyColorMap(pet_slice, cv2.COLORMAP_HOT)
 
+            ct_alpha = self.ct_alpha if self.boxCT.isChecked() else 0
+            pet_alpha = self.pet_alpha if self.boxPET.isChecked() else 0
             current_slice = cv2.addWeighted(
-                ct_slice, self.ct_alpha, pet_slice, self.pet_alpha, 0
+                ct_slice, ct_alpha, pet_slice,  pet_alpha, 0
             )
 
             change_image_mode = False
