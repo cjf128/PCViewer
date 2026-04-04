@@ -8,8 +8,17 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import QCoreApplication, QMetaObject, QRect, QSize, Qt
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtCore import (
+    QCoreApplication,
+    QMetaObject,
+    QRect,
+    QSize,
+    Qt,
+)
+from PySide6.QtGui import (
+    QAction,
+    QIcon,
+)
 from PySide6.QtWidgets import (
     QCheckBox,
     QDockWidget,
@@ -35,7 +44,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1276, 823)
+        MainWindow.resize(1276, 882)
         MainWindow.setMinimumSize(QSize(0, 0))
         MainWindow.setAnimated(True)
         self.setting_atn = QAction(MainWindow)
@@ -387,6 +396,7 @@ class Ui_MainWindow(object):
         self.dockWidget = QDockWidget(MainWindow)
         self.dockWidget.setObjectName("dockWidget")
         self.dockWidget.setMinimumSize(QSize(230, 39))
+        self.dockWidget.setMaximumSize(QSize(500, 524287))
         self.dockWidget.setFloating(False)
         self.dockWidget.setFeatures(
             QDockWidget.DockWidgetFeature.DockWidgetFloatable
@@ -420,6 +430,7 @@ class Ui_MainWindow(object):
         self.dockWidget_4 = QDockWidget(MainWindow)
         self.dockWidget_4.setObjectName("dockWidget_4")
         self.dockWidget_4.setMinimumSize(QSize(230, 39))
+        self.dockWidget_4.setMaximumSize(QSize(500, 524287))
         self.dockWidget_4.setFloating(False)
         self.dockWidget_4.setFeatures(
             QDockWidget.DockWidgetFeature.DockWidgetFloatable
@@ -451,7 +462,8 @@ class Ui_MainWindow(object):
         )
         self.dockWidget_2 = QDockWidget(MainWindow)
         self.dockWidget_2.setObjectName("dockWidget_2")
-        self.dockWidget_2.setMinimumSize(QSize(230, 51))
+        self.dockWidget_2.setMinimumSize(QSize(230, 39))
+        self.dockWidget_2.setMaximumSize(QSize(500, 524287))
         self.dockWidget_2.setFeatures(
             QDockWidget.DockWidgetFeature.DockWidgetFloatable
             | QDockWidget.DockWidgetFeature.DockWidgetMovable
@@ -476,7 +488,12 @@ class Ui_MainWindow(object):
         )
         self.dockWidget_3 = QDockWidget(MainWindow)
         self.dockWidget_3.setObjectName("dockWidget_3")
-        self.dockWidget_3.setMinimumSize(QSize(230, 51))
+        sizePolicy2.setHeightForWidth(
+            self.dockWidget_3.sizePolicy().hasHeightForWidth()
+        )
+        self.dockWidget_3.setSizePolicy(sizePolicy2)
+        self.dockWidget_3.setMinimumSize(QSize(230, 39))
+        self.dockWidget_3.setMaximumSize(QSize(500, 524287))
         self.dockWidget_3.setFeatures(
             QDockWidget.DockWidgetFeature.DockWidgetFloatable
             | QDockWidget.DockWidgetFeature.DockWidgetMovable

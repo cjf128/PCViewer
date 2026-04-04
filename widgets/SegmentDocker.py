@@ -1,4 +1,3 @@
-import re
 import sys
 from pathlib import Path
 
@@ -8,7 +7,6 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
     QApplication,
     QButtonGroup,
-    QCheckBox,
     QColorDialog,
     QMessageBox,
     QRadioButton,
@@ -21,7 +19,6 @@ if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app.configs import ConfigManager
-
 from app.mode import SAMMode
 from ui.SegmentDock_ui import Ui_Form
 
@@ -333,18 +330,16 @@ class SegmentDocker(QWidget, Ui_Form):
         radio_widget = self.tableWidget.cellWidget(row, 0)
         if radio_widget:
             # 获取widget中的radio button
-            for child in radio_widget.children():
-                if hasattr(child, "setChecked"):
-                    # 选中radio button
-                    assert isinstance(child, QCheckBox)
-                    child.setChecked(True)
-                    # 获取标签ID
-                    labels = self.main_window._config.label
-                    sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
-                    if row < len(sorted_labels):
-                        label_id = int(sorted_labels[row][0])
-                        # 发送选择信号
-                        self.on_select_button_clicked(label_id)
+            radio_button = radio_widget.findChild(QRadioButton)
+            if radio_button:
+                radio_button.setChecked(True)
+                # 获取标签ID
+                labels = self.main_window._config.label
+                sorted_labels = sorted(labels.items(), key=lambda x: int(x[0]))
+                if row < len(sorted_labels):
+                    label_id = int(sorted_labels[row][0])
+                    # 发送选择信号
+                    self.on_select_button_clicked(label_id)
 
 
 if __name__ == "__main__":

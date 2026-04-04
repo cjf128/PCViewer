@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1276</width>
-    <height>823</height>
+    <height>882</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -579,6 +579,12 @@
      <height>39</height>
     </size>
    </property>
+   <property name="maximumSize">
+    <size>
+     <width>500</width>
+     <height>524287</height>
+    </size>
+   </property>
    <property name="floating">
     <bool>false</bool>
    </property>
@@ -628,6 +634,12 @@
     <size>
      <width>230</width>
      <height>39</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>500</width>
+     <height>524287</height>
     </size>
    </property>
    <property name="floating">
@@ -699,7 +711,13 @@
    <property name="minimumSize">
     <size>
      <width>230</width>
-     <height>51</height>
+     <height>39</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>500</width>
+     <height>524287</height>
     </size>
    </property>
    <property name="features">
@@ -738,10 +756,22 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_3">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>230</width>
-     <height>51</height>
+     <height>39</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>500</width>
+     <height>524287</height>
     </size>
    </property>
    <property name="features">
