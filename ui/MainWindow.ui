@@ -484,6 +484,7 @@
     <addaction name="separator"/>
     <addaction name="menutheme"/>
     <addaction name="separator"/>
+    <addaction name="shortcut_action"/>
    </widget>
    <addaction name="muFile"/>
    <addaction name="menu"/>
@@ -1098,6 +1099,14 @@
    </property>
    <property name="text">
     <string>患者名</string>
+   </property>
+  </action>
+  <action name="shortcut_action">
+   <property name="text">
+    <string>快捷键</string>
+   </property>
+   <property name="iconText">
+    <string>快捷键</string>
    </property>
   </action>
   <zorder>dockWidget_4</zorder>

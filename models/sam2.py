@@ -103,26 +103,6 @@ class SAM2Image:
 
         return concat_coords, concat_labels
 
-    def remove_point(
-        self, point_coords: tuple[int, int], label_id: int
-    ) -> dict[int, np.ndarray]:
-        point_id = np.where(
-            (self.point_coords[label_id][:, 0] == point_coords[0])
-            & (self.point_coords[label_id][:, 1] == point_coords[1])
-        )[0][0]
-        self.point_coords[label_id] = np.delete(
-            self.point_coords[label_id], point_id, axis=0
-        )
-        self.point_labels[label_id] = np.delete(
-            self.point_labels[label_id], point_id, axis=0
-        )
-
-        return self.decode_mask(label_id)
-
-    def remove_box(self, label_id: int) -> dict[int, np.ndarray]:
-        del self.box_coords[label_id]
-        return self.decode_mask(label_id)
-
     def get_masks(self) -> dict[int, np.ndarray]:
         return self.masks
 

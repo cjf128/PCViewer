@@ -39,6 +39,7 @@ from widgets.ImageViewer import ImageViewer
 from widgets.InfoDocker import InfoDocker
 from widgets.LoadDialog import LoadDialog
 from widgets.SegmentDocker import SegmentDocker
+from widgets.ShortcutDialog import ShortcutDialog
 from widgets.WorkerThread import (
     BuiltThread,
     DicomWorker,
@@ -324,6 +325,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.dark_action.triggered.connect(lambda: self.change_theme("dark"))
         self.light_action.triggered.connect(lambda: self.change_theme("light"))
 
+        # 快捷键设置
+        self.shortcut_action.triggered.connect(self.show_shortcut_dialog)
+
         self.file_Setting.file_name.connect(self.viewer.patient_name_change)
 
     def transpose(self, mode):
@@ -451,6 +455,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         )
 
         self.update_all()
+
+    def show_shortcut_dialog(self):
+        """显示快捷键设置对话框"""
+        dialog = ShortcutDialog(self)
+        dialog.shortcuts_changed.connect(self._on_shortcuts_changed)
+        dialog.exec()
+
+    def _on_shortcuts_changed(self, shortcuts_dict: dict):
+        """快捷键更改时的处理"""
+        # config_manager = ConfigManager()
+        # self._config.shortcuts = shortcuts_dict
+        # config_manager.save(self._config)
+        self.viewer.setCursor(Qt.CursorShape.ArrowCursor)  # 切换回默认光标，避免快捷键冲突导致的光标异常
+        log_info(f"快捷键已更新: {shortcuts_dict}")
 
     def redo_slot(self):
         """重做-清空标注"""
@@ -815,9 +833,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             ct_alpha = self.ct_alpha if self.boxCT.isChecked() else 0
             pet_alpha = self.pet_alpha if self.boxPET.isChecked() else 0
-            current_slice = cv2.addWeighted(
-                ct_slice, ct_alpha, pet_slice,  pet_alpha, 0
-            )
+            current_slice = cv2.addWeighted(ct_slice, ct_alpha, pet_slice, pet_alpha, 0)
 
             change_image_mode = False
             if self.layer != self.num:
