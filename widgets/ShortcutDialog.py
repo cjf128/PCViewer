@@ -14,6 +14,7 @@ if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
+from app.configs import ConfigManager
 from ui.ShortcutDialog_ui import Ui_Dialog
 
 
@@ -26,6 +27,7 @@ class ShortcutDialog(QDialog, Ui_Dialog):
         super().__init__(parent)
         self.setupUi(self)
         self._main_window = parent
+        self._config = parent._config if parent else None
 
         # 快捷键编辑控件与 MainWindow action 的映射
         self._shortcuts_mapping = {
@@ -45,13 +47,9 @@ class ShortcutDialog(QDialog, Ui_Dialog):
 
         # 保存初始快捷键状态（打开对话框时的状态）
         self._initial_shortcuts = {}
-        # 保存前一个有效状态（用于冲突时回滚）
-        self._previous_valid_shortcuts = {}
-        # 标志：是否正在恢复快捷键（禁用检查信号）
-        self._restoring_shortcut = False
 
-        # 从 MainWindow 加载当前快捷键
-        self._load_shortcuts_from_mainwindow()
+        # 从配置和 MainWindow 加载当前快捷键
+        self._load_shortcuts()
 
         # 保存加载后的初始状态
         self._save_initial_state()
@@ -63,79 +61,44 @@ class ShortcutDialog(QDialog, Ui_Dialog):
             self.reset_button, QDialogButtonBox.ButtonRole.ResetRole
         )
 
-        # 连接按钮信号
-        self.buttonBox.accepted.connect(self._on_ok_clicked)
+        # 重写确定按钮行为：手动检查冲突后再决定是否关闭
+        ok_button = self.buttonBox.button(QDialogButtonBox.StandardButton.Ok)
+        ok_button.clicked.disconnect()
+        ok_button.clicked.connect(self._on_ok_clicked)
+
         self.buttonBox.rejected.connect(self._on_cancel_clicked)
 
-        # 为每个快捷键编辑控件连接信号，实时检查冲突
-        self._connect_shortcut_change_signals()
-
-    def _load_shortcuts_from_mainwindow(self):
-        """从 MainWindow 加载当前的快捷键设置"""
-        if self._main_window is None:
-            return
-
-        for action_name, edit_widget in self._shortcuts_mapping.items():
-            if hasattr(self._main_window, action_name):
-                action = getattr(self._main_window, action_name)
-                shortcut = action.shortcut()
-                edit_widget.setKeySequence(shortcut)
+    def _load_shortcuts(self):
+        """从配置和 MainWindow 加载当前的快捷键设置"""
+        # 优先从 config 加载
+        if self._config and self._config.shortcuts:
+            for action_name, edit_widget in self._shortcuts_mapping.items():
+                key_sequence = self._config.shortcuts.get(action_name, "")
+                edit_widget.blockSignals(True)
+                edit_widget.setKeySequence(key_sequence)
+                edit_widget.blockSignals(False)
+        # 如果 config 中没有，则从 MainWindow 的 action 中获取
+        elif self._main_window is not None:
+            for action_name, edit_widget in self._shortcuts_mapping.items():
+                if hasattr(self._main_window, action_name):
+                    action = getattr(self._main_window, action_name)
+                    shortcut = action.shortcut()
+                    edit_widget.blockSignals(True)
+                    edit_widget.setKeySequence(shortcut)
+                    edit_widget.blockSignals(False)
 
     def _save_initial_state(self):
         """保存当前的快捷键状态作为初始状态"""
         for action_name, edit_widget in self._shortcuts_mapping.items():
             key_sequence = edit_widget.keySequence().toString()
             self._initial_shortcuts[action_name] = key_sequence
-            self._previous_valid_shortcuts[action_name] = (
-                key_sequence  # 同时保存为前一个有效状态
-            )
 
     def _reset_shortcuts(self):
         """恢复快捷键到初始状态（打开对话框时的状态）"""
-        self._restoring_shortcut = True
-        for action_name, key_sequence in self._initial_shortcuts.items():
-            edit_widget = self._shortcuts_mapping[action_name]
-            edit_widget.setKeySequence(key_sequence)
-        self._restoring_shortcut = False
-
-        # 更新前一个有效状态
-        self._previous_valid_shortcuts = self._initial_shortcuts.copy()
-
-    def _connect_shortcut_change_signals(self):
-        """为每个快捷键编辑控件连接信号"""
         for action_name, edit_widget in self._shortcuts_mapping.items():
-            # 使用 lambda 捕获 action_name
-            edit_widget.editingFinished.connect(
-                lambda an=action_name: self._on_shortcut_edited(an)
-            )
-
-    def _on_shortcut_edited(self, action_name: str):
-        """当某个快捷键编辑完成时的处理"""
-        # 如果正在恢复快捷键，不再进行检查
-        if self._restoring_shortcut:
-            return
-
-        # 收集所有快捷键设置
-        shortcuts_dict = {}
-        for an, edit_widget in self._shortcuts_mapping.items():
-            key_sequence = edit_widget.keySequence().toString()
-            shortcuts_dict[an] = key_sequence
-
-        # 检查快捷键冲突
-        is_valid, error_msg = self._check_shortcut_conflicts(shortcuts_dict)
-        if not is_valid:
-            QMessageBox.warning(
-                self, "快捷键冲突", error_msg, QMessageBox.StandardButton.Ok
-            )
-            # 恢复引起冲突的快捷键到前一个有效状态
-            self._restoring_shortcut = True
-            edit_widget = self._shortcuts_mapping[action_name]
-            edit_widget.setKeySequence(self._previous_valid_shortcuts[action_name])
-            self._restoring_shortcut = False
-        else:
-            # 无冲突，保存当前状态为有效状态
-            for an, key_sequence in shortcuts_dict.items():
-                self._previous_valid_shortcuts[an] = key_sequence
+            edit_widget.blockSignals(True)
+            edit_widget.setKeySequence(self._initial_shortcuts[action_name])
+            edit_widget.blockSignals(False)
 
     def _on_cancel_clicked(self):
         """取消按钮被点击时的处理 - 不应用任何更改"""
@@ -200,12 +163,32 @@ class ShortcutDialog(QDialog, Ui_Dialog):
             key_sequence = edit_widget.keySequence().toString()
             shortcuts_dict[action_name] = key_sequence
 
+        # 检查快捷键冲突
+        is_valid, error_msg = self._check_shortcut_conflicts(shortcuts_dict)
+        if not is_valid:
+            QMessageBox.warning(
+                self, "快捷键冲突", error_msg, QMessageBox.StandardButton.Ok
+            )
+            # 重置为打开窗口时的快捷键内容
+            for action_name, edit_widget in self._shortcuts_mapping.items():
+                edit_widget.blockSignals(True)
+                edit_widget.setKeySequence(self._initial_shortcuts[action_name])
+                edit_widget.blockSignals(False)
+            return
+
         # 应用快捷键到 MainWindow
         if self._main_window is not None:
             for action_name, key_sequence in shortcuts_dict.items():
                 if hasattr(self._main_window, action_name):
                     action = getattr(self._main_window, action_name)
                     action.setShortcut(key_sequence)
+
+            # 保存到 config
+            if self._main_window._config:
+                self._main_window._config.shortcuts = shortcuts_dict
+
+                config_manager = ConfigManager()
+                config_manager.save(self._main_window._config)
 
         # 发送信号
         self.shortcuts_changed.emit(shortcuts_dict)

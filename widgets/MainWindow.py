@@ -151,7 +151,32 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.init_ui()
         self.config()
+        self.init_shortcuts()
         self.init_connectAction()
+
+    def init_shortcuts(self):
+        """从配置初始化快捷键"""
+        default_shortcuts = {
+            "load_atn": "Ctrl+O",
+            "aim_atn": "1",
+            "paint_atn": "4",
+            "add_atn": "Ctrl+A",
+            "move_atn": "2",
+            "eraser_atn": "5",
+            "save_atn": "Ctrl+S",
+            "win_atn": "3",
+            "sam_atn": "6",
+        }
+
+        shortcuts = self._config.shortcuts or default_shortcuts
+
+        for action_name, key_sequence in shortcuts.items():
+            if hasattr(self, action_name):
+                action = getattr(self, action_name)
+                action.setShortcut(key_sequence)
+
+        if not self._config.shortcuts:
+            self._config.shortcuts = default_shortcuts
 
     def config(self) -> None:
         theme = self._config.theme
@@ -465,10 +490,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def _on_shortcuts_changed(self, shortcuts_dict: dict):
         """快捷键更改时的处理"""
-        # config_manager = ConfigManager()
-        # self._config.shortcuts = shortcuts_dict
-        # config_manager.save(self._config)
-        self.viewer.setCursor(Qt.CursorShape.ArrowCursor)  # 切换回默认光标，避免快捷键冲突导致的光标异常
+        config_manager = ConfigManager()
+        self._config.shortcuts = shortcuts_dict
+        config_manager.save(self._config)
+        self.viewer.setCursor(
+            Qt.CursorShape.ArrowCursor
+        )  # 切换回默认光标，避免快捷键冲突导致的光标异常
         log_info(f"快捷键已更新: {shortcuts_dict}")
 
     def redo_slot(self):
