@@ -36,6 +36,16 @@ pip install -r requirements.txt
 uv sync
 ```
 
+### 使用前先下载onnx模型
+
+将[sam2.1_hiera_base_plus](https://huggingface.co/mabote-itumeleng/ONNX-SAM2-Segment-Anything/tree/main)放到models/checkpoints下即可
+
+### 运行软件
+
+```bash
+python main.py
+```
+
 ---
 
 ## 开源协议
@@ -49,5 +59,15 @@ uv sync
 
 本软件仅用于科研与教学目的，
 不作为临床诊断或治疗决策的直接依据。
+
+---
+
+
+
+# 参考:
+
+SAM2 Repository: https://github.com/facebookresearch/segment-anything-2
+
+ONNX-SAM2-Segment-Anything: https://github.com/ibaiGorordo/ONNX-SAM2-Segment-Anything
 
 ---
