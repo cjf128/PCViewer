@@ -1,3 +1,4 @@
+# Copyright (c) 2026 PCViewer Jinfr
 import shutil
 from pathlib import Path
 from typing import Tuple

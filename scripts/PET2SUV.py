@@ -1,3 +1,4 @@
+# Copyright (c) 2026 PCViewer Jinfr
 from typing import Dict, Tuple
 
 import pydicom

@@ -3,9 +3,8 @@ __pycache__/
 
 # 数据示例
 example/
-checkpoints/Net/
 data/
-config.yaml
+
 
 # 日志文件
 logs/
@@ -31,3 +30,7 @@ logs/
 *.egg-info/
 dist/
 build/
+
+# 其他配置文件
+config.yaml
+*.ps1

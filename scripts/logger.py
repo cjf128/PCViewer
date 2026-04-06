@@ -1,3 +1,4 @@
+# Copyright (c) 2026 PCViewer Jinfr
 import logging
 import sys
 import time

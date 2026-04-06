@@ -1,3 +1,4 @@
+# Copyright (c) 2026 PCViewer Jinfr
 import sys
 
 from PySide6.QtGui import QIcon

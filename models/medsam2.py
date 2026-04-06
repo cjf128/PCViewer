@@ -5,10 +5,10 @@ from numpy import ndarray
 from typing import Any
 
 
-class SAM2Image:
+class MedSAM2Image:
     def __init__(self, encoder_path: str, decoder_path: str) -> None:
         # Initialize models
-        self.encoder = SAM2ImageEncoder(encoder_path)
+        self.encoder = MedSAM2ImageEncoder(encoder_path)
         self.orig_im_size = self.encoder.input_shape[2:]
         self.decoder_path = decoder_path
         self.decoders = {}
@@ -28,7 +28,7 @@ class SAM2Image:
     ) -> dict[int, np.ndarray]:
 
         if label_id not in self.decoders:
-            self.decoders[label_id] = SAM2ImageDecoder(
+            self.decoders[label_id] = MedSAM2ImageDecoder(
                 self.decoder_path, self.encoder.input_shape[2:], self.orig_im_size
             )
 
@@ -50,7 +50,7 @@ class SAM2Image:
     ) -> dict[int, np.ndarray]:
 
         if label_id not in self.decoders:
-            self.decoders[label_id] = SAM2ImageDecoder(
+            self.decoders[label_id] = MedSAM2ImageDecoder(
                 self.decoder_path, self.encoder.input_shape[2:], self.orig_im_size
             )
 
@@ -103,26 +103,6 @@ class SAM2Image:
 
         return concat_coords, concat_labels
 
-    def remove_point(
-        self, point_coords: tuple[int, int], label_id: int
-    ) -> dict[int, np.ndarray]:
-        point_id = np.where(
-            (self.point_coords[label_id][:, 0] == point_coords[0])
-            & (self.point_coords[label_id][:, 1] == point_coords[1])
-        )[0][0]
-        self.point_coords[label_id] = np.delete(
-            self.point_coords[label_id], point_id, axis=0
-        )
-        self.point_labels[label_id] = np.delete(
-            self.point_labels[label_id], point_id, axis=0
-        )
-
-        return self.decode_mask(label_id)
-
-    def remove_box(self, label_id: int) -> dict[int, np.ndarray]:
-        del self.box_coords[label_id]
-        return self.decode_mask(label_id)
-
     def get_masks(self) -> dict[int, np.ndarray]:
         return self.masks
 
@@ -134,7 +114,7 @@ class SAM2Image:
         self.decoders = {}
 
 
-class SAM2ImageEncoder:
+class MedSAM2ImageEncoder:
     def __init__(self, path: str) -> None:
         # Initialize model
         so = ort.SessionOptions()
@@ -199,7 +179,7 @@ class SAM2ImageEncoder:
         self.output_names = [model_outputs[i].name for i in range(len(model_outputs))]
 
 
-class SAM2ImageDecoder:
+class MedSAM2ImageDecoder:
     def __init__(
         self,
         path: str,

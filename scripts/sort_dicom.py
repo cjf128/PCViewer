@@ -1,3 +1,4 @@
+# Copyright (c) 2026 PCViewer Jinfr
 import shutil
 from dataclasses import dataclass
 from pathlib import Path

@@ -1,7 +1,7 @@
 [project]
 name = "Viewer"
 version = "0.1.0"
-description = "PET/CT图像全身病灶检测软件"
+description = "基于SAM2的PET/CT图像全身病灶分割软件"
 authors = [
     { name="Jinfr"}
 ]

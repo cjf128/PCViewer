@@ -1,3 +1,4 @@
+# Copyright (c) 2026 PCViewer Jinfr
 import json
 import os
 import shutil
@@ -882,9 +883,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.SamThread.start()
         except Exception as e:
             log_error(f"SAM操作失败: {e}")
-            import traceback
-
-            traceback.print_exc()
             return
 
     def normalize(self, slice, ww, wl):

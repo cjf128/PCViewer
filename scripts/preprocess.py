@@ -1,3 +1,4 @@
+# Copyright (c) 2026 PCViewer Jinfr
 from pathlib import Path
 
 import SimpleITK as sitk

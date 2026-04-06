@@ -1,3 +1,4 @@
+# Copyright (c) 2026 PCViewer Jinfr
 import sys
 from pathlib import Path
 
@@ -322,16 +323,13 @@ class ImageViewer(QGraphicsView):
 
         event.ignore()
 
-    # def enterEvent(self, event):
-    #     self.wheel = True
-    #     if self.mode == VIEWERMode.PAINT or self.mode == VIEWERMode.ERASER:
-    #         self.setCursor(Qt.CursorShape.BlankCursor)
-    #     super().enterEvent(event)
+    def enterEvent(self, event):
+        self.wheel = True
+        super().enterEvent(event)
 
-    # def leaveEvent(self, event):
-    #     self.unsetCursor()
-    #     self.wheel = False
-    #     super().leaveEvent(event)
+    def leaveEvent(self, event):
+        self.wheel = False
+        super().leaveEvent(event)
 
     def patient_name_change(self, file_name):
         self.patient_name = file_name

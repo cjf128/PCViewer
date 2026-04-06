@@ -1,27 +1,146 @@
-# AGENTS.md - Viewer 开发者指南
+# AGENTS.md — Viewer 开发者指南（项目定制版）
 
-## 项目概述
+## 概述
 
-Viewer 是一款基于 PySide6 构建的 PET/CT 医学图像全身病灶检测软件。提供医学影像数据的图像分析、分割和管理功能。
+Viewer 是基于 PySide6 的 PET/CT 医学影像查看与分析工具，包含影像读取、可视化、分割（使用 MedSAM2/SAM 变体）、以及影像管理与预处理功能。
+
+本文件面向团队开发者与贡献者，涵盖：快速上手、依赖与运行、代码约定、常见开发任务、模型与资源管理，以及与 AI 代理/自定义指令相关的注意事项。
 
 ---
 
-## 构建、检查和测试命令
+## 快速开始
 
-### 安装
+安装（开发环境）：
 
 ```bash
-# 使用 pip
 pip install -e .
 ```
 
-### 运行应用程序
+运行应用：
 
 ```bash
 python main.py
 ```
 
+配置虚拟环境并安装可选依赖（建议）：
 
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+---
+
+## 主要依赖（来自 pyproject.toml / requirements.txt）
+
+- PySide6 >= 6.9
+- numpy >= 1.26
+- opencv-python >= 4.8
+- onnxruntime >= 1.16
+- pydicom >= 2.4
+- pypinyin
+- SimpleITK
+- vtk (用于 3D 可视化)
+- pyyaml
+
+模型/检查点目录：`models/checkpoints/`（例如 MedSAM2 编码器/解码器 onnx 文件）
+
+---
+
+**重要说明**：涉及患者数据时务必遵守隐私与合规要求（脱敏、访问控制、日志审计）。
+
+---
+
+## 代码风格与约定
+
+- 导入顺序：标准库 → 第三方库 → 本地模块。
+- 本地模块尽量使用相对或基于项目根的显式导入（例如 `from app.configs import AppConfig`）。
+- 命名：类 PascalCase；函数/变量 snake_case；常量 UPPER_SNAKE_CASE。
+- 在公共 API 与模块边界处添加类型提示。
+- 每个类保持关注点单一：文档字符串 → `__init__` → 属性 → 公共方法 → 私有方法。
+
+错误与日志：使用 `scripts/logger.py` 提供的集中化日志函数，不要使用 print；针对外部依赖的操作（文件读取、模型加载）要有明确的异常处理与日志记录。
+
+界面字符串使用中文；保持 Qt Designer 生成的 UI 文件放在 `ui/`，相应逻辑类放在 `widgets/`。
+
+---
+
+## GUI 开发与 UI 文件
+
+- 将 Qt Designer 的 `.ui` 文件放入 `ui/`，对应的 Python UI 文件放入同目录（或通过生成脚本）。
+- 窗口类通常继承自 `QMainWindow`/`QDialog` 并组合生成的 UI 类，例如在 `widgets/MainWindow.py` 中集成 `ui/MainWindow_ui.py`。
+- 信号/槽的连接集中在初始化方法（如 `init_connectAction()`）。
+
+---
+
+## 多线程与后台任务
+
+- 对于重型模型加载和推理（例如加载 ONNX 模型或执行大图像处理），应使用 `QThread` 或工作线程，并通过 Signal 返回结果给主线程以保持 UI 响应性。
+- 在 `widgets/WorkerThread.py` 中实现可复用的线程类，尽量把 I/O 与 CPU 密集型任务放到后台。
+
+---
+
+## 模型与资源管理
+
+- 模型文件放在 `models/checkpoints/`，加载逻辑在 `models/medsam2.py`、`models/sam2.py` 等模块中实现。
+- 大模型建议延迟加载（按需）并在后台线程中初始化；提供进度与超时处理。
+- 对于可重复实验，记录模型版本与推理配置（例如 ONNX runtime flags）。
+
+---
+
+## 项目结构（简要）
+
+```
+Viewer/
+├── app/           # 应用启动、配置和模式
+├── models/        # 模型加载与推理封装
+├── scripts/       # 辅助脚本（logger、preprocess、sort_dicom）
+├── ui/            # Qt Designer 的 UI 文件及生成的 Python UI
+├── widgets/       # 界面逻辑与窗口部件
+├── icons/         # 主题图标（dark/ light）
+├── logs/          # 运行日志
+├── models/checkpoints/  # 模型权重（ONNX）
+├── main.py        # 程序入口
+├── path.py        # 路径常量
+└── requirements.txt / pyproject.toml
+```
+
+---
+
+## 常见开发任务（速览）
+
+- 运行应用：`python main.py`。
+- 生成 UI：使用 `pyside6-uic`（或项目已有生成脚本）把 `.ui` 转为 Python。
+- 添加新窗口：在 `widgets/` 新建类并在 `ui/` 增加对应 `.ui`，在 `MainWindow` 集成。
+
+---
+
+## 调试与测试
+
+- 将日志级别配置为 `DEBUG` 以便排查问题；在关键模块加入可开关的详细日志。
+- 对于模型推理与预处理，编写小型单元测试或脚本放在 `assert/` 或 `example/` 下以验证数据流与可重现性。
+
+---
+
+## AI 代理与自定义指令注意事项
+
+- 本仓库提供给 AI 助手（例如用于代码改写、生成补丁等）的上下文应避免包含真实患者数据；测试示例请使用 `example/` 下的匿名数据集。
+- 如果为 VS Code Copilot 或自定义 agent 编写 instruction 文件（例如 `AGENTS.md`、`.instructions.md`），请：
+    - 在 `description` 中包含明确触发关键词，便于检索。
+    - 避免使用宽泛的 `applyTo: "**"`，仅在确实全局适用时使用。
+    - 保证 YAML frontmatter 格式正确（使用空格，不使用 tab）。
+
+---
+
+## 贡献与代码审查
+
+- 在提交前确保通过静态检查（如 flake8/ruff）及基本单元测试。
+- 代码变更应附带说明，界面改动附带截图或短录屏。
+
+---
+
+如果你希望我把本文件拆分为更小的 `CONTRIBUTING.md` / `DEVELOPMENT.md` / `MODEL_GUIDE.md`，或者把运行/打包说明写到 `README.md`，告诉我下一步需求。
 ### 依赖项
 
 核心依赖（来自 pyproject.toml/setup.py）：
