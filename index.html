@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<html lang="zh-CN"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PCViewer — PET/CT 全身病灶分割软件</title>
@@ -173,7 +172,7 @@
             z-index: -1;
         }
 
-        .version-badge {
+        .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
@@ -181,14 +180,15 @@
             background: var(--accent-dim);
             border: 1px solid var(--border-accent);
             border-radius: 100px;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 500;
             color: var(--accent);
             margin-bottom: 1.5rem;
             animation: fadeInDown 0.6s ease-out;
         }
 
-        .version-badge::before {
+        .status-badge::before {
             content: '';
             width: 6px;
             height: 6px;
@@ -303,37 +303,12 @@
             position: relative;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
             box-shadow:
                 0 0 0 1px rgba(255,255,255,0.03),
                 0 20px 60px rgba(0, 0, 0, 0.4),
                 0 0 80px var(--accent-dim);
-        }
-
-        .screenshot-topbar {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background: rgba(255,255,255,0.02);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .screenshot-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--text-muted);
-            opacity: 0.4;
-        }
-
-        .screenshot-title {
-            flex: 1;
-            text-align: center;
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            color: var(--text-muted);
         }
 
         .screenshot-frame img {
@@ -390,11 +365,12 @@
         }
 
         .section-label {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
             color: var(--accent);
             text-transform: uppercase;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.1em;
             margin-bottom: 0.75rem;
         }
 
@@ -679,7 +655,7 @@
     <section class="hero">
         <div class="hero-glow"></div>
 
-        <div class="version-badge">v0.1.0 — 开源发布</div>
+        <div class="status-badge">开源项目</div>
 
         <h1>
             <span class="gradient-text">PCViewer</span><br>
@@ -703,13 +679,6 @@
 
         <div class="hero-screenshot">
             <div class="screenshot-frame">
-                <div class="screenshot-topbar">
-                    <span class="screenshot-dot"></span>
-                    <span class="screenshot-dot"></span>
-                    <span class="screenshot-dot"></span>
-                    <span class="screenshot-title">PCViewer — PET/CT 影像分析</span>
-                    <span style="width:30px"></span>
-                </div>
                 <img src="assert/image.png" alt="PCViewer 主界面截图">
             </div>
         </div>
@@ -833,7 +802,7 @@
     <section class="section-padding code-section">
         <div class="container">
             <div class="section-header">
-                <div class="section-label">快速开始</div>
+                <div class="section-label">// 快速开始</div>
                 <h2 class="section-title">开发者指南</h2>
                 <p class="section-desc">克隆仓库，安装依赖，即可开始使用</p>
             </div>
@@ -855,7 +824,7 @@
     <section id="download" class="section-padding download-section">
         <div class="container">
             <div class="section-header">
-                <div class="section-label">下载</div>
+                <div class="section-label">// 下载</div>
                 <h2 class="section-title">获取 PCViewer</h2>
                 <p class="section-desc">选择适合您的安装方式</p>
             </div>
@@ -911,5 +880,14 @@
         </div>
     </footer>
 
+提交前运行基本单元测试与静态检查。</p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <div>© 2026 Viewer 项目</div>
+    </footer>
+  </div>
 </body>
 </html>
