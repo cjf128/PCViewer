@@ -9,68 +9,22 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    runs-on: windows-latest
+  release:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install dependencies
+      - name: Create Source Archive
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Build with Nuitka
-        run: |
-          nuitka --standalone `
-            --remove-output `
-            --windows-console-mode=disable `
-            --enable-plugin=pyside6 `
-            --include-qt-plugins=sensible,styles `
-            --include-package-data=pypinyin `
-            --include-package-data=pydicom `
-            --include-package=pydicom.pixels `
-            --include-data-dir=models=models `
-            --include-data-dir=icons=icons `
-            --windows-icon-from-ico=icons/logo_2.ico `
-            --output-dir=dist `
-            --show-progress `
-            --assume-yes `
-            --lto=yes `
-            --jobs=2 `
-            main.py
-
-      - name: Package output
-        run: |
-          $tag = $env:GITHUB_REF_NAME
-          $appName = "PCViewer-$tag"
-          $outputDir = "dist/main.dist"
-          Compress-Archive -Path "$outputDir\*" -DestinationPath "$appName-windows.zip" -Force
-          echo "ARTIFACT=$appName-windows.zip" >> $env:GITHUB_ENV
+          zip -r PCViewer-${{ github.ref_name }}-source.zip . \
+            -x ".git/*" -x ".github/*" -x ".venv/*" -x ".ruff_cache/*" -x "__pycache__/*" -x "*.pyc" -x "uv.lock" -x "logs/*" -x "data/*"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          body: |
-            ## PCViewer ${{ github.ref_name }}
-
-            ### 更新内容
-            - 请在此填写更新说明
-
-            ### 安装方式
-            1. 下载并解压 `PCViewer-${{ github.ref_name }}-windows.zip`
-            2. 将模型文件放入 `models/checkpoints/` 目录
-            3. 运行 `main.exe`
-
-            > 本软件仅用于科研与教学目的，不作为临床诊断依据。
-          files: ${{ env.ARTIFACT }}
-          draft: true
+          body: 
           generate_release_notes: true
