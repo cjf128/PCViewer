@@ -36,9 +36,9 @@ pip install -r requirements.txt
 uv sync
 ```
 
-### 使用前先下载onnx模型
+### 使用前先下载onnx模型与示例数据
 
-将[sam2.1_hiera_base_plus](https://huggingface.co/mabote-itumeleng/ONNX-SAM2-Segment-Anything/tree/main)放到models/checkpoints下即可
+将[sam2.1_hiera_base_plus](https://huggingface.co/datasets/Jinfr/PCViewer/tree/main)放到models/checkpoints下即可
 
 ### 运行软件
 
