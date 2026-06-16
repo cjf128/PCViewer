@@ -404,7 +404,7 @@ wheels = [
 
 [[package]]
 name = "pcst"
-version = "0.4.0"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
@@ -704,7 +704,7 @@ wheels = [
 
 [[package]]
 name = "pcst"
-version = "0.4.0"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },

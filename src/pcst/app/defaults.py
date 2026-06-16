@@ -4,7 +4,7 @@ from copy import deepcopy
 
 APP_NAME = "PCST"
 APP_AUTHOR = "Jinfr"
-APP_VERSION = "0.4.0"
+APP_VERSION = "1.0.0"
 APP_LICENSE = "Apache License 2.0"
 PROJECT_HOMEPAGE_URL = "https://cjf128.github.io/PCST/"
 PROJECT_REPOSITORY_URL = "https://github.com/cjf128/PCST"
