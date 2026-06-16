@@ -703,43 +703,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pcst"
-version = "1.0.0"
-source = { editable = "." }
-dependencies = [
-    { name = "numpy" },
-    { name = "onnxruntime" },
-    { name = "opencv-python" },
-    { name = "pydicom" },
-    { name = "pypinyin" },
-    { name = "pyside6" },
-    { name = "pyyaml" },
-    { name = "simpleitk" },
-    { name = "vtk" },
-]
-
-[package.dev-dependencies]
-build = [
-    { name = "nuitka" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "numpy", specifier = ">=1.26.0" },
-    { name = "onnxruntime", specifier = ">=1.16.0" },
-    { name = "opencv-python", specifier = ">=4.8.0" },
-    { name = "pydicom", specifier = ">=2.4.3" },
-    { name = "pypinyin", specifier = ">=0.49.0" },
-    { name = "pyside6", specifier = ">=6.9.1" },
-    { name = "pyyaml", specifier = ">=6.0.1" },
-    { name = "simpleitk", specifier = ">=2.3.0" },
-    { name = "vtk", specifier = ">=9.2.6" },
-]
-
-[package.metadata.requires-dev]
-build = [{ name = "nuitka", specifier = ">=2.8" }]
-
-[[package]]
 name = "vtk"
 version = "9.6.1"
 source = { registry = "https://mirrors.aliyun.com/pypi/simple/" }
