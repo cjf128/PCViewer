@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "PCST"
-version = "0.4.0"
+version = "1.0.0"
 description = "基于 SAM 的 PET/CT 图像全身病灶分割软件"
 authors = [
     { name="Jinfr"}
